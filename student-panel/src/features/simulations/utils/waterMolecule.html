@@ -1,0 +1,198 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Water Molecule Structure</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: transparent !important; color: #333; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; margin: 0; overflow: hidden; height: 100vh; }
+h1, .controls, .info { display: none !important; }
+canvas { width: 100%; height: 100%; object-fit: contain; background: transparent; border: none; }
+.controls { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+button { padding: 8px 16px; border: 1px solid #d0d7de; border-radius: 5px; background: #ffffff; color: #333; cursor: pointer; font-size: 0.9em; }
+button:hover { background: #e8ecf0; }
+button.active { background: #e94560; color: #fff; border-color: #e94560; }
+.info { margin-top: 10px; font-size: 0.85em; color: #555; text-align: center; max-width: 500px; }
+</style>
+</head>
+<body>
+<h1>Structure of Water Molecule (H₂O)</h1>
+<canvas id="c" width="500" height="450"></canvas>
+<div class="controls">
+<button id="btnRotate" class="active">Auto Rotate</button>
+<button id="btnLonePairs">Lone Pairs</button>
+<button id="btnLabels" class="active">Labels</button>
+<button id="btnAngle" class="active">Bond Angle</button>
+<button id="btnPartial">Partial Charges</button>
+</div>
+<div class="info">Drag to rotate the molecule. Water has a bent shape with a 104.5° bond angle due to two lone pairs on oxygen.</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+let angleY = 0, angleX = 0.3;
+let autoRotate = true, showLonePairs = true, showLabels = true, showAngle = true, showPartial = true;
+let dragging = false, lastMX, lastMY;
+
+const bondAngle = 104.5 * Math.PI / 180;
+const bondLength = 90;
+
+const atoms = [
+  { x: 0, y: 0, z: 0, r: 28, color: '#e94560', label: 'O', name: 'Oxygen' },
+  { x: -bondLength * Math.sin(bondAngle/2), y: bondLength * Math.cos(bondAngle/2), z: 0, r: 18, color: '#e0e0e0', label: 'H', name: 'Hydrogen' },
+  { x: bondLength * Math.sin(bondAngle/2), y: bondLength * Math.cos(bondAngle/2), z: 0, r: 18, color: '#e0e0e0', label: 'H', name: 'Hydrogen' }
+];
+
+const lonePairs = [
+  { x: -50, y: -55, z: 30 },
+  { x: 50, y: -55, z: -30 }
+];
+
+function rotate3D(x, y, z) {
+  let x1 = x * Math.cos(angleY) - z * Math.sin(angleY);
+  let z1 = x * Math.sin(angleY) + z * Math.cos(angleY);
+  let y1 = y * Math.cos(angleX) - z1 * Math.sin(angleX);
+  let z2 = y * Math.sin(angleX) + z1 * Math.cos(angleX);
+  return { x: x1, y: y1, z: z2 };
+}
+
+function project(p) {
+  const scale = 300 / (300 + p.z);
+  return { x: W/2 + p.x * scale, y: H/2 + p.y * scale, scale: scale };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  
+  const transformed = atoms.map(a => {
+    const r = rotate3D(a.x, a.y, a.z);
+    const p = project(r);
+    return { ...a, px: p.x, py: p.y, pz: r.z, scale: p.scale };
+  });
+
+  const sorted = [...transformed].sort((a, b) => a.pz - b.pz);
+
+  for (let i = 1; i < 3; i++) {
+    const o = transformed[0], h = transformed[i];
+    ctx.beginPath();
+    ctx.moveTo(o.px, o.py);
+    ctx.lineTo(h.px, h.py);
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  }
+
+  if (showLonePairs) {
+    lonePairs.forEach(lp => {
+      const r = rotate3D(lp.x, lp.y, lp.z);
+      const p = project(r);
+      for (let d = -4; d <= 4; d += 8) {
+        ctx.beginPath();
+        ctx.arc(p.x + d, p.y, 4 * p.scale, 0, Math.PI * 2);
+        ctx.fillStyle = '#e6a800';
+        ctx.fill();
+      }
+      if (showLabels) {
+        ctx.fillStyle = '#b38600';
+        ctx.font = '11px Arial';
+        ctx.fillText('lone pair', p.x - 25, p.y - 12);
+      }
+    });
+  }
+
+  if (showAngle) {
+    const o = transformed[0];
+    const h1 = transformed[1], h2 = transformed[2];
+    const a1 = Math.atan2(h1.py - o.py, h1.px - o.px);
+    const a2 = Math.atan2(h2.py - o.py, h2.px - o.px);
+    ctx.beginPath();
+    ctx.arc(o.px, o.py, 35, Math.min(a1,a2), Math.max(a1,a2));
+    ctx.strokeStyle = '#0099cc';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#0099cc';
+    ctx.font = 'bold 13px Arial';
+    const midA = (a1 + a2) / 2;
+    ctx.fillText('104.5°', o.px + 40 * Math.cos(midA) - 15, o.py + 40 * Math.sin(midA) + 5);
+  }
+
+  sorted.forEach(a => {
+    const r = a.r * a.scale;
+    const grad = ctx.createRadialGradient(a.px - r*0.3, a.py - r*0.3, r*0.1, a.px, a.py, r);
+    if (a.label === 'O') {
+      grad.addColorStop(0, '#ff6b81');
+      grad.addColorStop(1, '#c0354d');
+    } else {
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(1, '#b0b0b0');
+    }
+    ctx.beginPath();
+    ctx.arc(a.px, a.py, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    if (showLabels) {
+      ctx.fillStyle = a.label === 'O' ? '#fff' : '#333';
+      ctx.font = `bold ${Math.round(14 * a.scale)}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(a.label, a.px, a.py);
+    }
+
+    if (showPartial) {
+      ctx.font = `bold ${Math.round(16 * a.scale)}px Arial`;
+      ctx.textAlign = 'center';
+      if (a.label === 'O') {
+        ctx.fillStyle = '#0077aa';
+        ctx.fillText('δ⁻', a.px, a.py - r - 10);
+      } else {
+        ctx.fillStyle = '#cc3333';
+        ctx.fillText('δ⁺', a.px, a.py - r - 10);
+      }
+    }
+  });
+
+  if (autoRotate) angleY += 0.012;
+  requestAnimationFrame(draw);
+}
+
+canvas.addEventListener('mousedown', e => { dragging = true; lastMX = e.offsetX; lastMY = e.offsetY; canvas.style.cursor = 'grabbing'; });
+canvas.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  angleY += (e.offsetX - lastMX) * 0.01;
+  angleX += (e.offsetY - lastMY) * 0.01;
+  lastMX = e.offsetX; lastMY = e.offsetY;
+});
+canvas.addEventListener('mouseup', () => { dragging = false; canvas.style.cursor = 'grab'; });
+canvas.addEventListener('mouseleave', () => { dragging = false; canvas.style.cursor = 'grab'; });
+
+canvas.addEventListener('touchstart', e => { e.preventDefault(); dragging = true; lastMX = e.touches[0].clientX; lastMY = e.touches[0].clientY; });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (!dragging) return;
+  angleY += (e.touches[0].clientX - lastMX) * 0.01;
+  angleX += (e.touches[0].clientY - lastMY) * 0.01;
+  lastMX = e.touches[0].clientX; lastMY = e.touches[0].clientY;
+});
+canvas.addEventListener('touchend', () => { dragging = false; });
+
+function toggleBtn(id, getter, setter) {
+  document.getElementById(id).addEventListener('click', function() {
+    setter(!getter());
+    this.classList.toggle('active');
+  });
+}
+toggleBtn('btnRotate', () => autoRotate, v => autoRotate = v);
+toggleBtn('btnLonePairs', () => showLonePairs, v => showLonePairs = v);
+toggleBtn('btnLabels', () => showLabels, v => showLabels = v);
+toggleBtn('btnAngle', () => showAngle, v => showAngle = v);
+toggleBtn('btnPartial', () => showPartial, v => showPartial = v);
+
+draw();
+</script>
+
+</body></html>
