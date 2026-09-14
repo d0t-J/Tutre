@@ -14,6 +14,7 @@ dist-ssr
 
 .env
 .env.*
+!.env.example
 
 strix_runs/
 

@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="./admin-panel/public/co_tutor_new_logo.png" alt="Co-Tutor Logo" width="150" />
-  <h1>Co-Tutor</h1>
+  <img src="./admin-panel/public/co_tutor_new_logo.png" alt="Tutre Logo" width="150" />
+  <h1>Tutre</h1>
   <p><strong>Experience Science & Math like never before with Real-Time Interactive Simulations</strong></p>
   
   <p>
@@ -15,13 +15,13 @@
 
 ## 🌟 Overview 
 
-**Co-Tutor** is a state-of-the-art educational platform that redefines how students learn STEM (Science, Technology, Engineering, and Mathematics). By leveraging the power of Artificial Intelligence, educators can instantly generate fully functional, interactive simulations that bring abstract concepts to life. 
+**Tutre** is a state-of-the-art educational platform that redefines how students learn STEM (Science, Technology, Engineering, and Mathematics). By leveraging the power of Artificial Intelligence, educators can instantly generate fully functional, interactive simulations that bring abstract concepts to life. 
 
-With over **50+ Simulations**, covering **4 Subjects** (Physics, Chemistry, Biology, Mathematics), and delivering a **100% Interactive** experience, Co-Tutor bridges the gap between theoretical knowledge and practical understanding.
+With over **50+ Simulations**, covering **4 Subjects** (Physics, Chemistry, Biology, Mathematics), and delivering a **100% Interactive** experience, Tutre bridges the gap between theoretical knowledge and practical understanding.
 
 The ecosystem is divided into two perfectly synchronized, modern applications:
-1. 🎓 **Student Portal** ([Live Demo](https://co-tutor-std.vercel.app/)): A focused, gamified, and distraction-free environment where students can explore simulations, adjust parameters in real-time, and learn via a built-in AI Tutor and interactive Study Guides.
-2. 👨‍🏫 **Admin Portal** ([Live Demo](https://co-tutor-admin.vercel.app/)): A powerful dashboard empowering educators to dynamically generate, preview, customize, and publish simulations using simple text prompts and images.
+1. 🎓 **Student Portal** ([Live Demo](https://Tutre-std.vercel.app/)): A focused, gamified, and distraction-free environment where students can explore simulations, adjust parameters in real-time, and learn via a built-in AI Tutor and interactive Study Guides.
+2. 👨‍🏫 **Admin Portal** ([Live Demo](https://Tutre-admin.vercel.app/)): A powerful dashboard empowering educators to dynamically generate, preview, customize, and publish simulations using simple text prompts and images.
 
 ---
 
@@ -73,7 +73,7 @@ The ecosystem is divided into two perfectly synchronized, modern applications:
 
 ## 🔍 Deep Dive: Architecture & Libraries
 
-Co-Tutor is split into two specialized applications to optimize the user experience for both educators and students. Here is a technical breakdown of each panel's features and the specific open-source libraries powering them.
+Tutre is split into two specialized applications to optimize the user experience for both educators and students. Here is a technical breakdown of each panel's features and the specific open-source libraries powering them.
 
 ### 👨‍🏫 Admin Panel (Simulation Generator)
 The Admin Panel is designed as a powerful workspace for educators to prompt, build, and publish interactive simulations.
@@ -115,10 +115,10 @@ The Student Panel focuses on a distraction-free, gamified experience where stude
 
 ## 📂 Project Structure
 
-Co-Tutor is a monorepo containing two independent web applications:
+Tutre is a monorepo containing two independent web applications:
 
 ```text
-Co-Tutor/
+Tutre/
 ├── admin-panel/         # React app for teachers/admins
 │   ├── src/             # Admin components, contexts, hooks, pages
 │   └── public/          # Admin static assets
@@ -143,8 +143,8 @@ Follow these instructions to set up the project locally.
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/co-tutor.git
-cd co-tutor
+git clone https://github.com/yourusername/Tutre.git
+cd Tutre
 ```
 
 ### 2. Environment Setup
@@ -186,7 +186,7 @@ npm run dev
 
 ## 🔒 Database Architecture
 
-Co-Tutor relies on Supabase for a seamless backend experience with secure data access:
+Tutre relies on Supabase for a seamless backend experience with secure data access:
 - **`users` / Auth**: Secure management of student and admin roles.
 - **`classes` & `subjects`**: Hierarchical organization of the academic curriculum.
 - **`topics`**: Granular lesson definitions.
@@ -197,7 +197,7 @@ Co-Tutor relies on Supabase for a seamless backend experience with secure data a
 
 ## 🤝 Contributing
 
-We welcome contributions to make Co-Tutor even better! 
+We welcome contributions to make Tutre even better! 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
