@@ -25,7 +25,7 @@ function AuthFormContent() {
           {/* Form Header */}
           <div className="text-center mb-2 sm:mb-5">
             <h2 className="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
-              {isLogin ? 'Welcome Back!' : 'Join Co-Tutor'}
+              {isLogin ? 'Welcome Back!' : 'Join Tutre'}
             </h2>
             <p className="text-[11px] sm:text-sm text-slate-500 mt-0.5 leading-tight">
               {isLogin ? 'Log in to explore interactive simulations' : 'Create your account to start learning'}

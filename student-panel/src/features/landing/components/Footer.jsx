@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import logo from '../../../assets/co_tutor_logo.png';
+import logo from '../../../assets/tutre_logo.png';
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -29,16 +29,16 @@ export default function Footer() {
         
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Co-Tutor Logo" className="w-8 h-8 object-contain grayscale opacity-60" />
+          <img src={logo} alt="Tutre Logo" className="w-8 h-8 object-contain grayscale opacity-60" />
           <div>
-            <h1 className="text-lg font-bold text-slate-400 tracking-tight leading-none">Co-Tutor</h1>
+            <h1 className="text-lg font-bold text-slate-400 tracking-tight leading-none">Tutre</h1>
             <p className="text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">Student Portal</p>
           </div>
         </div>
 
         {/* Copyright */}
         <div className="flex items-center justify-center text-sm font-medium text-slate-400">
-          <p>&copy; {new Date().getFullYear()} Co-Tutor. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Tutre. All rights reserved.</p>
         </div>
       </div>
     </footer>

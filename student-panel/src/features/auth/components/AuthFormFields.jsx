@@ -43,7 +43,7 @@ export default function AuthFormFields() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="student@co-tutor.com"
+            placeholder="student@tutre.com"
             className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-slate-50/80 border border-slate-200/80 rounded-lg sm:rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-[13px] sm:text-sm placeholder:text-slate-400"
             required
           />

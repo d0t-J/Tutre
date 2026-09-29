@@ -16,7 +16,7 @@ export default function DashboardLanding({ classes, isLoading }) {
           <div className="w-10 h-10 sm:w-16 sm:h-16 bg-linear-to-br from-primary-100 to-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-6 shadow-sm border border-primary-100/50">
             <Icons.GraduationCap className="w-5 h-5 sm:w-8 sm:h-8 text-primary-600" />
           </div>
-          <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2 sm:mb-4">Welcome to Co-Tutor</h2>
+          <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2 sm:mb-4">Welcome to Tutre</h2>
           <p className="[@media(max-height:650px)]:hidden text-sm sm:text-base text-slate-500 font-medium leading-relaxed mb-6 sm:mb-8 max-w-lg px-2 sm:px-0">
             Please select a class below or from the top menu to begin exploring interactive simulations.
           </p>

@@ -1,9 +1,26 @@
-# Keep only admin-panel and student-panel
+# Deny-by-default: everything at the repository root is ignored, then the
+# directories and files Tutre actually tracks are re-allowed below.
+# Adding a new top-level file? Add a matching `!` line or git will not see it.
+# Check with: git check-ignore -v <path>
 /*
+
+# Applications
 !/admin-panel/
 !/student-panel/
-!/.gitignore
 
-# graphify output (tracked)
+# Backend: Supabase CLI config, migrations, Edge Functions
+!/supabase/
+
+# Project documentation and agent configuration
+!/README.md
+!/CLAUDE.md
+!/.gitignore
+!/.claude/
+
+# Generated code-graph analysis output (tracked deliberately)
 !/graphify-out/
 
+# Never track secrets, anywhere, at any depth
+.env
+.env.*
+!.env.example

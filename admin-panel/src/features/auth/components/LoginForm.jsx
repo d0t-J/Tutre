@@ -20,7 +20,7 @@ export default function LoginForm({
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@co-tutor.com"
+            placeholder="admin@tutre.com"
             className="w-full pl-9 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-[13px]"
             required
           />

@@ -1,4 +1,4 @@
-import Logo from '../../../assets/co_tutor_new_logo.png';
+import Logo from '../../../assets/tutre_new_logo.png';
 import DotField from '../DotField';
 
 export default function GlobalSplashScreen() {
@@ -13,7 +13,7 @@ export default function GlobalSplashScreen() {
       <div className="relative z-10">
         <img 
           src={Logo} 
-          alt="Co-Tutor Logo" 
+          alt="Tutre Logo" 
           className="w-[100px] sm:w-[132px] md:w-[164px] h-auto object-contain animate-pulse" 
         />
       </div>

@@ -45,7 +45,7 @@ export default function Login() {
             <Lock className="w-6 h-6 text-primary-600" />
           </div>
           <h1 className="text-xl font-bold text-slate-800 tracking-tight">Admin Login</h1>
-          <p className="text-[13px] text-slate-500 mt-1">Secure access to Co-Tutor</p>
+          <p className="text-[13px] text-slate-500 mt-1">Secure access to Tutre</p>
         </div>
 
         <LoginForm 

@@ -1,0 +1,12 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Local Supabase env files (access tokens, DB passwords, function secrets)
+.env
+.env.local

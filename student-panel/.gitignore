@@ -29,3 +29,6 @@ strix_runs/
 *.njsproj
 *.sln
 *.sw?
+
+# Keep the env template tracked even though real .env files are ignored
+!.env.example
