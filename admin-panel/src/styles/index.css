@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-primary-50: #e0f8fc;
+  --color-primary-100: #b3ecf7;
+  --color-primary-200: #80def0;
+  --color-primary-300: #4dcfea;
+  --color-primary-400: #26c4e5;
+  --color-primary-500: #0095b6;
+  --color-primary-600: #0087a8;
+  --color-primary-700: #007695;
+  --color-primary-800: #006583;
+  --color-primary-900: #005470;
+  --color-primary-950: #00364e;
+}
+
+@layer base {
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input, textarea, [contenteditable="true"] {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  .selectable-text {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none; /* stylelint-disable-line plugin/no-unsupported-browser-features -- covered by ::-webkit-scrollbar fallback below */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* React Quill Layout Fixes */
+  .quill-container .quill {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .quill-container .ql-container {
+    flex: 1;
+    overflow-y: auto;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+  .quill-container .ql-toolbar {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    background-color: #f8fafc;
+  }
+
+  /* Jodit Document Mode Fixes */
+  .jodit-document-mode.jodit-container:not(.jodit_inline) {
+    border: none !important;
+  }
+  .jodit-document-mode .jodit-toolbar__box {
+    border-bottom: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+  }
+  .jodit-document-mode .jodit-workplace {
+    background-color: transparent !important;
+  }
+  .jodit-document-mode .jodit-wysiwyg {
+    padding: 20mm !important; /* Standard A4 margins */
+    outline: none !important;
+    @apply prose prose-slate max-w-none text-slate-800;
+  }
+  
+  .custom-jodit-wrapper .jodit-wysiwyg {
+    @apply prose prose-slate max-w-none text-slate-800;
+  }
+}

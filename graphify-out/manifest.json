@@ -1,0 +1,862 @@
+{
+  "admin-panel/eslint.config.js": {
+    "mtime": 1783619882.270797,
+    "ast_hash": "3aa4b57d7f08181d86bde52a4dcb7f22",
+    "semantic_hash": "3aa4b57d7f08181d86bde52a4dcb7f22"
+  },
+  "admin-panel/package.json": {
+    "mtime": 1784286133.6475315,
+    "ast_hash": "cba44bc4f30a0df539639259fc2604d1",
+    "semantic_hash": ""
+  },
+  "admin-panel/skills-lock.json": {
+    "mtime": 1783620283.7491803,
+    "ast_hash": "cf17d99319c0b1bd8c2df5c6c3fa955f",
+    "semantic_hash": "cf17d99319c0b1bd8c2df5c6c3fa955f"
+  },
+  "admin-panel/src/App.jsx": {
+    "mtime": 1784283561.734652,
+    "ast_hash": "57af8b5f2b40f762c32e5829472348a4",
+    "semantic_hash": "57af8b5f2b40f762c32e5829472348a4"
+  },
+  "admin-panel/src/components/common/ConfirmationModal.jsx": {
+    "mtime": 1785522002.3866522,
+    "ast_hash": "7c13c721e2408e85514ecb4f7770ece1",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/components/common/CustomDropdown.jsx": {
+    "mtime": 1785468143.1132367,
+    "ast_hash": "65ab2ea3a3e99fa8b71c5e9333c4fe67",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/components/common/EmptyState.jsx": {
+    "mtime": 1783704705.5216792,
+    "ast_hash": "f02efe928bcd3f19cca449431ba71c67",
+    "semantic_hash": "f02efe928bcd3f19cca449431ba71c67"
+  },
+  "admin-panel/src/components/common/FilterDropdown.jsx": {
+    "mtime": 1784211466.786141,
+    "ast_hash": "7635b8a7ec7985a3b8d3d5d343bf1b5e",
+    "semantic_hash": "7635b8a7ec7985a3b8d3d5d343bf1b5e"
+  },
+  "admin-panel/src/components/common/FilterDropdownMenu.jsx": {
+    "mtime": 1784211465.3783505,
+    "ast_hash": "611d7ff7311b024c7740c85ec19c9c1c",
+    "semantic_hash": "611d7ff7311b024c7740c85ec19c9c1c"
+  },
+  "admin-panel/src/components/common/LogoutConfirmationModal.jsx": {
+    "mtime": 1785522000.3298652,
+    "ast_hash": "7336a225183d028d4890444da317d1a4",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/components/common/SkeletonLoaders.jsx": {
+    "mtime": 1785522007.5782232,
+    "ast_hash": "6ccb217c90bdb274fdb37c140855c3eb",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/components/common/loaders/CurriculumSkeleton.jsx": {
+    "mtime": 1784807359.2558913,
+    "ast_hash": "f8d322a4e0e6ad0c1d5d6db9983d4d14",
+    "semantic_hash": "f8d322a4e0e6ad0c1d5d6db9983d4d14"
+  },
+  "admin-panel/src/components/common/loaders/DropdownSkeleton.jsx": {
+    "mtime": 1784209979.5575325,
+    "ast_hash": "694618ff3a6ad59bd1a12c524f86ab62",
+    "semantic_hash": "694618ff3a6ad59bd1a12c524f86ab62"
+  },
+  "admin-panel/src/components/common/loaders/HomeScreenSkeleton.jsx": {
+    "mtime": 1784210017.0674896,
+    "ast_hash": "22718da6e6f05d25b57d543e4c5bc66c",
+    "semantic_hash": "22718da6e6f05d25b57d543e4c5bc66c"
+  },
+  "admin-panel/src/components/common/loaders/LivePreviewSkeleton.jsx": {
+    "mtime": 1784209982.2131827,
+    "ast_hash": "31f70597bbfc6ad17322a71df36751a4",
+    "semantic_hash": "31f70597bbfc6ad17322a71df36751a4"
+  },
+  "admin-panel/src/components/common/loaders/SavedSimulationsSkeleton.jsx": {
+    "mtime": 1784210015.6488688,
+    "ast_hash": "edf6f3b7d6cb7462bb20c96e0e38b206",
+    "semantic_hash": "edf6f3b7d6cb7462bb20c96e0e38b206"
+  },
+  "admin-panel/src/components/common/loaders/SimulationCardSkeleton.jsx": {
+    "mtime": 1784209975.3823638,
+    "ast_hash": "202363ec5162496f355d8cbe92d82aef",
+    "semantic_hash": "202363ec5162496f355d8cbe92d82aef"
+  },
+  "admin-panel/src/components/common/loaders/TopicInputSkeleton.jsx": {
+    "mtime": 1784209980.9214704,
+    "ast_hash": "ce67bccf371820b255d374aae282aa3e",
+    "semantic_hash": "ce67bccf371820b255d374aae282aa3e"
+  },
+  "admin-panel/src/components/layout/Header.jsx": {
+    "mtime": 1785521997.1926346,
+    "ast_hash": "feed1ba45cba520c10af288466f0c9dc",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/components/layout/Header/MobileMenu.jsx": {
+    "mtime": 1784282880.3928406,
+    "ast_hash": "443810794e157aebabeb77e693920b19",
+    "semantic_hash": "443810794e157aebabeb77e693920b19"
+  },
+  "admin-panel/src/components/layout/Header/NavLinks.jsx": {
+    "mtime": 1784803999.5979848,
+    "ast_hash": "4b2a648ffdb95502c211f3db06cf25f1",
+    "semantic_hash": "4b2a648ffdb95502c211f3db06cf25f1"
+  },
+  "admin-panel/src/context/AuthContext.jsx": {
+    "mtime": 1784228960.5613165,
+    "ast_hash": "17e7ecdbaed088a5fb84977a645cbf6e",
+    "semantic_hash": "17e7ecdbaed088a5fb84977a645cbf6e"
+  },
+  "admin-panel/src/features/simulations/components/ChapterSelector.jsx": {
+    "mtime": 1784808587.6857471,
+    "ast_hash": "06da1afb9127e10fb967c83fc5b5058d",
+    "semantic_hash": "06da1afb9127e10fb967c83fc5b5058d"
+  },
+  "admin-panel/src/features/simulations/components/ClassSelector.jsx": {
+    "mtime": 1785468135.6800601,
+    "ast_hash": "eec9f596f443b1b17a8e968d06ef2caa",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/LivePreview.jsx": {
+    "mtime": 1784490393.2040658,
+    "ast_hash": "6eec3b88a411e52036fb5f963c5d108a",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/LivePreview/PreviewContent.jsx": {
+    "mtime": 1785521964.6769242,
+    "ast_hash": "1f0718b3c7e2fb36261f3a397bc0a663",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/LivePreview/components/GeneratingState.jsx": {
+    "mtime": 1784808331.024235,
+    "ast_hash": "306eff7e06b5ab96b54ef5be500f6a85",
+    "semantic_hash": "306eff7e06b5ab96b54ef5be500f6a85"
+  },
+  "admin-panel/src/features/simulations/components/LivePreview/components/ReadyState.jsx": {
+    "mtime": 1784808333.0492835,
+    "ast_hash": "d984245903e01e1da43f8f89a622e482",
+    "semantic_hash": "d984245903e01e1da43f8f89a622e482"
+  },
+  "admin-panel/src/features/simulations/components/LivePreview/hooks/useIframeHeight.js": {
+    "mtime": 1784808328.9986687,
+    "ast_hash": "df002ccb9cf0f1d4e05b40ecfa796e53",
+    "semantic_hash": "df002ccb9cf0f1d4e05b40ecfa796e53"
+  },
+  "admin-panel/src/features/simulations/components/LivePreview/utils.js": {
+    "mtime": 1784800869.178184,
+    "ast_hash": "95f53e597a2f4fe5ed0ef8bd5d79a06e",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/SavedSimulations.jsx": {
+    "mtime": 1785522006.552647,
+    "ast_hash": "4fe69526b1fd808e6f2649844c128cab",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/SavedSimulations/SimulationsFilterBar.jsx": {
+    "mtime": 1784828544.652758,
+    "ast_hash": "ee41c6906f5e5ca45a9fc12d93579da3",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/SavedSimulations/SimulationsGrid.jsx": {
+    "mtime": 1785521995.1111684,
+    "ast_hash": "cd3eea9fd508e440b1ac6a31f2eba188",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/SubjectSelector.jsx": {
+    "mtime": 1785468135.6897159,
+    "ast_hash": "84af9a8a4b6ad46d5b2638c8dfc08be4",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput.jsx": {
+    "mtime": 1785469388.814111,
+    "ast_hash": "7bf26e435d139c0292e3bc229ac0f0a8",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput/GenerateActions.jsx": {
+    "mtime": 1785469873.1813748,
+    "ast_hash": "7974f9efffdf1b0e86b662077efbca5b",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput/ImageUploader.jsx": {
+    "mtime": 1785522004.4981444,
+    "ast_hash": "9b82349d28288c9ffe0f737a3e2a7a59",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput/TopicForm.jsx": {
+    "mtime": 1785470911.5303001,
+    "ast_hash": "f8e0aa7e18a93d17422c73fe46e55fd4",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput/useImageUpload.js": {
+    "mtime": 1784283635.390791,
+    "ast_hash": "ce300d0fd466af3ab9aa601d9a65f746",
+    "semantic_hash": "ce300d0fd466af3ab9aa601d9a65f746"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/SimulationWizard.jsx": {
+    "mtime": 1784808618.6093328,
+    "ast_hash": "8fda63fa41dfd203a2eb78b1f4061c04",
+    "semantic_hash": "8fda63fa41dfd203a2eb78b1f4061c04"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step1Requirements.jsx": {
+    "mtime": 1785469393.053936,
+    "ast_hash": "8ee9c2743593f943e8a8f186fecb7498",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step2/PromptEditor.jsx": {
+    "mtime": 1785521974.187806,
+    "ast_hash": "5c58482c666b4fb8de9ce09b69c2286a",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step2/PromptStyleSelectors.jsx": {
+    "mtime": 1784291425.9525914,
+    "ast_hash": "106aa19b95aed108ca3740336957dc74",
+    "semantic_hash": "106aa19b95aed108ca3740336957dc74"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step2Prompt.jsx": {
+    "mtime": 1785521977.2867336,
+    "ast_hash": "45f67802d2f9d3e0f089838e6335bd04",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step3/WorkspaceAIUpdater.jsx": {
+    "mtime": 1784288419.322606,
+    "ast_hash": "2ae2fb8f83ee0b28c01bcaf39823a466",
+    "semantic_hash": "2ae2fb8f83ee0b28c01bcaf39823a466"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step3/WorkspaceRightPanel.jsx": {
+    "mtime": 1784288433.4185674,
+    "ast_hash": "00942ee5772725ff2ee88d22b4db1d82",
+    "semantic_hash": "00942ee5772725ff2ee88d22b4db1d82"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/Step3Workspace.jsx": {
+    "mtime": 1785521999.2914052,
+    "ast_hash": "f9e6f1cc0f20f25ce58971fe24e6bd7b",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/Wizard/TopicDetailsForm.jsx": {
+    "mtime": 1784808883.8687947,
+    "ast_hash": "d8ca02c5633cf3a6508f5cde0c67b025",
+    "semantic_hash": "d8ca02c5633cf3a6508f5cde0c67b025"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/components/WizardStepper.jsx": {
+    "mtime": 1784808616.4830234,
+    "ast_hash": "a4f43d530d9157198fa9904ebd0f74f4",
+    "semantic_hash": "a4f43d530d9157198fa9904ebd0f74f4"
+  },
+  "admin-panel/src/features/simulations/components/Wizard/hooks/useWizardSync.js": {
+    "mtime": 1784808614.4477851,
+    "ast_hash": "83642cd086b74f9c9c8c8b63eb6f70b4",
+    "semantic_hash": "83642cd086b74f9c9c8c8b63eb6f70b4"
+  },
+  "admin-panel/src/features/simulations/context/SimulationContext.jsx": {
+    "mtime": 1785470877.525851,
+    "ast_hash": "ac819c53b8bff024cd772b52589999d1",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/context/WizardContext.jsx": {
+    "mtime": 1784250937.8702097,
+    "ast_hash": "f118117aaa672ecc6c1c877832824849",
+    "semantic_hash": "f118117aaa672ecc6c1c877832824849"
+  },
+  "admin-panel/src/features/simulations/hooks/useCategories.js": {
+    "mtime": 1784808194.4563031,
+    "ast_hash": "68f711083f651dcb4870cc2d532dc49f",
+    "semantic_hash": "68f711083f651dcb4870cc2d532dc49f"
+  },
+  "admin-panel/src/features/simulations/hooks/useChapterQueries.js": {
+    "mtime": 1785521970.0005662,
+    "ast_hash": "ee8125787184e3f35ec13e5dbd6f4aa8",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useClassQueries.js": {
+    "mtime": 1785521965.795946,
+    "ast_hash": "94c07507e7afbd80d0f0f04e076cd367",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationGeneration.js": {
+    "mtime": 1785469328.9954424,
+    "ast_hash": "445a4d10c1e643578d5be1d15b888022",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationManagement.js": {
+    "mtime": 1785521971.0449214,
+    "ast_hash": "238f736319db88a1119d864b46fd9fc4",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationState.js": {
+    "mtime": 1785470836.9672546,
+    "ast_hash": "5e0e849e9a736a048715d9d0fb5b28f6",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationStorage.js": {
+    "mtime": 1785469399.538077,
+    "ast_hash": "2cb405ba376f735e8ec748a32da0fea0",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationSuggestions.js": {
+    "mtime": 1784283614.3226793,
+    "ast_hash": "a174d64821fae77d56b7efd96dea0db3",
+    "semantic_hash": "a174d64821fae77d56b7efd96dea0db3"
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulationUpdate.js": {
+    "mtime": 1785469331.9772816,
+    "ast_hash": "68f1f5b97f227a7b3b23f2175d04b40a",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSimulations.js": {
+    "mtime": 1784828544.6532834,
+    "ast_hash": "dee507227b19fdec6b4fb080d57035b5",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useSubjectQueries.js": {
+    "mtime": 1785521967.9179459,
+    "ast_hash": "a2138e91a5bb7c3894bcc81280d7ac63",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useWizardState.js": {
+    "mtime": 1784250927.5906937,
+    "ast_hash": "796f929fdd84ab502232f647743d4fa8",
+    "semantic_hash": "796f929fdd84ab502232f647743d4fa8"
+  },
+  "admin-panel/src/features/simulations/utils/htmlEntities.js": {
+    "mtime": 1784808538.8163695,
+    "ast_hash": "680fbd309307d7b3a07d908dbe909bbf",
+    "semantic_hash": "680fbd309307d7b3a07d908dbe909bbf"
+  },
+  "admin-panel/src/features/simulations/utils/mathPreprocessor.js": {
+    "mtime": 1784808540.8651266,
+    "ast_hash": "77e01a39d07a4b3f4f478414b61f6cf3",
+    "semantic_hash": "77e01a39d07a4b3f4f478414b61f6cf3"
+  },
+  "admin-panel/src/main.jsx": {
+    "mtime": 1784226930.5114844,
+    "ast_hash": "1172f6956606583549df0f66c40dd003",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/pages/Auth/Login.jsx": {
+    "mtime": 1784213259.3275065,
+    "ast_hash": "7007b8dd8a0b00d8acaca641ce84830c",
+    "semantic_hash": "7007b8dd8a0b00d8acaca641ce84830c"
+  },
+  "admin-panel/src/pages/Auth/LoginForm.jsx": {
+    "mtime": 1784230204.5676556,
+    "ast_hash": "4f5deb2dc218879738a070be46ceaaf5",
+    "semantic_hash": "4f5deb2dc218879738a070be46ceaaf5"
+  },
+  "admin-panel/src/pages/Curriculum/CurriculumManager.jsx": {
+    "mtime": 1784835477.711421,
+    "ast_hash": "6941b29c5d12bf99a5fa956a0ac0cf9d",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/pages/Curriculum/components/CategoryCard.jsx": {
+    "mtime": 1784831826.869018,
+    "ast_hash": "09c810d738179e0e1dd8f43ac0702d7e",
+    "semantic_hash": "09c810d738179e0e1dd8f43ac0702d7e"
+  },
+  "admin-panel/src/pages/Curriculum/components/CategoryEmptyState.jsx": {
+    "mtime": 1784808278.6423614,
+    "ast_hash": "debd77395885705b0171f36aea6678e2",
+    "semantic_hash": "debd77395885705b0171f36aea6678e2"
+  },
+  "admin-panel/src/pages/Curriculum/components/CategoryForm.jsx": {
+    "mtime": 1785521972.1138575,
+    "ast_hash": "ee4c9049c591db7b95a44dd2e78c9373",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/pages/Curriculum/components/CategoryList.jsx": {
+    "mtime": 1784808810.4656346,
+    "ast_hash": "7d98703a9f9616b0abef9202506b6a04",
+    "semantic_hash": "7d98703a9f9616b0abef9202506b6a04"
+  },
+  "admin-panel/src/pages/Curriculum/components/CategoryModal.jsx": {
+    "mtime": 1785522001.3559594,
+    "ast_hash": "00f619077bb69ae35b362a3254ce169b",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/pages/Curriculum/components/ChapterListRenderer.jsx": {
+    "mtime": 1784808797.425395,
+    "ast_hash": "be769b4f576334865df35ffe09e7e087",
+    "semantic_hash": "be769b4f576334865df35ffe09e7e087"
+  },
+  "admin-panel/src/pages/Curriculum/components/ClassListRenderer.jsx": {
+    "mtime": 1784808793.372843,
+    "ast_hash": "f23fd74334da50daf9aad867453623f3",
+    "semantic_hash": "f23fd74334da50daf9aad867453623f3"
+  },
+  "admin-panel/src/pages/Curriculum/components/CurriculumHeader.jsx": {
+    "mtime": 1784808215.3697803,
+    "ast_hash": "cd364d53f2201b6db04eb16748067741",
+    "semantic_hash": "cd364d53f2201b6db04eb16748067741"
+  },
+  "admin-panel/src/pages/Curriculum/components/CurriculumTabs.jsx": {
+    "mtime": 1784808217.3884363,
+    "ast_hash": "fa8f6900b77edef890d109b827656c18",
+    "semantic_hash": "fa8f6900b77edef890d109b827656c18"
+  },
+  "admin-panel/src/pages/Curriculum/components/SubjectListRenderer.jsx": {
+    "mtime": 1784808795.4039972,
+    "ast_hash": "cfa1200b00cae8ce3d9c0db950f00e74",
+    "semantic_hash": "cfa1200b00cae8ce3d9c0db950f00e74"
+  },
+  "admin-panel/src/pages/Curriculum/hooks/useCurriculumCrud.js": {
+    "mtime": 1784831713.3543084,
+    "ast_hash": "b89d3485cd5fbe5957b40022b2f36c14",
+    "semantic_hash": "b89d3485cd5fbe5957b40022b2f36c14"
+  },
+  "admin-panel/src/pages/Curriculum/hooks/useCurriculumState.js": {
+    "mtime": 1784808213.3520615,
+    "ast_hash": "4a698e97e78938674f8f4398c4580a9f",
+    "semantic_hash": "4a698e97e78938674f8f4398c4580a9f"
+  },
+  "admin-panel/src/pages/Simulations/CreateSimulation.jsx": {
+    "mtime": 1784828544.6538062,
+    "ast_hash": "37f260907f8b2c566ba69edaf62e666f",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/pages/Simulations/SavedSimulationsPage.jsx": {
+    "mtime": 1784208598.620007,
+    "ast_hash": "d8784abd77fb1e1bb135476388195681",
+    "semantic_hash": "d8784abd77fb1e1bb135476388195681"
+  },
+  "admin-panel/src/routes/AppRoutes.jsx": {
+    "mtime": 1784807270.1689575,
+    "ast_hash": "5b771abf5f8fd99b4a7893ecc780470a",
+    "semantic_hash": "5b771abf5f8fd99b4a7893ecc780470a"
+  },
+  "admin-panel/src/routes/ProtectedRoute.jsx": {
+    "mtime": 1783878838.6414847,
+    "ast_hash": "d1b73013c12f395dadb5388433f65b70",
+    "semantic_hash": "d1b73013c12f395dadb5388433f65b70"
+  },
+  "admin-panel/src/services/authApi.js": {
+    "mtime": 1785521976.265045,
+    "ast_hash": "47cee5305e950a314c77ee8f07bcccb1",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/services/supabase.js": {
+    "mtime": 1783623379.2681525,
+    "ast_hash": "add7846a0e19467d7a6000ea1af2ac40",
+    "semantic_hash": "add7846a0e19467d7a6000ea1af2ac40"
+  },
+  "admin-panel/vercel.json": {
+    "mtime": 1783716881.5344925,
+    "ast_hash": "61bd31a2b0ac08f10f13c932b32d6ca1",
+    "semantic_hash": "61bd31a2b0ac08f10f13c932b32d6ca1"
+  },
+  "admin-panel/vite.config.js": {
+    "mtime": 1783669339.8875086,
+    "ast_hash": "d10c79e0ebaea026808f949d3a80b6fb",
+    "semantic_hash": "d10c79e0ebaea026808f949d3a80b6fb"
+  },
+  "student-panel/eslint.config.js": {
+    "mtime": 1783619915.0070798,
+    "ast_hash": "3aa4b57d7f08181d86bde52a4dcb7f22",
+    "semantic_hash": "3aa4b57d7f08181d86bde52a4dcb7f22"
+  },
+  "student-panel/package.json": {
+    "mtime": 1784833571.7038825,
+    "ast_hash": "9ac7092c4733bcb44a825736653af8f6",
+    "semantic_hash": ""
+  },
+  "student-panel/skills-lock.json": {
+    "mtime": 1783620979.984147,
+    "ast_hash": "cf17d99319c0b1bd8c2df5c6c3fa955f",
+    "semantic_hash": "cf17d99319c0b1bd8c2df5c6c3fa955f"
+  },
+  "student-panel/src/App.jsx": {
+    "mtime": 1784283563.7469919,
+    "ast_hash": "c8eff6be728c901c29d4070248519eb3",
+    "semantic_hash": ""
+  },
+  "student-panel/src/components/common/DotField.jsx": {
+    "mtime": 1784234704.9352381,
+    "ast_hash": "e9492784eb555e725c454e0c4805e1f7",
+    "semantic_hash": "e9492784eb555e725c454e0c4805e1f7"
+  },
+  "student-panel/src/components/common/EmptyState.jsx": {
+    "mtime": 1783882977.124625,
+    "ast_hash": "1fc958692462f6fa927156b1b23140cf",
+    "semantic_hash": ""
+  },
+  "student-panel/src/components/common/LogoutConfirmationModal.jsx": {
+    "mtime": 1783704642.392296,
+    "ast_hash": "8c72ffe911f1df5f9149c6c2ec20a82c",
+    "semantic_hash": "8c72ffe911f1df5f9149c6c2ec20a82c"
+  },
+  "student-panel/src/components/common/MobileDropdown.jsx": {
+    "mtime": 1784921999.45417,
+    "ast_hash": "ea2f36876b07907836d0e1fe2efc4179",
+    "semantic_hash": ""
+  },
+  "student-panel/src/components/common/loaders/PageSkeleton.jsx": {
+    "mtime": 1784835983.9658582,
+    "ast_hash": "bd6b39edcda3be80eeb565912e0b32c5",
+    "semantic_hash": "bd6b39edcda3be80eeb565912e0b32c5"
+  },
+  "student-panel/src/components/layout/Layout.jsx": {
+    "mtime": 1784834707.241817,
+    "ast_hash": "c1fc59caafc83fb5d7118fa4fd5c8912",
+    "semantic_hash": ""
+  },
+  "student-panel/src/components/layout/TopNavbar.jsx": {
+    "mtime": 1784921999.4557648,
+    "ast_hash": "a1d7aae8e118515fbede97c76005ab63",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/auth/components/AuthForm.jsx": {
+    "mtime": 1784232858.965587,
+    "ast_hash": "02b4f257a00de9f9b0f48c74c0b16194",
+    "semantic_hash": "02b4f257a00de9f9b0f48c74c0b16194"
+  },
+  "student-panel/src/features/auth/components/AuthFormFields.jsx": {
+    "mtime": 1784233010.7244177,
+    "ast_hash": "03241e80d6119f51681a3ef22c434fb2",
+    "semantic_hash": "03241e80d6119f51681a3ef22c434fb2"
+  },
+  "student-panel/src/features/auth/components/AuthHeader.jsx": {
+    "mtime": 1784232634.9808624,
+    "ast_hash": "506c092c3baa4da16906c08c1c820439",
+    "semantic_hash": "506c092c3baa4da16906c08c1c820439"
+  },
+  "student-panel/src/features/auth/components/AuthStats.jsx": {
+    "mtime": 1784232256.3875191,
+    "ast_hash": "e808556394ca277597ed1aefb38447bf",
+    "semantic_hash": "e808556394ca277597ed1aefb38447bf"
+  },
+  "student-panel/src/features/auth/context/AuthContext.jsx": {
+    "mtime": 1784212386.3174193,
+    "ast_hash": "479a060d2706b69627ee2623a33150e2",
+    "semantic_hash": "479a060d2706b69627ee2623a33150e2"
+  },
+  "student-panel/src/features/auth/context/AuthFormContext.jsx": {
+    "mtime": 1784490393.2177825,
+    "ast_hash": "b8820c6b1dee2968ea90ba1f2d027b1a",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/landing/components/Features.jsx": {
+    "mtime": 1784235811.618364,
+    "ast_hash": "750b14775208c426798980c90e5291e6",
+    "semantic_hash": "750b14775208c426798980c90e5291e6"
+  },
+  "student-panel/src/features/landing/components/Footer.jsx": {
+    "mtime": 1784235817.599246,
+    "ast_hash": "75d21134eaf5434536fd8324dec59848",
+    "semantic_hash": "75d21134eaf5434536fd8324dec59848"
+  },
+  "student-panel/src/features/landing/components/Navbar.jsx": {
+    "mtime": 1784249576.4073803,
+    "ast_hash": "9870ca33a77fda689fcea12086a4898a",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/landing/components/PreviewSection.jsx": {
+    "mtime": 1784235813.7736094,
+    "ast_hash": "4853fb7a5f18968223c2cea494f355c4",
+    "semantic_hash": "4853fb7a5f18968223c2cea494f355c4"
+  },
+  "student-panel/src/features/simulations/components/ChatMessage.jsx": {
+    "mtime": 1784226898.0413263,
+    "ast_hash": "d50f0d7b352f49a706705231a9693cd6",
+    "semantic_hash": "d50f0d7b352f49a706705231a9693cd6"
+  },
+  "student-panel/src/features/simulations/components/Chatbot.jsx": {
+    "mtime": 1784212982.5725765,
+    "ast_hash": "1c022841fdfbc1e2a8623971bb611415",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/components/SimulationCard.jsx": {
+    "mtime": 1784833975.3353252,
+    "ast_hash": "f854f278ef692f71df6240bef1b2a111",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/components/StudyGuidePrintView.jsx": {
+    "mtime": 1784246133.2542074,
+    "ast_hash": "10a66c3f93a52e63b25c36b9dfbdbe62",
+    "semantic_hash": "10a66c3f93a52e63b25c36b9dfbdbe62"
+  },
+  "student-panel/src/features/simulations/context/SimulationViewerContext.jsx": {
+    "mtime": 1784244873.4261127,
+    "ast_hash": "c33e4684172b490001782e7a9da53e27",
+    "semantic_hash": "c33e4684172b490001782e7a9da53e27"
+  },
+  "student-panel/src/features/simulations/hooks/pdfUtils.js": {
+    "mtime": 1784241410.6148298,
+    "ast_hash": "63a7a9df63da64609c7b98a2c9c6eb1c",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/hooks/useChapters.js": {
+    "mtime": 1784833478.2189677,
+    "ast_hash": "3fad93b0b9c93aa3dc6c9612befdb26b",
+    "semantic_hash": "3fad93b0b9c93aa3dc6c9612befdb26b"
+  },
+  "student-panel/src/features/simulations/hooks/useClasses.js": {
+    "mtime": 1784209113.318199,
+    "ast_hash": "3e10c441e99ae3ab55fc3bc28f712533",
+    "semantic_hash": "3e10c441e99ae3ab55fc3bc28f712533"
+  },
+  "student-panel/src/features/simulations/hooks/useFetchSimulation.js": {
+    "mtime": 1784212422.561346,
+    "ast_hash": "5c612d92317c3050acb69f0308aeb094",
+    "semantic_hash": "5c612d92317c3050acb69f0308aeb094"
+  },
+  "student-panel/src/features/simulations/hooks/useSimulations.js": {
+    "mtime": 1784833758.008143,
+    "ast_hash": "86e2517155a72f3b93fb9f35b596f1f6",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/hooks/useStudyGuideDocxGenerator.js": {
+    "mtime": 1784283641.4523897,
+    "ast_hash": "abf127041e9058d2ea6a0671bc5402fd",
+    "semantic_hash": "abf127041e9058d2ea6a0671bc5402fd"
+  },
+  "student-panel/src/features/simulations/hooks/useStudyGuideGenerator.js": {
+    "mtime": 1784289396.456229,
+    "ast_hash": "e7ff8e608a9bb0f09f9357ea46da8483",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/hooks/useSubjects.js": {
+    "mtime": 1784833459.920192,
+    "ast_hash": "1d4128c00bc8d9b9f3b2b53f16a6e63f",
+    "semantic_hash": "1d4128c00bc8d9b9f3b2b53f16a6e63f"
+  },
+  "student-panel/src/features/simulations/utils/animations.js": {
+    "mtime": 1783809606.9992175,
+    "ast_hash": "add402181fb368e2e9ec25fb7d91485b",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/utils/cardiacCycle.js": {
+    "mtime": 1783801081.869353,
+    "ast_hash": "752e3b95819f5eee4246883abc35ad0c",
+    "semantic_hash": "752e3b95819f5eee4246883abc35ad0c"
+  },
+  "student-panel/src/features/simulations/utils/cathodeRayOscilloscope.js": {
+    "mtime": 1783809080.4618695,
+    "ast_hash": "1a45a4db31b4754523b62a1b65251c71",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/utils/fluidMosaicModel.js": {
+    "mtime": 1783805609.321797,
+    "ast_hash": "c9084cff847c368e61231ec08c04a1bb",
+    "semantic_hash": "c9084cff847c368e61231ec08c04a1bb"
+  },
+  "student-panel/src/features/simulations/utils/pendulumMotion.js": {
+    "mtime": 1783799007.199082,
+    "ast_hash": "d99414c4e067a1649a2ce0c4da963acb",
+    "semantic_hash": "d99414c4e067a1649a2ce0c4da963acb"
+  },
+  "student-panel/src/features/simulations/utils/planetaryMotion.js": {
+    "mtime": 1783861374.596371,
+    "ast_hash": "f4b035d92d4497699bc9fc24655615c5",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/utils/simpleHarmonicMotion.js": {
+    "mtime": 1783809080.4638758,
+    "ast_hash": "6ac9dc38f962715f643a6a4e04faaaf1",
+    "semantic_hash": ""
+  },
+  "student-panel/src/features/simulations/utils/waterMolecule.js": {
+    "mtime": 1783804974.7658362,
+    "ast_hash": "b0ce94525d573dee1e19b7dd6430e168",
+    "semantic_hash": "b0ce94525d573dee1e19b7dd6430e168"
+  },
+  "student-panel/src/hooks/useIntersectionObserver.js": {
+    "mtime": 1783692210.0781245,
+    "ast_hash": "16c00b709a6a0f325be30eca32ff159a",
+    "semantic_hash": "16c00b709a6a0f325be30eca32ff159a"
+  },
+  "student-panel/src/main.jsx": {
+    "mtime": 1784226928.443916,
+    "ast_hash": "3f738cefb56d6a705ff4922b86b8cbe2",
+    "semantic_hash": "3f738cefb56d6a705ff4922b86b8cbe2"
+  },
+  "student-panel/src/pages/Auth/Auth.jsx": {
+    "mtime": 1784234535.9931107,
+    "ast_hash": "66e823008cceee830eeb8afcbccec593",
+    "semantic_hash": "66e823008cceee830eeb8afcbccec593"
+  },
+  "student-panel/src/pages/Dashboard/Dashboard.jsx": {
+    "mtime": 1784836439.269627,
+    "ast_hash": "53b2cab76716229ac3f58cdd2885f005",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Dashboard/DashboardGrid.jsx": {
+    "mtime": 1784210751.0521367,
+    "ast_hash": "24997e0c3a819d86282e01f1538c2158",
+    "semantic_hash": "24997e0c3a819d86282e01f1538c2158"
+  },
+  "student-panel/src/pages/Dashboard/DashboardHeader.jsx": {
+    "mtime": 1784921999.4568796,
+    "ast_hash": "21bc43e1c548b07ffb87614d512d52d3",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Dashboard/DashboardLanding.jsx": {
+    "mtime": 1784921999.4568796,
+    "ast_hash": "115b9364a65a0c329b737f3db9c12d12",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Dashboard/hooks/useDashboardState.js": {
+    "mtime": 1784835876.1803997,
+    "ast_hash": "141d8682230a9028129af783ad5145c0",
+    "semantic_hash": "141d8682230a9028129af783ad5145c0"
+  },
+  "student-panel/src/pages/Landing/Landing.jsx": {
+    "mtime": 1784833709.479364,
+    "ast_hash": "58e7ddfdee535f16382b5b76b3fabe64",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Simulations/SimulationTabs.jsx": {
+    "mtime": 1784229553.8127112,
+    "ast_hash": "d00870bd50e10e5873f314cbb75a8fd6",
+    "semantic_hash": "d00870bd50e10e5873f314cbb75a8fd6"
+  },
+  "student-panel/src/pages/Simulations/SimulationViewer.jsx": {
+    "mtime": 1784834876.6674874,
+    "ast_hash": "a9ffcf3d99cec19bfd10f440d8a49a20",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Simulations/ViewerHeader.jsx": {
+    "mtime": 1784921999.458212,
+    "ast_hash": "d8ba1777d9b4786ffa52631bb818cf6d",
+    "semantic_hash": ""
+  },
+  "student-panel/src/pages/Simulations/ViewerIframe.jsx": {
+    "mtime": 1784212978.3869407,
+    "ast_hash": "36a975eb2cf603045f585daacf4cf082",
+    "semantic_hash": "36a975eb2cf603045f585daacf4cf082"
+  },
+  "student-panel/src/routes/AppRoutes.jsx": {
+    "mtime": 1784836048.1288097,
+    "ast_hash": "2e96b7633fe3615ed4dfd804a0eddc30",
+    "semantic_hash": ""
+  },
+  "student-panel/src/routes/ProtectedRoute.jsx": {
+    "mtime": 1784836347.492294,
+    "ast_hash": "84a5368e32d790d1d40737901aede0d0",
+    "semantic_hash": "84a5368e32d790d1d40737901aede0d0"
+  },
+  "student-panel/src/services/authApi.js": {
+    "mtime": 1784212384.2880516,
+    "ast_hash": "989f1b4dd468fb5aeefe946f6002b523",
+    "semantic_hash": "989f1b4dd468fb5aeefe946f6002b523"
+  },
+  "student-panel/src/services/supabase.js": {
+    "mtime": 1783624852.551166,
+    "ast_hash": "add7846a0e19467d7a6000ea1af2ac40",
+    "semantic_hash": "add7846a0e19467d7a6000ea1af2ac40"
+  },
+  "student-panel/src/utils/mathPreprocessor.js": {
+    "mtime": 1784227387.046971,
+    "ast_hash": "7f2245665a4faacf9fc4a74078a3c159",
+    "semantic_hash": "7f2245665a4faacf9fc4a74078a3c159"
+  },
+  "student-panel/src/utils/slugify.js": {
+    "mtime": 1784833574.599537,
+    "ast_hash": "a61d742c28511d356ddfb28002c418c9",
+    "semantic_hash": "a61d742c28511d356ddfb28002c418c9"
+  },
+  "student-panel/vercel.json": {
+    "mtime": 1783716890.256282,
+    "ast_hash": "61bd31a2b0ac08f10f13c932b32d6ca1",
+    "semantic_hash": "61bd31a2b0ac08f10f13c932b32d6ca1"
+  },
+  "student-panel/vite.config.js": {
+    "mtime": 1783712338.9541974,
+    "ast_hash": "435fd9d1ab48982377f9e56c2d05fed3",
+    "semantic_hash": "435fd9d1ab48982377f9e56c2d05fed3"
+  },
+  "admin-panel/index.html": {
+    "mtime": 1784230220.242118,
+    "ast_hash": "03295ad33d61fb146281b7a980d663d7",
+    "semantic_hash": ""
+  },
+  "student-panel/README.md": {
+    "mtime": 1783619915.0362835,
+    "ast_hash": "a28dc4cb878325f3e9e5649f3e1469ac",
+    "semantic_hash": "a28dc4cb878325f3e9e5649f3e1469ac"
+  },
+  "student-panel/index.html": {
+    "mtime": 1784290969.7451854,
+    "ast_hash": "59fd1bbfbb01963abe5a87491c2a61b6",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/components/TopicInput/HtmlUploader.jsx": {
+    "mtime": 1785522003.443816,
+    "ast_hash": "a96dc2a0f9ee0edf62aac2f0e3b69813",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useHtmlDetailsExtraction.js": {
+    "mtime": 1785470854.2240293,
+    "ast_hash": "ea54144f14faa22ecf8b0d96ea6c8dfc",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/hooks/useHtmlUpload.js": {
+    "mtime": 1785469346.8518178,
+    "ast_hash": "017266096d7f778fd80f4129df59797f",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/features/simulations/utils/extractDescription.js": {
+    "mtime": 1785469321.6482315,
+    "ast_hash": "3babab319ace6c59d02fb172baba7d39",
+    "semantic_hash": ""
+  },
+  "admin-panel/ADMIN_PANEL_AUDIT_REPORT.md": {
+    "mtime": 1785521728.3090384,
+    "ast_hash": "3e5d777e5360ace8d11ce42be5aaf627",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/admin_create.png": {
+    "mtime": 1783861374.5793612,
+    "ast_hash": "621cb1f350912bbef21efdc11ae1e6be",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/biology_sim.png": {
+    "mtime": 1783861374.5819619,
+    "ast_hash": "9cb5f7c5acee82f5aeb17dc03b29ccf3",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/chmistry_sim.png": {
+    "mtime": 1783861374.5852795,
+    "ast_hash": "18c3c93b4f2e44bc09a9f8cba5724bbd",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/physics_sim.png": {
+    "mtime": 1783861374.5872655,
+    "ast_hash": "bce0e033748e36186d2a3af94c9f7085",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/saved_sim.png": {
+    "mtime": 1783861374.5888934,
+    "ast_hash": "ccf28e1b724cb3aa12f34203cc778263",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/assets/screenshots/student_login.png": {
+    "mtime": 1783861374.590898,
+    "ast_hash": "06fbe97cd591d029956ff48ffbc7fcd2",
+    "semantic_hash": ""
+  },
+  "admin-panel/public/co_tutor_logo.png": {
+    "mtime": 1784230078.6062074,
+    "ast_hash": "f04d626d235d3fa20504724cb7768cd5",
+    "semantic_hash": ""
+  },
+  "admin-panel/src/assets/co_tutor_logo.png": {
+    "mtime": 1784230078.6062074,
+    "ast_hash": "f04d626d235d3fa20504724cb7768cd5",
+    "semantic_hash": ""
+  },
+  "student-panel/public/co_tutor_logo.png": {
+    "mtime": 1784230078.6062074,
+    "ast_hash": "f04d626d235d3fa20504724cb7768cd5",
+    "semantic_hash": ""
+  },
+  "student-panel/src/assets/co_tutor_logo.png": {
+    "mtime": 1784230078.6062074,
+    "ast_hash": "f04d626d235d3fa20504724cb7768cd5",
+    "semantic_hash": ""
+  },
+  "student-panel/src/assets/hero.png": {
+    "mtime": 1783618669.523135,
+    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
+    "semantic_hash": ""
+  }
+}

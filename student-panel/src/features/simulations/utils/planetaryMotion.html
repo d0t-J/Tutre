@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar System Simulation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; color: #fff; overflow: hidden; }
+canvas { display: block; cursor: grab; }
+.controls { position: fixed; top: 10px; left: 10px; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; font-size: 13px; }
+.controls label { display: block; margin: 6px 0 2px; }
+.controls input[type=range] { width: 140px; }
+.info { position: fixed; bottom: 10px; left: 10px; font-size: 12px; color: #aaa; }
+
+/* OVERRIDES FOR CLEAN DISPLAY IN GRID */
+body { background: transparent !important; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.controls, .info { display: none !important; }
+canvas { background: transparent !important; width: 100% !important; height: 100% !important; object-fit: contain; }
+</style>
+</head>
+<body>
+<div class="controls">
+  <strong>☀ Solar System</strong>
+  <label>Speed: <span id="speedVal">1.0</span>x</label>
+  <input type="range" id="speed" min="0" max="5" step="0.1" value="1">
+  <label>Zoom: <span id="zoomVal">1.0</span>x</label>
+  <input type="range" id="zoom" min="0.3" max="3" step="0.1" value="1">
+  <label><input type="checkbox" id="trails" checked> Show trails</label>
+  <label><input type="checkbox" id="labels" checked> Show labels</label>
+</div>
+<div class="info">Scroll to zoom • Drag to pan • Click planet for info</div>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+const planets = [
+  { name: 'Mercury', dist: 50,  radius: 3,  color: '#b5b5b5', period: 0.24, angle: Math.random()*Math.PI*2, info: 'Closest to Sun, 88 day orbit' },
+  { name: 'Venus',   dist: 80,  radius: 5,  color: '#e8cda0', period: 0.62, angle: Math.random()*Math.PI*2, info: 'Hottest planet, 225 day orbit' },
+  { name: 'Earth',   dist: 115, radius: 5.5,color: '#4da6ff', period: 1.0,  angle: Math.random()*Math.PI*2, info: 'Our home, 365 day orbit' },
+  { name: 'Mars',    dist: 150, radius: 4,  color: '#e07040', period: 1.88, angle: Math.random()*Math.PI*2, info: 'Red planet, 687 day orbit' },
+  { name: 'Jupiter', dist: 210, radius: 12, color: '#d4a574', period: 11.86,angle: Math.random()*Math.PI*2, info: 'Largest planet, 12 year orbit' },
+  { name: 'Saturn',  dist: 270, radius: 10, color: '#e8d088', period: 29.46,angle: Math.random()*Math.PI*2, info: 'Ringed giant, 29 year orbit' },
+  { name: 'Uranus',  dist: 330, radius: 7,  color: '#7de8e8', period: 84.01,angle: Math.random()*Math.PI*2, info: 'Ice giant, 84 year orbit' },
+  { name: 'Neptune', dist: 380, radius: 6.5,color: '#4466ff', period: 164.8,angle: Math.random()*Math.PI*2, info: 'Farthest planet, 165 year orbit' }
+];
+
+planets.forEach(p => { p.trail = []; p.eccentricity = 0.02 + Math.random() * 0.04; });
+
+let speed = window.innerWidth < 768 ? 0.6 : (window.innerWidth < 1024 ? 0.8 : 1);
+let zoom = window.innerWidth < 768 ? 0.8 : (window.innerWidth < 1024 ? 0.9 : 1.1);
+let showTrails = true, showLabels = true;
+let panX = 0, panY = 0, dragging = false, dragStart = {x:0,y:0}, panStart = {x:0,y:0};
+let selectedPlanet = null;
+
+function draw() {
+  ctx.fillStyle = '#000';
+  ctx.clearRect(0, 0, W, H);
+  
+  if(!draw.stars) { draw.stars = Array.from({length: 200}, () => ({x: Math.random()*W, y: Math.random()*H, s: Math.random()*1.5})); }
+  ctx.fillStyle = '#fff';
+  draw.stars.forEach(s => { ctx.globalAlpha = 0.3 + Math.random()*0.3; ctx.fillRect(s.x, s.y, s.s, s.s); });
+  ctx.globalAlpha = 1;
+
+  const cx = W/2 + panX, cy = H/2 + panY;
+
+  const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 40*zoom);
+  sunGrad.addColorStop(0, '#fff8e0');
+  sunGrad.addColorStop(0.3, '#ffcc00');
+  sunGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = sunGrad;
+  ctx.beginPath(); ctx.arc(cx, cy, 40*zoom, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffdd33';
+  ctx.beginPath(); ctx.arc(cx, cy, 18*zoom, 0, Math.PI*2); ctx.fill();
+
+  planets.forEach(p => {
+    p.angle += (0.01 * speed) / p.period;
+    
+    const r = p.dist * zoom * (1 + p.eccentricity * Math.cos(p.angle));
+    const px = cx + Math.cos(p.angle) * r;
+    const py = cy + Math.sin(p.angle) * r;
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(let a = 0; a < Math.PI*2; a += 0.05) {
+      const or = p.dist * zoom * (1 + p.eccentricity * Math.cos(a));
+      const ox = cx + Math.cos(a) * or, oy = cy + Math.sin(a) * or;
+      a === 0 ? ctx.moveTo(ox, oy) : ctx.lineTo(ox, oy);
+    }
+    ctx.closePath(); ctx.stroke();
+
+    if(showTrails) {
+      p.trail.push({x: px, y: py});
+      if(p.trail.length > 80) p.trail.shift();
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      p.trail.forEach((t, i) => { i === 0 ? ctx.moveTo(t.x, t.y) : ctx.lineTo(t.x, t.y); });
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(px, py, p.radius * zoom, 0, Math.PI*2); ctx.fill();
+
+    if(p.name === 'Saturn') {
+      ctx.strokeStyle = '#d4b868';
+      ctx.lineWidth = 2 * zoom;
+      ctx.beginPath(); ctx.ellipse(px, py, p.radius*zoom*2, p.radius*zoom*0.5, 0.3, 0, Math.PI*2); ctx.stroke();
+    }
+
+    if(showLabels) {
+      ctx.fillStyle = '#ccc';
+      ctx.font = `${11*Math.min(zoom,1.5)}px Arial`;
+      ctx.fillText(p.name, px + p.radius*zoom + 5, py + 3);
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

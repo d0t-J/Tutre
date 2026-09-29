@@ -1,0 +1,9 @@
+# Keep only admin-panel and student-panel
+/*
+!/admin-panel/
+!/student-panel/
+!/.gitignore
+
+# graphify output (tracked)
+!/graphify-out/
+
