@@ -15,11 +15,11 @@ The backend is captured and reproducible as of 2026-09-30.
 | `functions/generate-simulation-prompt/` | Downloaded |
 | `functions/suggest-requirements/` | Downloaded |
 | `functions/send-whatsapp/` | Downloaded |
-| `functions/extract-html-details/` | **Written here, not yet deployed** — was missing from the project |
-| `migrations/20260930090000_all_simulations_security_invoker.sql` | **Written, not yet applied** |
-| `migrations/20260930100000_subjects_slug.sql` | **Written, not yet applied** |
-| `migrations/20260930100100_computer_science_simulations.sql` | **Written, not yet applied** |
-| `migrations/20260930100200_upsert_canonical_simulation.sql` | **Written, not yet applied** |
+| `functions/extract-html-details/` | Written here — was missing from the project |
+| `migrations/20260930090000_all_simulations_security_invoker.sql` | Applied 2026-09-30 |
+| `migrations/20260930100000_subjects_slug.sql` | Applied 2026-09-30 |
+| `migrations/20260930100100_computer_science_simulations.sql` | Applied 2026-09-30 |
+| `migrations/20260930100200_upsert_canonical_simulation.sql` | Applied 2026-09-30 |
 
 `supabase migration list` shows local and remote both at `20260929172634`.
 
@@ -255,15 +255,25 @@ the `USING` expression is reused for inserts. Any student account can therefore
 insert, update or delete chapters. Every other content table restricts writes to
 `admin_users`; `chapters` does not.
 
-**2. `all_simulations` bypasses RLS — fix written, not yet applied.**
+**2. `all_simulations` bypassed RLS — fixed and verified 2026-09-30.**
 
 The view is owned by `postgres` and was created without `security_invoker = on`,
 so it executes with the owner's privileges. Anonymous requests return every
 simulation payload, while the underlying `classes`, `subjects` and `topics`
 tables correctly return nothing. Simulation HTML is effectively public.
 
-`migrations/20260930090000_all_simulations_security_invoker.sql` closes this.
-Every caller of the view sits behind an authenticated route in both panels, so
-signed-in behaviour is unchanged; only anonymous access is removed.
+`migrations/20260930090000_all_simulations_security_invoker.sql` closed this.
+An anonymous request to `all_simulations` now returns `[]` where it previously
+returned every payload. Every caller of the view sits behind an authenticated
+route in both panels, so signed-in behaviour is unchanged.
 
 Gap 1 has no fix written yet and still needs a decision.
+
+### Adding a column to all_simulations
+
+`CREATE OR REPLACE VIEW` may only **append** columns. A column inserted in the
+middle of the list is read as renaming whatever already occupies that position
+and fails with `42P16`. `subject_slug` is therefore the last column, after
+`study_guide`, not next to `subject` where it reads more naturally. Changing the
+order at all would require dropping and recreating the view, which means
+re-granting and re-asserting `security_invoker` — avoid it.
