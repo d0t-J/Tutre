@@ -27,7 +27,7 @@ export function useSimulationManagement(state, navigate, queryClient) {
     state.setLoadedTopicId(sim.topic_id);
     state.setLoadedSubjectId(sim.subject_id);
     state.setLoadedChapterId(sim.chapter_id);
-    state.setLoadedSubjectName(sim.subject);
+    state.setLoadedSubjectSlug(sim.subject_slug);
     state.setLoadedClassId(sim.class_id);
     state.setLoadedTopic(sim.topic);
     state.setLoadedHtml(sim.code_payload);
@@ -38,8 +38,10 @@ export function useSimulationManagement(state, navigate, queryClient) {
 
   const deleteSimulation = async (sim) => {
     try {
-      const subjectName = sim.subject.toLowerCase();
-      const tableName = `${subjectName}_simulations`;
+      // subject_slug comes from the all_simulations view and is the identifier
+      // the payload table is named after.
+      if (!sim.subject_slug) throw new Error('Simulation is missing its subject slug.');
+      const tableName = `${sim.subject_slug}_simulations`;
 
       const { error: simError } = await supabase.from(tableName).delete().eq('id', sim.sim_id);
       if (simError) throw simError;
@@ -71,7 +73,7 @@ export function useSimulationManagement(state, navigate, queryClient) {
     state.setLoadedTopicId(null);
     state.setLoadedSubjectId(null);
     state.setLoadedChapterId(null);
-    state.setLoadedSubjectName(null);
+    state.setLoadedSubjectSlug(null);
     state.setLoadedTopic('');
     state.setLoadedClassId(null);
     state.setLoadedHtml('');

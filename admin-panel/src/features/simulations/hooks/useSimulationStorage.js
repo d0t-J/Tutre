@@ -11,24 +11,27 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
     state.setIsSaving(true);
 
     try {
-      let subjectName = subjects.find(s => s.id === state.selectedSubject)?.name.toLowerCase();
+      // subjects.slug is the identifier-safe name the payload tables are named
+      // after. It is not always lower(name): "Computer Science and
+      // Entrepreneurship" has the slug "computer_science".
+      let subjectSlug = subjects.find(s => s.id === state.selectedSubject)?.slug;
 
-      if (!subjectName) {
-        const { data: subData } = await supabase.from('subjects').select('name').eq('id', state.selectedSubject).single();
-        if (subData) {
-          subjectName = subData.name.toLowerCase();
+      if (!subjectSlug) {
+        const { data: subData } = await supabase.from('subjects').select('slug').eq('id', state.selectedSubject).single();
+        if (subData?.slug) {
+          subjectSlug = subData.slug;
         } else {
           throw new Error('Please wait for subjects to load or select a valid subject.');
         }
       }
 
-      const tableName = `${subjectName}_simulations`;
+      const tableName = `${subjectSlug}_simulations`;
       const isUpdating = Boolean(state.loadedSimId && state.loadedTopicId);
 
       if (isUpdating) {
         if (state.selectedSubject !== state.loadedSubjectId) {
-          const oldSubjectName = state.loadedSubjectName ? state.loadedSubjectName.toLowerCase() : 'physics';
-          const oldTableName = `${oldSubjectName}_simulations`;
+          if (!state.loadedSubjectSlug) throw new Error('Cannot move this simulation: its original subject is unknown.');
+          const oldTableName = `${state.loadedSubjectSlug}_simulations`;
 
           const { data: newSimData, error: newSimError } = await supabase.from(tableName).insert([{ topic_id: state.loadedTopicId, code_payload: state.generatedHtml }]).select().single();
           if (newSimError) throw newSimError;
@@ -47,7 +50,7 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
 
           state.setLoadedSimId(newSimData.id);
           state.setLoadedSubjectId(state.selectedSubject);
-          state.setLoadedSubjectName(subjectName);
+          state.setLoadedSubjectSlug(subjectSlug);
         } else {
           const { data: topicData, error: topicError } = await supabase.from('topics').update({ name: state.topic, description: state.generatedDescription, study_guide: state.studyGuide, chapter_id: state.selectedChapter }).eq('id', state.loadedTopicId).select();
           if (topicError) throw topicError;
@@ -74,7 +77,7 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
       state.setLoadedClassId(state.selectedClass);
       state.setLoadedSubjectId(state.selectedSubject);
       state.setLoadedChapterId(state.selectedChapter);
-      state.setLoadedSubjectName(subjectName);
+      state.setLoadedSubjectSlug(subjectSlug);
       state.setLoadedHtml(state.generatedHtml);
       state.setLoadedDescription(state.generatedDescription);
       state.setLoadedStudyGuide(state.studyGuide);

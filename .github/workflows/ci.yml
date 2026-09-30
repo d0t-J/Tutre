@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: ${{ matrix.panel }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        panel: [admin-panel, student-panel]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ${{ matrix.panel }}/package-lock.json
+
+      - name: Install
+        run: npm ci --prefix ${{ matrix.panel }}
+
+      - name: Lint
+        run: npm run lint --prefix ${{ matrix.panel }}
+
+      # No Supabase credentials are needed to build. Vite compiles the VITE_*
+      # variables in as undefined, which is fine for a compile check and keeps
+      # this workflow free of secrets.
+      - name: Build
+        run: npm run build --prefix ${{ matrix.panel }}

@@ -32,7 +32,7 @@ export function useSimulationState(classesData) {
   const [loadedSimId, setLoadedSimId] = useState(null);
   const [loadedTopicId, setLoadedTopicId] = useState(null);
   const [loadedSubjectId, setLoadedSubjectId] = useState(null);
-  const [loadedSubjectName, setLoadedSubjectName] = useState(null);
+  const [loadedSubjectSlug, setLoadedSubjectSlug] = useState(null);
   const [loadedChapterId, setLoadedChapterId] = useState(null);
 
   // Track original loaded values to detect unsaved changes
@@ -83,7 +83,7 @@ export function useSimulationState(classesData) {
     loadedSimId, setLoadedSimId,
     loadedTopicId, setLoadedTopicId,
     loadedSubjectId, setLoadedSubjectId,
-    loadedSubjectName, setLoadedSubjectName,
+    loadedSubjectSlug, setLoadedSubjectSlug,
     loadedChapterId, setLoadedChapterId,
     loadedTopic, setLoadedTopic,
     loadedClassId, setLoadedClassId,

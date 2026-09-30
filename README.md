@@ -32,6 +32,8 @@
 - [Troubleshooting](#troubleshooting)
 - [Deployment](#deployment)
 - [Contributing](#contributing)
+- [Content today](#content-today)
+- [Roadmap](#roadmap)
 - [Project status](#project-status)
 - [Team](#team)
 
@@ -141,11 +143,15 @@ Tutre/
 │   ├── functions/            Edge Function source — see supabase/README.md
 │   └── README.md             What is known, what is missing, how to pull it
 │
+├── .github/                  Issue and pull-request templates, CI workflow
 ├── graphify-out/             Generated code-graph analysis. Not app code.
-├── .claude/                  Agent definitions and dev-server launch config
-├── CLAUDE.md                 Engineering rules for this repository
+├── CONTRIBUTING.md           Working agreement for the team
 └── README.md                 This file
 ```
+
+`CLAUDE.md` and `.claude/` may also exist in your working copy. They are local AI
+assistant configuration, are deliberately git-ignored, and are not part of the
+project. Do not rely on them being present after a fresh clone.
 
 There is **no root `package.json`** and no workspace tooling. The two panels are
 independent npm projects; install and run each one separately.
@@ -449,29 +455,31 @@ separately through the Supabase CLI.
 
 ## Contributing
 
-Read [`CLAUDE.md`](./CLAUDE.md) first. It is the short version of how work is
-done here, and it applies to humans as much as to AI assistants.
+Read [CONTRIBUTING.md](./CONTRIBUTING.md) before your first change. It is the
+full working agreement: ground rules, branch and commit conventions, the
+verification bar, database rules and security expectations.
 
-The rules that catch people out most often:
+The short version:
 
 - **Preserve existing behaviour.** Breaking a working feature is a regression
   even if the new code is better.
 - **Prefer additive changes.** Add alongside; do not rewrite in place.
-- **Do not delete files or dependencies without evidence.** "Looks unused" is not
-  evidence — search for every reference and say what you found.
-- **One concern per commit.** Do not mix unrelated changes.
+- **One concern per branch.** Do not mix unrelated changes.
 - **Verify before claiming done.** Build, lint, and open the screen.
-
-Workflow:
+- **Schema changes need a migration.** Destructive ones need explicit approval.
+- **No secrets in the diff.** Ever.
 
 ```bash
-git checkout -b feature/your-change
+git checkout -b feat/your-change
 # ... work ...
-npm run build --prefix admin-panel
-npm run lint  --prefix admin-panel
+npm run build --prefix admin-panel && npm run lint --prefix admin-panel
+npm run build --prefix student-panel && npm run lint --prefix student-panel
 git commit -m "feat: describe what changed and why"
-git push origin feature/your-change
+git push origin feat/your-change
 ```
+
+CI runs lint and build for both panels on every pull request
+(`.github/workflows/ci.yml`). It needs no secrets.
 
 One repository-specific trap: the root `.gitignore` is **deny-by-default** (`/*`
 plus explicit `!` negations). A new top-level file is invisible to git until you
@@ -483,17 +491,65 @@ git check-ignore -v <path>
 
 ---
 
+## Content today
+
+Counts read from the live database on 2026-09-30.
+
+| Class | Biology | Chemistry | Mathematics | Physics | Total |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Class 9 | 17 | 14 | 7 | 24 | **62** |
+| Class 10 | 13 | 11 | 11 | 13 | **48** |
+| **Total** | 30 | 25 | 18 | 37 | **110** |
+
+Facts worth knowing before you plan content work:
+
+- **There is no per-user content.** No `user_id`, no ownership, no draft or
+  published flag anywhere in the schema. Every signed-up student sees the entire
+  catalogue. "Default simulations" and "all simulations" are the same set.
+- **Classes 11 and 12 have no simulations.** Neither does Computer Science.
+- **92 of 110 simulations have no study guide** — the AI tutor and the export
+  features have nothing to work from on those topics.
+- Every simulation is assigned to a chapter; none are orphaned.
+- The landing page's planetary-motion and water-molecule animations are
+  hard-coded files under `student-panel/src/features/simulations/utils/`, not
+  database rows. They are decoration, not content.
+
+---
+
+## Roadmap
+
+Direction, not committed scope. Items become work when they have an issue and an
+agreed plan.
+
+**Next:** verified Computer Science simulations for classes 9–12, aligned to the
+Punjab Curriculum and Textbook Board syllabus. This is the first content set
+intended to be canonical rather than generated ad hoc.
+
+**Known blockers for that work:**
+
+1. Simulation tables are derived from the subject name as
+   `` `${subjectName.toLowerCase()}_simulations` ``. A subject literally named
+   "Computer Science" produces the invalid table name
+   `computer science_simulations`. This must be resolved before a CS subject is
+   created.
+2. `all_simulations` is a view over the four existing per-subject tables. A new
+   subject needs both a new table and an updated view.
+3. Nothing distinguishes a verified simulation from a generated draft. Selling a
+   curated library implies that distinction exists.
+
+**Longer term:** performance and structure work on the generation and render path
+as the catalogue grows.
+
+**Inspiration, not requirement:** TinkerCAD informs how interaction should *feel*.
+It is not a commitment to reproduce CAD, 3D modelling or circuit simulation.
+
+---
+
 ## Project status
 
 Tutre is a Final Year Project (CS-607, FYP-I) at the University of Agriculture,
 Faisalabad. The application here is the working foundation, not a prototype
 awaiting replacement.
-
-**Planned:** a Computer Science curriculum for Pakistani classes 9–12 is the major
-intended expansion. It is not built yet.
-
-**Inspiration, not requirement:** TinkerCAD informs how interaction should *feel*.
-It is not a commitment to reproduce CAD, 3D modelling or circuit simulation.
 
 Ideas raised in discussion stay proposals until they are explicitly approved.
 
