@@ -17,8 +17,9 @@
 !/.gitignore
 !/.github/
 
-# Canonical simulation source files
-!/content/
+# Canonical simulation source files (content/) are deliberately NOT tracked:
+# they are the product's curated library and must not be published in this
+# public repository. Keep them in a private repository or backup instead.
 
 # Generated code-graph analysis output (tracked deliberately)
 !/graphify-out/
