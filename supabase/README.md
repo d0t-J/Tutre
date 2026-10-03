@@ -1,7 +1,16 @@
 # Tutre — Supabase
 
-Supabase CLI configuration, the schema baseline, and Edge Function source for the
-hosted project `belxamnldwfkagkmgobt`.
+Supabase CLI configuration, the schema baseline, and Edge Function source for
+Tutre's hosted Supabase project.
+
+On 2026-10-04 the backend moved to a new project owned by this team. It was
+cloned from the previous, shared project with `supabase db dump` (roles, schema,
+and the `auth` and `public` data) and restored with `psql`. `storage` rows were
+left out: they belonged only to the WhatsApp feature, and the files themselves
+are not in the database. The migration history was then recorded with
+`supabase migration repair --status applied`, because a dump does not carry it.
+The project ref lives in each developer's git-ignored `.env` and
+`supabase/.temp/`, not in this file.
 
 ## Status
 
@@ -21,7 +30,8 @@ The backend is captured and reproducible as of 2026-09-30.
 | `migrations/20260930100100_computer_science_simulations.sql` | Applied 2026-09-30 |
 | `migrations/20260930100200_upsert_canonical_simulation.sql` | Applied 2026-09-30 |
 
-`supabase migration list` shows local and remote both at `20260929172634`.
+`supabase migration list` shows all five migrations on both sides (re-checked on
+the new project 2026-10-04).
 
 ### Not captured
 
@@ -40,7 +50,7 @@ belong in git; take content backups outside the repository.
 
 ```bash
 npx supabase login                                    # personal access token
-npx supabase link --project-ref belxamnldwfkagkmgobt  # prompts for DB password
+npx supabase link --project-ref <project-ref>          # prompts for DB password
 npx supabase migration list                           # confirm local == remote
 ```
 
