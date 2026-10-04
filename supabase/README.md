@@ -112,6 +112,8 @@ anywhere in the repository.
 | `AIMLAPI_MAX_TOKENS_CHAT_TUTOR` | no | `8192` | `chat-tutor` |
 | `AIMLAPI_MAX_TOKENS_SUGGEST_REQUIREMENTS` | no | `8192` | `suggest-requirements` |
 | `AIMLAPI_MAX_TOKENS_EXTRACT_HTML_DETAILS` | no | `2048` | `extract-html-details` |
+| `ALLOWED_ORIGINS` | no (set it in production) | unset = any origin | all functions (CORS) |
+| `WHATSAPP_ENABLED` | no | unset = off | `send-whatsapp` runs only when this is exactly `true` |
 
 Set them with:
 
@@ -121,6 +123,68 @@ npx supabase secrets set AIMLAPI_API_KEY=...
 
 Model IDs are environment variables rather than literals so a model can be
 swapped without editing and redeploying a function.
+
+`ALLOWED_ORIGINS` is a comma-separated list of the panels' origins, for example
+`https://admin.example.com,https://app.example.com,http://localhost:5173`. While it
+is unset the functions answer any origin, as they did before; set it once the
+deployed URLs are known. CORS only stops other websites using the functions from
+a visitor's browser. It is not access control.
+
+## Edge Function access control and AI limits (Phase 1, 2026-10-04)
+
+Every function starts with `requireUser()` from `functions/_shared/guard.ts`.
+The publishable key is public and proves nothing about the caller, so only a
+signed-in user's access token is accepted. The token is checked with the Auth
+server, so expired or tampered tokens are refused.
+
+| Function | Who may call | Usage limit (scope) |
+| --- | --- | --- |
+| `generate-simulation` | admins | `simulation_generation` (one request = one use, although it makes three model calls) |
+| `generate-simulation-3d` | admins | `simulation_generation` |
+| `suggest-requirements` | admins | `authoring_assist` (logged, no limit) |
+| `extract-html-details` | admins | `authoring_assist` (logged, no limit) |
+| `generate-simulation-prompt` | admins | none (no model call) |
+| `chat-tutor` | any signed-in user | `tutor_message` |
+| `send-whatsapp` | any signed-in user, only if `WHATSAPP_ENABLED=true` | none. Off by default. |
+
+Responses: `401` not signed in or session expired, `403` signed in but not an
+admin, `429` limit reached (with a `Retry-After` header and a message such as
+"Daily limit reached: 30 simulation generations per 24 hours").
+
+Callers must send `Authorization: Bearer <session access token>`. In the admin
+panel, `src/services/edgeFunctions.js` builds those headers; `supabase.functions.invoke`
+does it automatically.
+
+**Limits** live in `ai_quota_limits` (migration `20261004120100_ai_usage_quota.sql`).
+The window is a rolling 24 hours per user:
+
+| Scope | Limit |
+| --- | --- |
+| `simulation_generation` | 30 |
+| `tutor_message` | 200 |
+| `authoring_assist` | none (`NULL`) |
+
+Change a limit in the SQL editor; `NULL` means unlimited:
+
+```sql
+update ai_quota_limits set daily_limit = 50, updated_at = now() where scope = 'simulation_generation';
+```
+
+**Usage log.** `ai_usage` has one row per counted request: user, scope, function,
+time, and prompt and completion tokens where the model reports them (not for
+streamed tutor replies). Attempts are counted even if the model call then fails,
+so retrying cannot get round a limit. Users can read their own rows and admins
+can read all rows. Nobody can insert, change or delete rows through the API; only
+the `consume_ai_quota` and `record_ai_usage_tokens` functions write them.
+
+Cost per user over the last 7 days:
+
+```sql
+select user_id, scope, count(*) as requests,
+       sum(prompt_tokens) as prompt_tokens, sum(completion_tokens) as completion_tokens
+from ai_usage where created_at > now() - interval '7 days'
+group by user_id, scope order by completion_tokens desc nulls last;
+```
 
 ### Notes on the migration from Fireworks
 
@@ -237,7 +301,8 @@ and only admins or the service role can write through it.
 
 ## Row Level Security
 
-RLS is enabled on all nine tables. Two patterns cover the content tables:
+RLS is enabled on every table: the nine content and admin tables, plus
+`ai_quota_limits` and `ai_usage` (see above). Two patterns cover the content tables:
 
 | Policy | Commands | Role | Condition |
 | --- | --- | --- | --- |
@@ -250,9 +315,9 @@ admin list.
 
 ### Two known gaps
 
-Both are recorded here as findings. Neither has been changed.
+Both are fixed.
 
-**1. `chapters` is writable by any signed-in user.**
+**1. `chapters` was writable by any signed-in user. Fixed 2026-10-04.**
 
 ```sql
 CREATE POLICY "Enable all access for authenticated users"
@@ -277,7 +342,12 @@ An anonymous request to `all_simulations` now returns `[]` where it previously
 returned every payload. Every caller of the view sits behind an authenticated
 route in both panels, so signed-in behaviour is unchanged.
 
-Gap 1 has no fix written yet and still needs a decision.
+`migrations/20261004120000_chapters_admin_write_policy.sql` closes gap 1. It adds
+the `Enable all access for admins` policy that every other content table already
+had (admins had been writing chapters through the over-broad policy), then drops
+the over-broad one. `Enable read access for all users` remains, so students and
+anonymous visitors still read chapters. Tested on a local stack: students can no
+longer insert, update or delete chapters; admins still can.
 
 ### Adding a column to all_simulations
 

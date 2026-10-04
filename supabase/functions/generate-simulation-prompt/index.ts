@@ -1,27 +1,21 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-};
+import { json, preflight } from "../_shared/cors.ts";
+import { requireUser, errorResponse, HttpError } from "../_shared/guard.ts";
+// Admins only. Builds a prompt string locally; no model call, so no usage limit.
+// (Previously wrapped in withSupabase({ auth: ["publishable", "secret"] }), which
+// accepted the public publishable key, i.e. any visitor.)
 export default {
-  fetch: withSupabase({
-    auth: [
-      "publishable",
-      "secret"
-    ]
-  }, async (req, ctx)=>{
+  fetch: async (req: Request)=>{
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
-      return new Response('ok', {
-        headers: corsHeaders
-      });
+      return preflight(req);
     }
     try {
+      await requireUser(req, { admin: true });
       const { topic, details, uiTheme, animationArchitecture, interactionType, dimension } = await req.json();
       // Ensure topic is provided
       if (!topic) {
-        throw new Error("Topic is required.");
+        throw new HttpError(400, "Topic is required.");
       }
       // Format architecture specifics
       let architectureDescription = "";
@@ -86,25 +80,11 @@ ${details || 'Create an intuitive and highly engaging educational experience tha
 ### Interaction & Behavior
 - User Controls: ${interactionDescription}
 - Environment Style: ${architectureDescription}`;
-      return new Response(JSON.stringify({
+      return json(req, {
         prompt: generatedPrompt
-      }), {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
-        status: 200
       });
     } catch (error) {
-      return new Response(JSON.stringify({
-        error: error.message
-      }), {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        },
-        status: 400
-      });
+      return errorResponse(req, error);
     }
-  })
+  }
 };

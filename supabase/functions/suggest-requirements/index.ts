@@ -1,14 +1,13 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { json, preflight } from "../_shared/cors.ts";
+import { requireUser, consumeQuota, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
+// Admins only. Logged under authoring_assist (no limit).
 Deno.serve(async (req)=>{
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-      }
-    });
+    return preflight(req);
   }
   try {
+    const caller = await requireUser(req, { admin: true });
     const { subject, className, topic, existingDetails, imageBase64 } = await req.json();
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -53,6 +52,7 @@ Topic Name: ${topic}
     } else {
       userContent = promptText;
     }
+    const usageId = await consumeQuota(caller, 'authoring_assist', 'suggest-requirements');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -80,28 +80,16 @@ Topic Name: ${topic}
     if (data.error) {
       throw new Error(data.error.message || JSON.stringify(data.error));
     }
+    await recordTokens(caller, usageId, data.usage);
     let textPayload = data.choices[0].message.content.trim();
     // Sometimes reasoning models still output `<think>...</think>`, let's strip it just in case
     textPayload = textPayload.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
     // Also strip "Thinking Process:" if it appears
     textPayload = textPayload.replace(/Thinking Process:[\s\S]*?(?=Interactive elements|Controls|Sliders|Requirements|- 1)/gi, '').trim();
-    return new Response(JSON.stringify({
+    return json(req, {
       suggestions: textPayload
-    }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
     });
   } catch (err) {
-    return new Response(JSON.stringify({
-      error: err.message
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    return errorResponse(req, err);
   }
 });

@@ -1,15 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-};
+import { corsHeaders, preflight } from "../_shared/cors.ts";
+import { requireUser, consumeQuota, recordTokens, errorResponse } from "../_shared/guard.ts";
+// Any signed-in user: students (tutor chat) and admins (study-guide drafts).
+// Counts against the tutor_message limit.
 serve(async (req)=>{
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: corsHeaders
-    });
+    return preflight(req);
   }
   try {
+    const caller = await requireUser(req);
     const { topic, details, messages, stream } = await req.json();
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -37,11 +36,12 @@ CRITICAL FORMATTING RULES FOR MATH:
         role: 'system',
         content: systemPrompt
       },
-      ...messages.map((m)=>({
+      ...messages.map((m: { role: string; content: string })=>({
           role: m.role === 'assistant' ? 'assistant' : 'user',
           content: m.content
         }))
     ];
+    const usageId = await consumeQuota(caller, 'tutor_message', 'chat-tutor');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: "POST",
       headers: {
@@ -64,12 +64,13 @@ CRITICAL FORMATTING RULES FOR MATH:
     if (stream) {
       return new Response(response.body, {
         headers: {
-          ...corsHeaders,
+          ...corsHeaders(req),
           'Content-Type': 'text/event-stream'
         }
       });
     } else {
       const data = await response.json();
+      await recordTokens(caller, usageId, data.usage);
       let reply = "";
       const rawContent = data.choices?.[0]?.message?.content || "";
       let jsonStr = rawContent.trim();
@@ -86,21 +87,12 @@ CRITICAL FORMATTING RULES FOR MATH:
         reply
       }), {
         headers: {
-          ...corsHeaders,
+          ...corsHeaders(req),
           'Content-Type': 'application/json'
         }
       });
     }
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({
-      error: error.message
-    }), {
-      status: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      }
-    });
+    return errorResponse(req, error);
   }
 });

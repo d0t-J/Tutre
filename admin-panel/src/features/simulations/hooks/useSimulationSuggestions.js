@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { functionHeaders, functionError } from '../../../services/edgeFunctions';
 
 export function useSimulationSuggestions(state, subjects, classes) {
   const handleGenerateSuggestions = async () => {
@@ -16,12 +17,12 @@ export function useSimulationSuggestions(state, subjects, classes) {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/suggest-requirements`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: await functionHeaders(),
           body: JSON.stringify({ subject: subjectName, className: classNameStr, topic: state.topic, existingDetails: state.details, imageBase64: state.imageBase64 }),
         }
       );
 
-      if (!response.ok) throw new Error('Failed to generate suggestions.');
+      if (!response.ok) throw await functionError(response, 'Failed to generate suggestions.');
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);

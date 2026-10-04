@@ -1,18 +1,11 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { json, preflight } from "../_shared/cors.ts";
+import { requireUser, consumeQuota, recordTokens, errorResponse } from "../_shared/guard.ts";
 
 // Caller: admin-panel/src/features/simulations/hooks/useHtmlDetailsExtraction.js
 // Request:  { htmlContent: string }
 // Response: { topic: string, details: string } | { error: string }
-
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-};
-
-const JSON_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*'
-};
+// Admins only. Logged under authoring_assist (no limit).
 
 // Simulation payloads can be hundreds of kilobytes. Send the model the head and
 // the tail: the head carries the title, headings and control markup, the tail
@@ -42,10 +35,11 @@ function parseModelJson(raw: string) {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: CORS });
+    return preflight(req);
   }
 
   try {
+    const caller = await requireUser(req, { admin: true });
     const { htmlContent } = await req.json();
 
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
@@ -74,6 +68,7 @@ Describe only what the HTML actually implements. Do not invent controls or outpu
 ${trimPayload(htmlContent)}
 \`\`\``;
 
+    const usageId = await consumeQuota(caller, 'authoring_assist', 'extract-html-details');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -97,6 +92,7 @@ ${trimPayload(htmlContent)}
       throw new Error(data.error.message || JSON.stringify(data.error));
     }
 
+    await recordTokens(caller, usageId, data.usage);
     const parsed = parseModelJson(data.choices[0].message.content);
 
     const topic = typeof parsed.topic === 'string' ? parsed.topic.trim() : '';
@@ -106,11 +102,8 @@ ${trimPayload(htmlContent)}
       throw new Error('Could not extract a topic or details from this HTML.');
     }
 
-    return new Response(JSON.stringify({ topic, details }), { headers: JSON_HEADERS });
+    return json(req, { topic, details });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: JSON_HEADERS
-    });
+    return errorResponse(req, err);
   }
 });

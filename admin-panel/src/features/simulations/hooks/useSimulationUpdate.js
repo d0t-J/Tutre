@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { functionHeaders, functionError } from '../../../services/edgeFunctions';
 import { extractDescription } from '../utils/extractDescription';
 
 export function useSimulationUpdate(state, subjects, classes) {
@@ -16,10 +17,7 @@ export function useSimulationUpdate(state, subjects, classes) {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${functionName}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
+          headers: await functionHeaders(),
           body: JSON.stringify({
             subject: subjectName,
             className: classNameStr,
@@ -33,7 +31,7 @@ export function useSimulationUpdate(state, subjects, classes) {
         }
       );
 
-      if (!response.ok) throw new Error('Failed to update simulation. Check your API Key settings.');
+      if (!response.ok) throw await functionError(response, 'Failed to update simulation.');
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);

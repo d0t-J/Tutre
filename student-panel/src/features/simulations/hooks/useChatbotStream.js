@@ -27,7 +27,9 @@ export function useChatbotStream(topic, details, messages, setMessages) {
 
     try {
       const { data: authData } = await supabase.auth.getSession();
-      
+      const token = authData.session?.access_token;
+      if (!token) throw new Error('Your session has expired. Please sign in again.');
+
       const payload = {
         topic,
         details,
@@ -39,12 +41,20 @@ export function useChatbotStream(topic, details, messages, setMessages) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authData.session?.access_token || supabase.supabaseKey}`
+          apikey: supabase.supabaseKey,
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error(`Edge function returned ${response.status}`);
+      if (!response.ok) {
+        // 401 (signed out) and 429 (daily limit) carry a message worth showing.
+        let message = '';
+        try { message = (await response.json())?.error || ''; } catch { /* not JSON */ }
+        const error = new Error(message || `Edge function returned ${response.status}`);
+        error.userFacing = response.status === 401 || response.status === 429;
+        throw error;
+      }
 
       let isFirstChunk = true;
       await readSseStream(response, (fullText) => {
@@ -64,7 +74,9 @@ export function useChatbotStream(topic, details, messages, setMessages) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "I'm sorry, I'm having trouble connecting right now. Please try again later." 
+        content: error.userFacing || error.message.startsWith('Your session')
+          ? error.message
+          : "I'm sorry, I'm having trouble connecting right now. Please try again later." 
       }]);
     } finally {
       setIsLoading(false);

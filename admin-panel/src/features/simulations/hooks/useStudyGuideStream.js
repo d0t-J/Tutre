@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { markdownToHtml } from '../utils/markdownToHtml';
 import { preprocessLegacyMath } from '../utils/mathPreprocessor';
 import { STUDY_GUIDE_PROMPT } from '../utils/studyGuidePrompt';
+import { functionHeaders, functionError } from '../../../services/edgeFunctions';
 
 export function useStudyGuideStream(topic, details, setStudyGuide) {
   const [isGeneratingGuide, setIsGeneratingGuide] = useState(false);
@@ -16,8 +17,6 @@ export function useStudyGuideStream(topic, details, setStudyGuide) {
 
     setIsGeneratingGuide(true);
     try {
-      const { data: authData } = await supabase.auth.getSession();
-
       const payload = {
         topic,
         details,
@@ -27,14 +26,11 @@ export function useStudyGuideStream(topic, details, setStudyGuide) {
 
       const response = await fetch(`${supabase.supabaseUrl}/functions/v1/chat-tutor`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authData.session?.access_token || supabase.supabaseKey}`
-        },
+        headers: await functionHeaders(),
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error(`Edge function returned ${response.status}`);
+      if (!response.ok) throw await functionError(response, `Edge function returned ${response.status}`);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -76,7 +72,7 @@ export function useStudyGuideStream(topic, details, setStudyGuide) {
       toast.success('Study guide generated successfully!');
     } catch (err) {
       console.error('Failed to generate Study Guide:', err);
-      toast.error('Failed to generate Study Guide. Please try again.');
+      toast.error(err.message || 'Failed to generate Study Guide. Please try again.');
     } finally {
       setIsGeneratingGuide(false);
     }

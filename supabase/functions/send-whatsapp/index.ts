@@ -1,16 +1,24 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-};
+import { corsHeaders, json, preflight } from '../_shared/cors.ts';
+import { requireUser, HttpError } from '../_shared/guard.ts';
+// WhatsApp delivery is switched off (2026-10-04) until its future is decided:
+// it sends any file URL to any phone number from the project's Green API account.
+// It only runs when the WHATSAPP_ENABLED secret is exactly "true", and then only
+// for signed-in users. The student panel hides the button unless
+// VITE_ENABLE_WHATSAPP=true.
 serve(async (req)=>{
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: corsHeaders
-    });
+    return preflight(req);
+  }
+  if (Deno.env.get('WHATSAPP_ENABLED') !== 'true') {
+    return json(req, {
+      success: false,
+      error: 'WhatsApp delivery is turned off.'
+    }, 503);
   }
   try {
+    await requireUser(req);
     const { phoneNumber, fileUrl, fileName } = await req.json();
     if (!phoneNumber || !fileUrl || !fileName) {
       throw new Error('Missing required parameters: phoneNumber, fileUrl, or fileName.');
@@ -48,21 +56,15 @@ serve(async (req)=>{
       messageId: responseData.idMessage
     }), {
       headers: {
-        ...corsHeaders,
+        ...corsHeaders(req),
         'Content-Type': 'application/json'
       },
       status: 200
     });
   } catch (error) {
-    return new Response(JSON.stringify({
+    return json(req, {
       success: false,
-      error: error.message
-    }), {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      },
-      status: 400
-    });
+      error: error instanceof Error ? error.message : String(error)
+    }, error instanceof HttpError ? error.status : 400);
   }
 });

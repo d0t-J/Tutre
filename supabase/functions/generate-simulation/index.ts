@@ -1,14 +1,13 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { json, preflight } from "../_shared/cors.ts";
+import { requireUser, consumeQuota, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
+// Admins only. One request (three model calls) counts as one simulation_generation.
 Deno.serve(async (req)=>{
   if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-      }
-    });
+    return preflight(req);
   }
   try {
+    const caller = await requireUser(req, { admin: true });
     const { subject, className, topic, details, customPrompt, imageBase64, existingCode, updateTarget } = await req.json();
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -74,6 +73,8 @@ CRITICAL UI RULE FOR MOBILE: On small screens (using CSS @media max-width: 768px
     } else {
       userContent = promptText;
     }
+    const usageId = await consumeQuota(caller, 'simulation_generation', 'generate-simulation');
+    let usage = {};
     let currentHtml = "";
     let messages = [
       {
@@ -114,6 +115,7 @@ CRITICAL UI RULE FOR MOBILE: On small screens (using CSS @media max-width: 768px
       if (data.error) {
         throw new Error(data.error.message || JSON.stringify(data.error));
       }
+      usage = addUsage(usage, data.usage);
       let htmlPayload = data.choices[0].message.content.trim();
       // Robust regex to extract code block regardless of conversational text
       const codeMatch = htmlPayload.match(/\`\`\`(?:html)?\s*([\s\S]*?)\`\`\`/i);
@@ -132,23 +134,11 @@ CRITICAL UI RULE FOR MOBILE: On small screens (using CSS @media max-width: 768px
       }
       currentHtml = htmlPayload.trim();
     }
-    return new Response(JSON.stringify({
+    await recordTokens(caller, usageId, usage);
+    return json(req, {
       code_payload: currentHtml
-    }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
     });
   } catch (err) {
-    return new Response(JSON.stringify({
-      error: err.message
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    return errorResponse(req, err);
   }
 });

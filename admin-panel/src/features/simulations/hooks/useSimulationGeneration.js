@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { functionHeaders, functionError } from '../../../services/edgeFunctions';
 import { extractDescription } from '../utils/extractDescription';
 
 export function useSimulationGeneration(state, subjects, classes) {
@@ -25,15 +26,12 @@ export function useSimulationGeneration(state, subjects, classes) {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${functionName}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
+          headers: await functionHeaders(),
           body: JSON.stringify({ subject: subjectName, className: classNameStr, topic: state.topic, details: state.details, customPrompt: finalCustomPrompt, imageBase64: state.imageBase64 }),
         }
       );
 
-      if (!response.ok) throw new Error('Failed to generate simulation. Check your API Key settings.');
+      if (!response.ok) throw await functionError(response, 'Failed to generate simulation.');
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);

@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { functionHeaders, functionError } from '../../../services/edgeFunctions';
 
 export function useHtmlDetailsExtraction(state) {
   const handleExtractDetails = async () => {
@@ -13,15 +14,12 @@ export function useHtmlDetailsExtraction(state) {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/extract-html-details`,
         {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
+          headers: await functionHeaders(),
           body: JSON.stringify({ htmlContent: state.generatedHtml }),
         }
       );
 
-      if (!response.ok) throw new Error('Failed to extract details from HTML.');
+      if (!response.ok) throw await functionError(response, 'Failed to extract details from HTML.');
 
       const data = await response.json();
       if (data.error) throw new Error(data.error);

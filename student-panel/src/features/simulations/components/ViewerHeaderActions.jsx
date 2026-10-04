@@ -3,6 +3,10 @@ import { Download, Printer, Loader2, MessageCircle, Send, X } from 'lucide-react
 import { toast } from 'sonner';
 import { useWhatsAppSender } from '../hooks/useWhatsAppSender';
 
+// WhatsApp delivery is switched off until its future is decided; the
+// send-whatsapp Edge Function also refuses unless WHATSAPP_ENABLED=true.
+const WHATSAPP_ENABLED = import.meta.env.VITE_ENABLE_WHATSAPP === 'true';
+
 export default function ViewerHeaderActions({
   onDownloadDocxClick,
   onDownloadClick,
@@ -37,6 +41,7 @@ export default function ViewerHeaderActions({
   return (
     <div className="flex flex-row shrink-0 gap-2 items-center relative">
       {/* WhatsApp Feature */}
+      {WHATSAPP_ENABLED && (
       <div className="relative flex items-center">
         <button
           type="button"
@@ -95,6 +100,7 @@ export default function ViewerHeaderActions({
           </div>
         )}
       </div>
+      )}
 
       <button
         type="button"
