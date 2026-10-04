@@ -213,6 +213,44 @@ group by user_id, scope order by completion_tokens desc nulls last;
 
 ---
 
+## Organisations, roles and profiles (Phase 2a, 2026-10-04)
+
+Migrations `20261004130000`–`20261004130300`.
+
+| Table | What it holds |
+| --- | --- |
+| `profiles` | One row per user: `display_name`, `preferred_language` (`en`/`ur`), `class_id`. Created by a trigger at sign-up from the `full_name` sign-up metadata, or the e-mail name if there is none; existing users were backfilled. Owners may update only those three columns |
+| `admin_users.studio_role` | Content Studio role: `author`, `reviewer`, `platform_admin`. `admin_users` is still the admin-panel gate; the pre-existing members became `platform_admin` |
+| `organizations` | A school or chain (`name`, unique `slug`, `status` active/suspended) |
+| `org_memberships` | user + school + role (`org_admin`, `teacher`, `student`, `parent`), `status` active/removed |
+| `sections` | A teaching group in a school, e.g. "9-A", optional `class_id` and `academic_year` |
+| `section_members` | user + section + role (`teacher`/`student`); the user must hold the same role in the section's school |
+| `invite_codes` | 10-character codes that join someone to a school (and optionally a section) with a role; limited uses, expiry, revocable |
+
+Joining is only through these functions (`invite_codes` has no write policies):
+
+| Function | Who |
+| --- | --- |
+| `create_organization(name, slug)` → first org-admin code | platform admins |
+| `set_organization_status(org, 'active' / 'suspended')` | platform admins |
+| `create_invite_code(org, role, section, max_uses, valid_days)` | platform admins; org admins for their school; teachers, student codes for their own sections |
+| `revoke_invite_code(id)` | the code's creator, org admins, platform admins |
+| `redeem_invite_code(code)` | any signed-in user |
+
+Who sees what: users see their own profile and memberships; teachers see the
+sections they teach, those sections' members, and their students' profiles; org
+admins see and manage everything in their own school; platform admins see all.
+Nobody sees another school's data, and a suspended school's members lose access
+to it. A school always keeps at least one active org admin.
+
+Access checks live in the `private` schema (`has_org_role`, `is_section_member`,
+`can_view_profile`, `is_platform_admin`, ...), which the API does not expose.
+Policies call these SECURITY DEFINER helpers instead of querying membership
+tables directly, which would recurse.
+
+Tests: `tests/database/phase2a_orgs_profiles.test.sql` (79 assertions). Run them
+with `npx supabase test db` on the local stack.
+
 ## Schema
 
 Nine tables, one view, RLS enabled on every table.

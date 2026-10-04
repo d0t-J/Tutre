@@ -79,7 +79,7 @@ force-push over a shared branch.
 
 ## Before you open a pull request
 
-There is no automated test suite. "Verified" means all four of these:
+The panels have no automated tests. "Verified" means all four of these:
 
 ```bash
 npm run build --prefix admin-panel
@@ -87,6 +87,19 @@ npm run lint  --prefix admin-panel
 npm run build --prefix student-panel
 npm run lint  --prefix student-panel
 ```
+
+If your change touches the database (a migration, a policy, a function), also run
+the database access tests in `supabase/tests/database/` against the local stack
+(Docker required; never the hosted project):
+
+```bash
+npx supabase start
+npx supabase db reset --local
+npx supabase test db
+```
+
+Every new table or policy needs tests there: one for each role that should get
+access, and one for each role that should not.
 
 ...plus opening the affected screen in a running browser and using it. Say in the
 pull request which screens you exercised and what you saw. If you could not test
