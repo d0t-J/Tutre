@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, LogOut, Wand2, LayoutDashboard } from 'lucide-react';
+import { Menu, LogOut, Wand2, LayoutDashboard, UserRound } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useWizard } from '../../features/simulations/context/WizardContext';
@@ -55,6 +55,20 @@ export default function Header() {
             <span className="hidden sm:inline">Wizard</span>
           </button>
         </div>
+
+        {/* Desktop Profile */}
+        <NavLink
+          to="/profile"
+          title="Your profile"
+          aria-label="Your profile"
+          className={({ isActive }) =>
+            `hidden lg:flex items-center justify-center p-1.5 rounded-lg transition-colors ${
+              isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+            }`
+          }
+        >
+          <UserRound className="w-4 h-4" />
+        </NavLink>
 
         {/* Desktop Logout */}
         <button 

@@ -1,0 +1,110 @@
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Loader2, Save } from 'lucide-react';
+import { useUpdateProfile } from '../hooks/useProfile';
+
+const NAME_MAX = 80;
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'ur', label: 'اردو', hint: 'Urdu', rtl: true },
+];
+
+const STUDIO_ROLE_LABELS = {
+  author: 'Author: creates drafts and submits them for review',
+  reviewer: 'Reviewer: publishes and maintains simulations',
+  platform_admin: 'Platform admin: full access',
+};
+
+export default function ProfileForm({ profile, email, studioRole }) {
+  const [displayName, setDisplayName] = useState(profile.display_name ?? '');
+  const [language, setLanguage] = useState(profile.preferred_language ?? 'en');
+  const updateProfile = useUpdateProfile();
+
+  const trimmedName = displayName.trim();
+  const isDirty =
+    trimmedName !== (profile.display_name ?? '') ||
+    language !== profile.preferred_language;
+  const nameError = trimmedName.length === 0 ? 'Enter your name.' : null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isDirty || nameError) return;
+    updateProfile.mutate(
+      { display_name: trimmedName, preferred_language: language },
+      {
+        onSuccess: () => toast.success('Profile saved.'),
+        onError: (err) => toast.error(err.message || 'Could not save your profile.'),
+      }
+    );
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <p className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</p>
+          <p className="text-sm text-slate-700 break-all">{email}</p>
+        </div>
+        <div>
+          <p className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio role</p>
+          <p className="text-sm text-slate-700">{STUDIO_ROLE_LABELS[studioRole] ?? 'Not set'}</p>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="display-name" className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          Name
+        </label>
+        <input
+          id="display-name"
+          type="text"
+          value={displayName}
+          maxLength={NAME_MAX}
+          onChange={(e) => setDisplayName(e.target.value)}
+          className="w-full text-sm p-2.5 rounded-lg border border-slate-300 bg-slate-50 focus:bg-white focus:border-primary-500 focus:ring-1 focus:ring-primary-100 outline-none transition-colors"
+        />
+        {nameError && <p className="mt-1 text-xs text-red-600">{nameError}</p>}
+      </div>
+
+      <fieldset>
+        <legend className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Language</legend>
+        <div className="flex gap-2">
+          {LANGUAGES.map(({ value, label, hint, rtl }) => (
+            <label
+              key={value}
+              className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-bold transition-colors ${
+                language === value
+                  ? 'border-primary-500 bg-primary-50 text-primary-700'
+                  : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <input
+                type="radio"
+                name="language"
+                value={value}
+                checked={language === value}
+                onChange={() => setLanguage(value)}
+                className="sr-only"
+              />
+              <span dir={rtl ? 'rtl' : undefined} lang={value}>{label}</span>
+              {hint && <span className="text-xs font-medium text-slate-400">({hint})</span>}
+            </label>
+          ))}
+        </div>
+        <p className="mt-1 text-xs text-slate-400">
+          The Studio is in English for now. Your choice is saved and will be used when the Urdu version is ready.
+        </p>
+      </fieldset>
+
+      <button
+        type="submit"
+        disabled={!isDirty || !!nameError || updateProfile.isPending}
+        className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {updateProfile.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+        {isDirty ? 'Save changes' : 'Saved'}
+      </button>
+    </form>
+  );
+}

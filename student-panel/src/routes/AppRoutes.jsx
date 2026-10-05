@@ -8,6 +8,7 @@ import { PageSkeleton } from '../components/common';
 import Dashboard from '../pages/Dashboard/Dashboard';
 
 const SimulationViewer = lazy(() => import('../pages/Simulations/SimulationViewer'));
+const Profile = lazy(() => import('../pages/Profile/Profile'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -21,6 +22,11 @@ export default function AppRoutes() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } />
         <Route path="/class/:classSlug" element={

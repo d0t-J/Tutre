@@ -1,11 +1,14 @@
 import { NavLink } from 'react-router-dom';
-import { Wand2, Database, Library } from 'lucide-react';
+import { Wand2, Database, Library, UserRound } from 'lucide-react';
 
-export default function NavLinks({ onLinkClick }) {
+// The desktop header shows Profile as an icon next to Logout; the mobile menu
+// lists it with the other links.
+export default function NavLinks({ onLinkClick, showProfile = false }) {
   const links = [
     { to: '/', icon: Wand2, label: 'Create Animation', end: true },
     { to: '/saved', icon: Database, label: 'Saved Simulations' },
-    { to: '/curriculum', icon: Library, label: 'Curriculum' }
+    { to: '/curriculum', icon: Library, label: 'Curriculum' },
+    ...(showProfile ? [{ to: '/profile', icon: UserRound, label: 'Profile' }] : [])
   ];
 
   return (

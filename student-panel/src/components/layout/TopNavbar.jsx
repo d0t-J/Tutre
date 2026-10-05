@@ -6,11 +6,13 @@ import { useAuth } from '../../features/auth';
 import Logo from '../../assets/tutre_new_logo.png';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
 import ClassNavMenu from './ClassNavMenu';
+import { useProfile } from '../../features/profile';
 
 export default function TopNavbar() {
   const [classes, setClasses] = useState([]);
   const { user, logout } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const { data: profile } = useProfile();
   
   useEffect(() => {
     async function fetchClasses() {
@@ -43,11 +45,20 @@ export default function TopNavbar() {
 
       {/* Right: User Menu */}
       <div className="flex items-center gap-3 shrink-0">
-        <div className="hidden md:flex flex-col items-end mr-1">
-          <p className="text-xs font-bold text-slate-800 truncate max-w-30">
-            {user?.user_metadata?.full_name || user?.email}
-          </p>
-        </div>
+        <NavLink
+          to="/profile"
+          title="Your profile"
+          className={({ isActive }) =>
+            `flex items-center gap-2 p-2 rounded-lg transition-colors ${
+              isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100'
+            }`
+          }
+        >
+          <Icons.UserRound className="w-4 h-4 shrink-0" />
+          <span className="hidden md:block text-xs font-bold text-slate-800 truncate max-w-30">
+            {profile?.display_name || user?.user_metadata?.full_name || user?.email}
+          </span>
+        </NavLink>
         
         <button
           onClick={() => setIsLogoutModalOpen(true)}

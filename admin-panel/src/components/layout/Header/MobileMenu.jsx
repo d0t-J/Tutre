@@ -21,7 +21,7 @@ export default function MobileMenu({ isOpen, onClose, onLogoutClick }) {
           </button>
         </div>
         <nav className="flex flex-col gap-2 p-4">
-          <NavLinks onLinkClick={onClose} />
+          <NavLinks onLinkClick={onClose} showProfile />
           <div className="mt-4 border-t border-slate-100 pt-4">
             <button 
               onClick={() => {

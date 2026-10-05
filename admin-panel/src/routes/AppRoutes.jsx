@@ -9,6 +9,7 @@ import { Sparkles } from 'lucide-react';
 const CreateSimulation = lazy(() => import('../pages/Simulations/CreateSimulation'));
 const SavedSimulationsPage = lazy(() => import('../pages/Simulations/SavedSimulationsPage'));
 const CurriculumManager = lazy(() => import('../pages/Curriculum/CurriculumManager'));
+const ProfilePage = lazy(() => import('../pages/Profile/ProfilePage'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -50,6 +51,11 @@ export default function AppRoutes() {
                 <Suspense fallback={<CurriculumSkeleton />}>
                   <CurriculumManager />
                 </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
           </Routes>
