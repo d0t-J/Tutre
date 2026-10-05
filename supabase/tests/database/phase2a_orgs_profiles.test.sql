@@ -6,7 +6,7 @@ BEGIN;
 CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 SET search_path = public, extensions;
 
-SELECT plan(79);
+SELECT plan(89);
 
 -- ---------------------------------------------------------------------------
 -- Helpers: act as a user, as an anonymous visitor, or as the test runner again.
@@ -34,6 +34,8 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO authenticated, anon;
 --   ...a1 platform admin      ...a2 principal A     ...b2 principal B
 --   ...a3 teacher A (9-A)     ...a4 student A (9-A) ...a5 student A (9-B)
 --   ...b4 student B           ...c1 independent learner (no full_name given)
+--   ...a6 student A3 (9-A, a classmate of A1)
+--   ...a7 teacher A2 (co-teacher of 9-A; later also an org admin)
 INSERT INTO auth.users (id, email, raw_user_meta_data, aud, role) VALUES
     ('00000000-0000-0000-0000-0000000000a1', 'platform@tutre.test', '{"full_name":"Platform Admin"}', 'authenticated', 'authenticated'),
     ('00000000-0000-0000-0000-0000000000a2', 'principal.a@tutre.test', '{"full_name":"Principal A"}', 'authenticated', 'authenticated'),
@@ -42,7 +44,9 @@ INSERT INTO auth.users (id, email, raw_user_meta_data, aud, role) VALUES
     ('00000000-0000-0000-0000-0000000000a4', 'student.a1@tutre.test', '{"full_name":"Student A1"}', 'authenticated', 'authenticated'),
     ('00000000-0000-0000-0000-0000000000a5', 'student.a2@tutre.test', '{"full_name":"Student A2"}', 'authenticated', 'authenticated'),
     ('00000000-0000-0000-0000-0000000000b4', 'student.b@tutre.test', '{"full_name":"Student B"}', 'authenticated', 'authenticated'),
-    ('00000000-0000-0000-0000-0000000000c1', 'independent.learner@tutre.test', '{}', 'authenticated', 'authenticated');
+    ('00000000-0000-0000-0000-0000000000c1', 'independent.learner@tutre.test', '{}', 'authenticated', 'authenticated'),
+    ('00000000-0000-0000-0000-0000000000a6', 'student.a3@tutre.test', '{"full_name":"Student A3"}', 'authenticated', 'authenticated'),
+    ('00000000-0000-0000-0000-0000000000a7', 'teacher.a2@tutre.test', '{"full_name":"Teacher A2"}', 'authenticated', 'authenticated');
 INSERT INTO public.admin_users (id, studio_role) VALUES ('00000000-0000-0000-0000-0000000000a1', 'platform_admin');
 
 -- ===========================================================================
@@ -118,9 +122,10 @@ WITH s AS (INSERT INTO sections (org_id, name, academic_year) VALUES (current_se
 SELECT set_config('test.sec_9b', id::text, true) FROM s;
 SELECT is((SELECT count(*)::int FROM sections), 2, 'an org admin sees their sections');
 SELECT set_config('test.code_teacher_9a', create_invite_code(current_setting('test.org_a')::uuid, 'teacher', current_setting('test.sec_9a')::uuid) ->> 'code', true);
+SELECT set_config('test.code_teacher_9a_2', create_invite_code(current_setting('test.org_a')::uuid, 'teacher', current_setting('test.sec_9a')::uuid) ->> 'code', true);
 SELECT set_config('test.code_student_9a', create_invite_code(current_setting('test.org_a')::uuid, 'student', current_setting('test.sec_9a')::uuid, 40, 30) ->> 'code', true);
 SELECT set_config('test.code_student_9b', create_invite_code(current_setting('test.org_a')::uuid, 'student', current_setting('test.sec_9b')::uuid, 40, 30) ->> 'code', true);
-SELECT is((SELECT count(*)::int FROM invite_codes), 4, 'an org admin sees all of their school''s codes');
+SELECT is((SELECT count(*)::int FROM invite_codes), 5, 'an org admin sees all of their school''s codes');
 SELECT throws_ok(format('SELECT create_invite_code(%L, %L, %L)', current_setting('test.org_b'), 'teacher', NULL), '42501', NULL,
     'an org admin cannot create codes for another school');
 SELECT throws_ok(format('SELECT create_invite_code(%L, %L, %L)', current_setting('test.org_a'), 'org_admin', current_setting('test.sec_9a')), '22023', NULL,
@@ -144,6 +149,9 @@ SELECT test_helpers.logout();
 -- ===========================================================================
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a3');
 SELECT is((redeem_invite_code(current_setting('test.code_teacher_9a')) ->> 'section_name'), '9-A', 'a teacher joins section 9-A');
+SELECT test_helpers.logout();
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a7');
+SELECT lives_ok(format('SELECT redeem_invite_code(%L)', current_setting('test.code_teacher_9a_2')), 'a second teacher joins 9-A');
 SELECT test_helpers.logout();
 SELECT is((SELECT role FROM org_memberships WHERE user_id = '00000000-0000-0000-0000-0000000000a3'), 'teacher',
     'the teacher is also a teacher of the school');
@@ -181,11 +189,11 @@ SELECT test_helpers.logout();
 -- What a teacher can see and do
 -- ===========================================================================
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a3');
-SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Teacher A', 'Student A1'],
-    'a teacher sees their own profile and their section''s students, nobody else');
+SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Teacher A', 'Teacher A2', 'Student A1'],
+    'a teacher sees their own profile, their co-teacher and their section''s students, nobody else');
 SELECT is((SELECT count(*)::int FROM sections), 1, 'a teacher sees only the sections they teach');
-SELECT is((SELECT count(*)::int FROM section_members), 2, 'a teacher sees their section''s members');
-SELECT lives_ok(format('SELECT create_invite_code(%L, %L, %L, 40, 7)', current_setting('test.org_a'), 'student', current_setting('test.sec_9a')),
+SELECT is((SELECT count(*)::int FROM section_members), 3, 'a teacher sees their section''s members');
+SELECT isnt(set_config('test.code_by_teacher', create_invite_code(current_setting('test.org_a')::uuid, 'student', current_setting('test.sec_9a')::uuid, 40, 7) ->> 'code', true), '',
     'a teacher can create student codes for their own section');
 SELECT throws_ok(format('SELECT create_invite_code(%L, %L, %L)', current_setting('test.org_a'), 'student', current_setting('test.sec_9b')), '42501', NULL,
     'a teacher cannot create codes for a section they do not teach');
@@ -195,11 +203,18 @@ SELECT throws_ok(format('INSERT INTO sections (org_id, name) VALUES (%L, %L)', c
     'a teacher cannot create sections');
 SELECT test_helpers.logout();
 
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a6');
+SELECT lives_ok(format('SELECT redeem_invite_code(%L)', current_setting('test.code_by_teacher')), 'a classmate joins 9-A with the teacher''s code');
+SELECT test_helpers.logout();
+
 -- ===========================================================================
 -- What a student can see and do
 -- ===========================================================================
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a4');
-SELECT is((SELECT count(*)::int FROM profiles), 1, 'a student sees only their own profile');
+SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Student A1', 'Teacher A', 'Teacher A2'],
+    'a student sees their own profile and their section''s teachers, not their classmates');
+SELECT bag_eq($$SELECT role FROM section_members$$, ARRAY['student', 'teacher', 'teacher'],
+    'a student sees their own section row and the teachers'' rows, not their classmates''');
 SELECT is((SELECT name FROM sections), '9-A', 'a student sees only their own section');
 SELECT is((SELECT count(*)::int FROM invite_codes), 0, 'a student cannot read invite codes');
 SELECT throws_ok(format('SELECT create_invite_code(%L, %L, %L)', current_setting('test.org_a'), 'student', current_setting('test.sec_9a')), '42501', NULL,
@@ -217,9 +232,9 @@ SELECT is((SELECT status FROM org_memberships WHERE user_id = '00000000-0000-000
 -- What org admins can see and do
 -- ===========================================================================
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a2');
-SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Principal A', 'Teacher A', 'Student A1', 'Student A2'],
+SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Principal A', 'Teacher A', 'Teacher A2', 'Student A1', 'Student A2', 'Student A3'],
     'org admin A sees exactly the members of School A');
-SELECT is((SELECT count(*)::int FROM org_memberships), 4, 'org admin A sees School A''s memberships');
+SELECT is((SELECT count(*)::int FROM org_memberships), 6, 'org admin A sees School A''s memberships');
 SELECT lives_ok($$UPDATE organizations SET name = 'School A (renamed)' WHERE slug = 'school-a'$$, 'an org admin can rename their school');
 SELECT throws_ok($$UPDATE organizations SET status = 'suspended' WHERE slug = 'school-a'$$, '42501', NULL,
     'an org admin cannot change their school''s status');
@@ -229,13 +244,37 @@ SELECT throws_ok(format('INSERT INTO section_members (section_id, user_id, role)
     'a student of another school cannot be put in a section');
 SELECT lives_ok(format('INSERT INTO section_members (section_id, user_id, role) VALUES (%L, %L, %L)', current_setting('test.sec_9b'), '00000000-0000-0000-0000-0000000000a3', 'teacher'),
     'an org admin can assign a teacher to another section');
-SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2'$$, '23514', NULL,
-    'a school cannot lose its last org admin');
+SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2'$$, '42501',
+    'Only Tutre platform admins can remove an org admin.', 'an org admin cannot remove an org admin, not even themselves');
 SELECT lives_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a5'$$,
     'an org admin can remove a student from the school');
 SELECT test_helpers.logout();
 SELECT is((SELECT count(*)::int FROM section_members WHERE user_id = '00000000-0000-0000-0000-0000000000a5'), 0,
     'removing a student from the school removes them from its sections');
+
+-- Org admins can appoint another org admin, but only a platform admin can remove one.
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a2');
+SELECT set_config('test.code_admin_a_2', create_invite_code(current_setting('test.org_a')::uuid, 'org_admin') ->> 'code', true);
+SELECT test_helpers.logout();
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a7');
+SELECT is((redeem_invite_code(current_setting('test.code_admin_a_2')) ->> 'role'), 'org_admin', 'an org admin can appoint another org admin');
+SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2' AND role = 'org_admin'$$, '42501',
+    'Only Tutre platform admins can remove an org admin.', 'a newly appointed org admin cannot remove the principal');
+SELECT test_helpers.logout();
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a1');
+SELECT lives_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'org_admin'$$,
+    'a platform admin can remove an org admin when another remains');
+SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2' AND role = 'org_admin'$$, '23514', NULL,
+    'not even a platform admin can remove a school''s last org admin');
+SELECT test_helpers.logout();
+SELECT is((SELECT status FROM org_memberships WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'teacher'), 'active',
+    'removing someone''s org admin role leaves their teacher role');
+SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a2');
+SELECT lives_ok($$UPDATE org_memberships SET status = 'active' WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'org_admin'$$,
+    'an org admin can restore a removed org admin');
+SELECT test_helpers.logout();
+SELECT is((SELECT status FROM org_memberships WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'org_admin'), 'active',
+    'the restore was saved');
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000b2');
 SELECT bag_eq($$SELECT display_name FROM profiles$$, ARRAY['Principal B', 'Student B'],
@@ -249,7 +288,7 @@ DELETE FROM section_members WHERE role = 'teacher';
 SELECT lives_ok(format('DELETE FROM section_members WHERE section_id = %L AND user_id = %L', current_setting('test.sec_9a'), '00000000-0000-0000-0000-0000000000a4'),
     'a teacher can remove a student from their section');
 SELECT test_helpers.logout();
-SELECT is((SELECT count(*)::int FROM section_members WHERE role = 'teacher'), 2, 'a teacher cannot remove teachers');
+SELECT is((SELECT count(*)::int FROM section_members WHERE role = 'teacher'), 3, 'a teacher cannot remove teachers');
 SELECT is((SELECT count(*)::int FROM section_members WHERE user_id = '00000000-0000-0000-0000-0000000000a4'), 0, 'the student was removed');
 
 -- ===========================================================================
