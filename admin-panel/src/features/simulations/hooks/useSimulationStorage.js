@@ -1,6 +1,10 @@
 import { supabase } from '../../../services/supabase';
 import { toast } from 'sonner';
 
+// Saves the workspace to topics + simulations (one table for every subject since
+// Phase 2b). A new simulation is saved as a draft; publishing is a separate step
+// (useSimulationStatus). Saving changes to a published simulation updates the live
+// version, which the database records in simulation_versions so it can be undone.
 export function useSimulationStorage(state, _navigate, queryClient, subjects) {
   const handleSave = async () => {
     if (!state.generatedHtml) return;
@@ -11,65 +15,57 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
     state.setIsSaving(true);
 
     try {
-      // subjects.slug is the identifier-safe name the payload tables are named
-      // after. It is not always lower(name): "Computer Science and
-      // Entrepreneurship" has the slug "computer_science".
-      let subjectSlug = subjects.find(s => s.id === state.selectedSubject)?.slug;
-
-      if (!subjectSlug) {
-        const { data: subData } = await supabase.from('subjects').select('slug').eq('id', state.selectedSubject).single();
-        if (subData?.slug) {
-          subjectSlug = subData.slug;
-        } else {
-          throw new Error('Please wait for subjects to load or select a valid subject.');
-        }
-      }
-
-      const tableName = `${subjectSlug}_simulations`;
+      const subjectSlug = subjects.find(s => s.id === state.selectedSubject)?.slug ?? null;
       const isUpdating = Boolean(state.loadedSimId && state.loadedTopicId);
 
       if (isUpdating) {
-        if (state.selectedSubject !== state.loadedSubjectId) {
-          if (!state.loadedSubjectSlug) throw new Error('Cannot move this simulation: its original subject is unknown.');
-          const oldTableName = `${state.loadedSubjectSlug}_simulations`;
+        // Moving to another subject is now just a change to the topic: the
+        // simulation row stays where it is.
+        const { data: topicData, error: topicError } = await supabase
+          .from('topics')
+          .update({
+            name: state.topic,
+            description: state.generatedDescription,
+            study_guide: state.studyGuide,
+            subject_id: state.selectedSubject,
+            chapter_id: state.selectedChapter,
+          })
+          .eq('id', state.loadedTopicId)
+          .select();
+        if (topicError) throw topicError;
+        if (!topicData || topicData.length === 0) throw new Error('Permission denied or topic not found. Ensure you are an admin.');
 
-          const { data: newSimData, error: newSimError } = await supabase.from(tableName).insert([{ topic_id: state.loadedTopicId, code_payload: state.generatedHtml }]).select().single();
-          if (newSimError) throw newSimError;
-
-          const { data: topicData, error: topicError } = await supabase.from('topics').update({ name: state.topic, description: state.generatedDescription, study_guide: state.studyGuide, subject_id: state.selectedSubject, chapter_id: state.selectedChapter }).eq('id', state.loadedTopicId).select();
-          if (topicError) {
-            await supabase.from(tableName).delete().eq('id', newSimData.id);
-            throw topicError;
-          }
-          if (!topicData || topicData.length === 0) {
-            await supabase.from(tableName).delete().eq('id', newSimData.id);
-            throw new Error('Permission denied or topic not found. Ensure you are an admin.');
-          }
-
-          await supabase.from(oldTableName).delete().eq('id', state.loadedSimId);
-
-          state.setLoadedSimId(newSimData.id);
-          state.setLoadedSubjectId(state.selectedSubject);
-          state.setLoadedSubjectSlug(subjectSlug);
-        } else {
-          const { data: topicData, error: topicError } = await supabase.from('topics').update({ name: state.topic, description: state.generatedDescription, study_guide: state.studyGuide, chapter_id: state.selectedChapter }).eq('id', state.loadedTopicId).select();
-          if (topicError) throw topicError;
-          if (!topicData || topicData.length === 0) throw new Error('Permission denied or topic not found. Ensure you are an admin.');
-
-          const { data: simData, error: simError } = await supabase.from(tableName).update({ code_payload: state.generatedHtml }).eq('id', state.loadedSimId).select();
+        if (state.generatedHtml !== state.loadedHtml) {
+          const { data: simData, error: simError } = await supabase
+            .from('simulations')
+            .update({ code_payload: state.generatedHtml })
+            .eq('id', state.loadedSimId)
+            .select('status');
           if (simError) throw simError;
           if (!simData || simData.length === 0) throw new Error('Permission denied or simulation not found. Ensure you are an admin.');
         }
       } else {
         const description = state.generatedDescription || state.details;
-        const { data: topicData, error: topicError } = await supabase.from('topics').insert([{ subject_id: state.selectedSubject, chapter_id: state.selectedChapter, name: state.topic, description, study_guide: state.studyGuide }]).select().single();
+        const { data: topicData, error: topicError } = await supabase
+          .from('topics')
+          .insert([{ subject_id: state.selectedSubject, chapter_id: state.selectedChapter, name: state.topic, description, study_guide: state.studyGuide }])
+          .select()
+          .single();
         if (topicError) throw topicError;
 
-        const { data: simData, error: simError } = await supabase.from(tableName).insert([{ topic_id: topicData.id, code_payload: state.generatedHtml }]).select().single();
-        if (simError) throw simError;
+        const { data: simData, error: simError } = await supabase
+          .from('simulations')
+          .insert([{ topic_id: topicData.id, code_payload: state.generatedHtml, status: 'draft' }])
+          .select('id, status')
+          .single();
+        if (simError) {
+          await supabase.from('topics').delete().eq('id', topicData.id);
+          throw simError;
+        }
 
         state.setLoadedTopicId(topicData.id);
         state.setLoadedSimId(simData.id);
+        state.setLoadedStatus(simData.status);
       }
 
       state.setSaveSuccess(true);
@@ -84,7 +80,13 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
       state.setIsLoadedFromSaved(true);
 
       queryClient.invalidateQueries({ queryKey: ['admin-simulations'] });
-      toast.success(isUpdating ? 'Simulation updated successfully in database!' : 'Simulation published successfully to student app!');
+      if (!isUpdating) {
+        toast.success('Saved as a draft. Students will see it once it is published.');
+      } else if (state.loadedStatus === 'published') {
+        toast.success('Saved. The live version students see has been updated.');
+      } else {
+        toast.success('Saved.');
+      }
       setTimeout(() => state.setSaveSuccess(false), 4000);
     } catch (err) {
       console.error('Error saving simulation:', err);
@@ -96,4 +98,3 @@ export function useSimulationStorage(state, _navigate, queryClient, subjects) {
 
   return { handleSave };
 }
-

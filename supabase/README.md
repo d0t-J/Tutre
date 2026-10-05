@@ -215,7 +215,7 @@ group by user_id, scope order by completion_tokens desc nulls last;
 
 ## Organisations, roles and profiles (Phase 2a, 2026-10-04)
 
-Migrations `20261004130000`–`20261004130300`.
+Migrations `20261004130000`–`20261004130300`, plus the follow-up `20261005090000`.
 
 | Table | What it holds |
 | --- | --- |
@@ -237,18 +237,24 @@ Joining is only through these functions (`invite_codes` has no write policies):
 | `revoke_invite_code(id)` | the code's creator, org admins, platform admins |
 | `redeem_invite_code(code)` | any signed-in user |
 
-Who sees what: users see their own profile and memberships; teachers see the
-sections they teach, those sections' members, and their students' profiles; org
-admins see and manage everything in their own school; platform admins see all.
-Nobody sees another school's data, and a suspended school's members lose access
-to it. A school always keeps at least one active org admin.
+Who sees what: users see their own profile and memberships; every section member
+sees the names of that section's teachers; teachers see the sections they teach,
+those sections' members, and their students' profiles (students do not see
+classmates); org admins see and manage everything in their own school; platform
+admins see all. Nobody sees another school's data, and a suspended school's
+members lose access to it.
+
+Org admins can appoint more org admins (with an `org_admin` code) and restore a
+removed one, but **only platform admins can remove an org admin**, so a newly
+added org admin cannot lock out the principal. A school always keeps at least one
+active org admin, even against a platform admin.
 
 Access checks live in the `private` schema (`has_org_role`, `is_section_member`,
 `can_view_profile`, `is_platform_admin`, ...), which the API does not expose.
 Policies call these SECURITY DEFINER helpers instead of querying membership
 tables directly, which would recurse.
 
-Tests: `tests/database/phase2a_orgs_profiles.test.sql` (79 assertions). Run them
+Tests: `tests/database/phase2a_orgs_profiles.test.sql` (89 assertions). Run them
 with `npx supabase test db` on the local stack.
 
 ## Schema
@@ -273,53 +279,62 @@ classes ──< subjects ──< chapters
 | `topics` | `id`, `subject_id`, `chapter_id`, `name`, `description`, `study_guide`, `created_at` | `chapter_id` is `ON DELETE SET NULL`; `subject_id` cascades |
 | `admin_users` | `id`, `created_at` | `id` references `auth.users(id)` |
 
-### Simulation payloads
+### Simulation payloads (one table since Phase 2b, 2026-10-05)
 
-Four identical tables — `physics_simulations`, `chemistry_simulations`,
-`biology_simulations`, `mathematics_simulations` — each with:
+`20261005120000_simulations_library.sql` replaced the five per-subject tables with
+one table:
 
 ```text
-id uuid PK, topic_id uuid REFERENCES topics(id) ON DELETE CASCADE,
-code_payload text, created_at timestamptz NOT NULL
+simulations          id, topic_id -> topics (cascade), code_payload,
+                     status   draft | in_review | published | archived
+                     kind     canonical (hand-authored, verified) | generated (AI)
+                     version  +1 each time code_payload changes
+                     created_by, reviewed_by, published_at, created_at, updated_at
+simulation_versions  (simulation_id, version) -> every payload a simulation has had,
+                     with replaced_by / replaced_at
 ```
 
-The admin panel picks the table at runtime from the subject name:
+The migration copied every row that had a topic, **keeping its id** (so
+`/simulation/<sim_id>` links still work), as `published`; Computer Science rows as
+`canonical`, the rest `generated`. It refuses to finish if the copied count differs
+from the source count. The old tables (`biology_`, `chemistry_`, `mathematics_`,
+`physics_`, `computer_science_simulations`) are **kept untouched as a frozen
+backup** and nothing reads or writes them any more. Note that deleting a topic
+still cascades into them. Dropping them is a separate decision.
 
-```js
-// admin-panel/src/features/simulations/hooks/useSimulationStorage.js:26
-const tableName = `${subjectName.toLowerCase()}_simulations`;
-```
+`subjects.slug` (from `20260930100000_subjects_slug.sql`) is still used to
+identify subjects, but no longer to build table names. Adding a subject no longer
+needs a table or a view change.
 
-That worked only while every subject was a single lowercase word. "Computer
-Science and Entrepreneurship" yielded `computer science and
-entrepreneurship_simulations`, which is not a valid identifier.
+**Review workflow**, enforced in the database (trigger `simulations_workflow`)
+for API callers; the SQL editor and migrations run as the owner and are trusted:
 
-`20260930100000_subjects_slug.sql` adds `subjects.slug`: identifier-safe,
-`NOT NULL`, unique per class, constrained to `^[a-z][a-z0-9_]*$`, and filled by a
-`BEFORE INSERT OR UPDATE` trigger when a writer omits it. For the four original
-subjects the slug equals `lower(name)`, so their table names are unchanged.
-Computer Science and Entrepreneurship is set explicitly to `computer_science`.
+| Studio role | May |
+| --- | --- |
+| `author` | create drafts; edit drafts and items in review; submit for review (`draft` -> `in_review`) and back; delete their own drafts |
+| `reviewer`, `platform_admin` | everything, including publish, unpublish, archive, edit a published simulation, mark it canonical, and `restore_simulation_version(sim, version)` |
 
-The admin panel now reads `subjects.slug` and the view's new `subject_slug`
-column instead of lowercasing the display name.
+Students and other signed-in users read only `published` rows. Anonymous visitors
+read nothing (an anonymous read of `all_simulations` returns `[]`, as before).
+Version numbers, `published_at`, `reviewed_by` and `created_by` are set by the
+database only. Because a simulation's title, description and study guide live on
+its topic, authors also cannot update or delete a topic whose simulation is
+published or archived (trigger `topics_respect_review`).
 
 ### `all_simulations`
 
-A four-branch `UNION ALL`, one branch per simulation table, each joining
-`topics`, `subjects` and `classes`. It exposes:
+Rebuilt by `20261005120000_simulations_library.sql` as a single join of
+`simulations`, `topics`, `subjects` and `classes`, with `security_invoker` on, so
+the rules above decide what each caller sees. Columns, in this order (new columns
+can only ever be appended):
 
 ```text
 topic_id, topic, description, chapter_id, subject_id, subject, icon_name,
-class_id, class_name, sim_id, code_payload, created_at, study_guide
+class_id, class_name, sim_id, code_payload, created_at, study_guide,
+subject_slug, status, kind, version
 ```
 
-There is no `id` column — the primary key of a row is `sim_id`.
-
-It now has five branches. `20260930100100_computer_science_simulations.sql`
-creates `computer_science_simulations` and rebuilds the view to include it, also
-exposing `subject_slug` in every branch.
-
-**Adding a subject still means adding a table and another branch to this view.**
+There is no `id` column: the primary key of a row is `sim_id`.
 
 ---
 
@@ -327,13 +342,15 @@ exposing `subject_slug` in every branch.
 
 Hand-authored simulations live as files under `content/simulations/` and are
 published into the database with `upsert_canonical_simulation`. See
-[`content/README.md`](../content/README.md) for the layout and the call.
+`content/README.md` (local only; `content/` is not in the public repository).
 
 The function resolves class, subject and chapter by name, creates or updates the
-topic, then inserts or updates the payload row in `<slug>_simulations`. It is
-idempotent on (class, subject, chapter, topic), so republishing a corrected
-simulation is the same call again. It runs SECURITY INVOKER, so RLS still applies
-and only admins or the service role can write through it.
+topic, then inserts or updates the topic's row in `simulations` as `published` and
+`canonical`. It is idempotent on (class, subject, chapter, topic); re-running it
+with a corrected payload updates the same simulation, and the previous payload is
+kept in `simulation_versions`. It runs SECURITY INVOKER, so RLS and the review
+workflow still apply: reviewers, platform admins and the SQL editor can publish
+through it; authors cannot.
 
 ---
 

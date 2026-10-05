@@ -2,6 +2,7 @@ import * as Icons from 'lucide-react';
 import { Trash2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../../../services/supabase';
+import StatusBadge from '../StatusBadge';
 
 function ChapterNameLabel({ chapterId }) {
   const { data: chapterName, isLoading } = useQuery({
@@ -72,9 +73,12 @@ export default function SimulationGridCard({ sim, theme, onSelect, onDelete }) {
       <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-1.5 sm:mb-2 group-hover:text-primary-600 transition-colors line-clamp-2 leading-tight pr-6 min-h-[2.5em]">
         {sim.topic}
       </h3>
-      <p className="text-[9px] sm:text-xs text-slate-400 mt-auto pt-1.5 sm:pt-2 border-t border-slate-100 w-full truncate">
-        {sim.chapter_id ? <ChapterNameLabel chapterId={sim.chapter_id} /> : <span>&nbsp;</span>}
-      </p>
+      <div className="mt-auto pt-1.5 sm:pt-2 border-t border-slate-100 w-full flex items-center gap-1.5 min-w-0">
+        <p className="text-[9px] sm:text-xs text-slate-400 truncate flex-1 min-w-0">
+          {sim.chapter_id ? <ChapterNameLabel chapterId={sim.chapter_id} /> : <span>&nbsp;</span>}
+        </p>
+        <StatusBadge status={sim.status} />
+      </div>
     </div>
   );
 }

@@ -10,6 +10,7 @@ export default function SavedSimulations({ loadSavedSimulation, deleteSimulation
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
   const [selectedChapterId, setSelectedChapterId] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -23,7 +24,8 @@ export default function SavedSimulations({ loadSavedSimulation, deleteSimulation
     selectedSubjectId || null, 
     selectedClassId || null, 
     debouncedSearch,
-    selectedChapterId || null
+    selectedChapterId || null,
+    selectedStatus || null
   );
 
   // Debounce search
@@ -52,6 +54,8 @@ export default function SavedSimulations({ loadSavedSimulation, deleteSimulation
         chapters={chapters}
         selectedChapterId={selectedChapterId}
         setSelectedChapterId={setSelectedChapterId}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
         setPage={setPage}
       />
 

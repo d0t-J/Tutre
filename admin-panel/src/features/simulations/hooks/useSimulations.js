@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../../services/supabase';
 
-export const useSimulations = (page, pageSize = 20, subjectId, classId, searchQuery, chapterId) => {
+export const useSimulations = (page, pageSize = 20, subjectId, classId, searchQuery, chapterId, status) => {
   return useQuery({
-    queryKey: ['admin-simulations', page, subjectId, classId, searchQuery, chapterId],
+    queryKey: ['admin-simulations', page, subjectId, classId, searchQuery, chapterId, status],
     queryFn: async () => {
       let query = supabase
         .from('all_simulations')
@@ -21,6 +21,10 @@ export const useSimulations = (page, pageSize = 20, subjectId, classId, searchQu
 
       if (chapterId) {
         query = query.eq('chapter_id', chapterId);
+      }
+
+      if (status) {
+        query = query.eq('status', status);
       }
 
       if (searchQuery) {

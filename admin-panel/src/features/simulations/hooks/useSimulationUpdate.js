@@ -47,7 +47,7 @@ export function useSimulationUpdate(state, subjects, classes) {
         state.setGeneratedHtml(cleanedHtml);
       }
 
-      toast.info("Preview updated! Click 'Update to Student App' to save changes to the database.");
+      toast.info("Preview updated! Click 'Save' to keep the changes.");
     } catch (err) {
       console.error('Update error:', err);
       toast.error(err.message);

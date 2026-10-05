@@ -1,16 +1,18 @@
 import { supabase } from './supabase';
 import { toast } from 'sonner';
 
-export const checkAdminStatus = async (userId, setIsAdmin, setLoading) => {
+// studio_role is the Content Studio role: author, reviewer or platform_admin.
+export const checkAdminStatus = async (userId, setIsAdmin, setLoading, setStudioRole = () => {}) => {
   try {
     const { data } = await supabase
       .from('admin_users')
-      .select('id')
+      .select('id, studio_role')
       .eq('id', userId)
       .single();
     
     if (data) {
       setIsAdmin(true);
+      setStudioRole(data.studio_role);
     } else {
       setIsAdmin(false);
       await supabase.auth.signOut();

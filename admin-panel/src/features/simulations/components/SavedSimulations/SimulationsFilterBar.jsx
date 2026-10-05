@@ -1,5 +1,6 @@
 import { Database, Search } from 'lucide-react';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
+import { STATUS_OPTIONS } from '../../utils/simulationStatus';
 
 export default function SimulationsFilterBar({
   searchQuery,
@@ -13,6 +14,8 @@ export default function SimulationsFilterBar({
   chapters,
   selectedChapterId,
   setSelectedChapterId,
+  selectedStatus,
+  setSelectedStatus,
   setPage
 }) {
   return (
@@ -83,6 +86,19 @@ export default function SimulationsFilterBar({
               placeholder={selectedSubjectId ? 'All Chapters' : 'Select Subject First'}
               defaultIcon="BookOpen"
               disabled={!selectedSubjectId}
+            />
+          </div>
+
+          <div className="col-span-2 xl:col-span-1 xl:w-36 z-0">
+            <FilterDropdown
+              options={STATUS_OPTIONS}
+              value={selectedStatus}
+              onChange={(val) => {
+                setSelectedStatus(val);
+                setPage(1);
+              }}
+              placeholder="Any status"
+              defaultIcon="ListChecks"
             />
           </div>
         </div>

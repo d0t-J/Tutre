@@ -6,6 +6,7 @@ import { AuthContext } from './AuthContext';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [studioRole, setStudioRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       currentUserId = session?.user?.id;
       setUser(session?.user ?? null);
       if (session?.user) {
-        checkAdminStatus(session.user.id, setIsAdmin, setLoading);
+        checkAdminStatus(session.user.id, setIsAdmin, setLoading, setStudioRole);
       } else {
         setLoading(false);
       }
@@ -29,10 +30,11 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         if (event === 'SIGNED_IN' || isDifferentUser) {
           if (isDifferentUser) setLoading(true);
-          checkAdminStatus(session.user.id, setIsAdmin, setLoading);
+          checkAdminStatus(session.user.id, setIsAdmin, setLoading, setStudioRole);
         }
       } else {
         setIsAdmin(false);
+        setStudioRole(null);
         setLoading(false);
       }
     });
@@ -44,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => logoutApi();
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, isAdmin, studioRole, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

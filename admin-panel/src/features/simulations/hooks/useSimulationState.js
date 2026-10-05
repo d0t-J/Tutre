@@ -34,6 +34,9 @@ export function useSimulationState(classesData) {
   const [loadedSubjectId, setLoadedSubjectId] = useState(null);
   const [loadedSubjectSlug, setLoadedSubjectSlug] = useState(null);
   const [loadedChapterId, setLoadedChapterId] = useState(null);
+  // Review status of the loaded simulation: draft, in_review, published or archived.
+  const [loadedStatus, setLoadedStatus] = useState(null);
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
 
   // Track original loaded values to detect unsaved changes
   const [loadedTopic, setLoadedTopic] = useState('');
@@ -85,6 +88,8 @@ export function useSimulationState(classesData) {
     loadedSubjectId, setLoadedSubjectId,
     loadedSubjectSlug, setLoadedSubjectSlug,
     loadedChapterId, setLoadedChapterId,
+    loadedStatus, setLoadedStatus,
+    isChangingStatus, setIsChangingStatus,
     loadedTopic, setLoadedTopic,
     loadedClassId, setLoadedClassId,
     loadedHtml, setLoadedHtml,

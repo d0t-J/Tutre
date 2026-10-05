@@ -9,6 +9,7 @@ import { useSimulationSuggestions } from '../hooks/useSimulationSuggestions';
 import { useSimulationUpdate } from '../hooks/useSimulationUpdate';
 import { useSimulationStorage } from '../hooks/useSimulationStorage';
 import { useSimulationManagement } from '../hooks/useSimulationManagement';
+import { useSimulationStatus } from '../hooks/useSimulationStatus';
 import { useHtmlUpload } from '../hooks/useHtmlUpload';
 import { useHtmlDetailsExtraction } from '../hooks/useHtmlDetailsExtraction';
 
@@ -34,6 +35,7 @@ export const SimulationProvider = ({ children }) => {
   const updateActions = useSimulationUpdate(state, subjects, classes);
   const storageActions = useSimulationStorage(state, navigate, queryClient, subjects);
   const managementActions = useSimulationManagement(state, navigate, queryClient);
+  const statusActions = useSimulationStatus(state, queryClient);
   const uploadActions = useHtmlUpload(state);
   const extractionActions = useHtmlDetailsExtraction(state);
 
@@ -46,6 +48,7 @@ export const SimulationProvider = ({ children }) => {
     ...updateActions,
     ...storageActions,
     ...managementActions,
+    ...statusActions,
     ...uploadActions,
     ...extractionActions
   };

@@ -24,6 +24,7 @@ export function useSimulationManagement(state, navigate, queryClient) {
     state.setSaveSuccess(false);
     state.setIsLoadedFromSaved(true);
     state.setLoadedSimId(sim.sim_id);
+    state.setLoadedStatus(sim.status ?? null);
     state.setLoadedTopicId(sim.topic_id);
     state.setLoadedSubjectId(sim.subject_id);
     state.setLoadedChapterId(sim.chapter_id);
@@ -38,13 +39,18 @@ export function useSimulationManagement(state, navigate, queryClient) {
 
   const deleteSimulation = async (sim) => {
     try {
-      // subject_slug comes from the all_simulations view and is the identifier
-      // the payload table is named after.
-      if (!sim.subject_slug) throw new Error('Simulation is missing its subject slug.');
-      const tableName = `${sim.subject_slug}_simulations`;
-
-      const { error: simError } = await supabase.from(tableName).delete().eq('id', sim.sim_id);
+      // Delete the simulation first: the database decides whether this Studio
+      // member may (reviewers may delete anything, authors only their own drafts).
+      // Only then remove its topic.
+      const { data: deleted, error: simError } = await supabase
+        .from('simulations')
+        .delete()
+        .eq('id', sim.sim_id)
+        .select('id');
       if (simError) throw simError;
+      if (!deleted || deleted.length === 0) {
+        throw new Error('You can only delete your own drafts. Ask a reviewer to delete this one.');
+      }
 
       const { error: topicError } = await supabase.from('topics').delete().eq('id', sim.topic_id);
       if (topicError) throw topicError;
@@ -70,6 +76,7 @@ export function useSimulationManagement(state, navigate, queryClient) {
     state.setIsLoadedFromSaved(false);
     state.setDimension('2D');
     state.setLoadedSimId(null);
+    state.setLoadedStatus(null);
     state.setLoadedTopicId(null);
     state.setLoadedSubjectId(null);
     state.setLoadedChapterId(null);
