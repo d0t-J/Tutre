@@ -7,12 +7,21 @@ import Logo from '../../assets/tutre_new_logo.png';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
 import ClassNavMenu from './ClassNavMenu';
 import { useProfile } from '../../features/profile';
+import { useMyRoles } from '../../features/school';
 
 export default function TopNavbar() {
   const [classes, setClasses] = useState([]);
   const { user, logout } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const { data: profile } = useProfile();
+  const { data: roles } = useMyRoles();
+
+  // School links depend on the user's roles; Join shows until they are in a school.
+  const roleLinks = [
+    roles?.adminOrgs.length > 0 && { to: '/school', icon: Icons.School, label: 'My school' },
+    roles?.isTeacher && { to: '/teaching', icon: Icons.Presentation, label: 'My sections' },
+    roles && !roles.hasSchool && { to: '/join', icon: Icons.KeyRound, label: 'Join a class' },
+  ].filter(Boolean);
   
   useEffect(() => {
     async function fetchClasses() {
@@ -45,6 +54,22 @@ export default function TopNavbar() {
 
       {/* Right: User Menu */}
       <div className="flex items-center gap-3 shrink-0">
+        {roleLinks.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            title={label}
+            className={({ isActive }) =>
+              `flex items-center gap-1.5 p-2 rounded-lg text-xs font-bold transition-colors ${
+                isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100'
+              }`
+            }
+          >
+            <Icon className="w-4 h-4 shrink-0" />
+            <span className="hidden xl:inline whitespace-nowrap">{label}</span>
+          </NavLink>
+        ))}
+
         <NavLink
           to="/profile"
           title="Your profile"

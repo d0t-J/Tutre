@@ -1,3 +1,4 @@
+export { default as ConfirmationModal } from './ConfirmationModal';
 export { default as DotField } from './DotField';
 export { default as EmptyState } from './EmptyState';
 export { default as ResponsiveSimulationFrame } from './ResponsiveSimulationFrame';

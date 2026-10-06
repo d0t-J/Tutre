@@ -9,6 +9,9 @@ import Dashboard from '../pages/Dashboard/Dashboard';
 
 const SimulationViewer = lazy(() => import('../pages/Simulations/SimulationViewer'));
 const Profile = lazy(() => import('../pages/Profile/Profile'));
+const Join = lazy(() => import('../pages/Join/Join'));
+const Teaching = lazy(() => import('../pages/Teaching/Teaching'));
+const School = lazy(() => import('../pages/School/School'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -27,6 +30,21 @@ export default function AppRoutes() {
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="/join" element={
+          <ProtectedRoute>
+            <Join />
+          </ProtectedRoute>
+        } />
+        <Route path="/teaching" element={
+          <ProtectedRoute>
+            <Teaching />
+          </ProtectedRoute>
+        } />
+        <Route path="/school" element={
+          <ProtectedRoute>
+            <School />
           </ProtectedRoute>
         } />
         <Route path="/class/:classSlug" element={

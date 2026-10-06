@@ -1,4 +1,5 @@
-import { School, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { KeyRound, School, Users } from 'lucide-react';
 
 const ROLE_LABELS = {
   org_admin: 'School admin',
@@ -31,12 +32,23 @@ function SectionRow({ section }) {
   );
 }
 
+function JoinLink({ label }) {
+  return (
+    <Link to="/join" className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 hover:underline">
+      <KeyRound className="w-4 h-4" /> {label}
+    </Link>
+  );
+}
+
 export default function SchoolCard({ schools }) {
   if (schools.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
-        You are not part of a school on Tutre yet. You can still use every published simulation.
-      </p>
+      <div className="space-y-2">
+        <p className="text-sm text-slate-500">
+          You are not part of a school on Tutre yet. You can still use every published simulation.
+        </p>
+        <JoinLink label="Join with a code from your school" />
+      </div>
     );
   }
 
@@ -65,6 +77,7 @@ export default function SchoolCard({ schools }) {
           )}
         </div>
       ))}
+      <JoinLink label="Join another class with a code" />
     </div>
   );
 }
