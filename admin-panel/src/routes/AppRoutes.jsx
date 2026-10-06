@@ -10,6 +10,7 @@ const CreateSimulation = lazy(() => import('../pages/Simulations/CreateSimulatio
 const SavedSimulationsPage = lazy(() => import('../pages/Simulations/SavedSimulationsPage'));
 const CurriculumManager = lazy(() => import('../pages/Curriculum/CurriculumManager'));
 const ProfilePage = lazy(() => import('../pages/Profile/ProfilePage'));
+const OrganizationsPage = lazy(() => import('../pages/Organizations/OrganizationsPage'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -51,6 +52,11 @@ export default function AppRoutes() {
                 <Suspense fallback={<CurriculumSkeleton />}>
                   <CurriculumManager />
                 </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/organizations" element={
+              <ProtectedRoute>
+                <OrganizationsPage />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={

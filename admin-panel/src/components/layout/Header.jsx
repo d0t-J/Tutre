@@ -43,7 +43,7 @@ export default function Header() {
             title="Classic View"
           >
             <LayoutDashboard className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
-            <span className="hidden sm:inline">Classic</span>
+            <span className="hidden sm:inline lg:hidden xl:inline">Classic</span>
           </button>
           <button
             onClick={() => setViewMode('wizard')}
@@ -52,7 +52,7 @@ export default function Header() {
             title="Wizard View"
           >
             <Wand2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
-            <span className="hidden sm:inline">Wizard</span>
+            <span className="hidden sm:inline lg:hidden xl:inline">Wizard</span>
           </button>
         </div>
 
@@ -73,9 +73,11 @@ export default function Header() {
         {/* Desktop Logout */}
         <button 
           onClick={() => setIsLogoutModalOpen(true)}
+          title="Logout"
+          aria-label="Logout"
           className="hidden lg:flex cursor-pointer items-center whitespace-nowrap shrink-0 gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-red-600 bg-red-50 hover:bg-red-100"
         >
-          <LogOut className="w-4 h-4" /> Logout
+          <LogOut className="w-4 h-4" /> <span className="hidden xl:inline">Logout</span>
         </button>
 
         {/* Hamburger Toggle (Mobile Only) */}

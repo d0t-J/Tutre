@@ -1,13 +1,17 @@
 import { NavLink } from 'react-router-dom';
-import { Wand2, Database, Library, UserRound } from 'lucide-react';
+import { Wand2, Database, Library, School, UserRound } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 
 // The desktop header shows Profile as an icon next to Logout; the mobile menu
 // lists it with the other links.
 export default function NavLinks({ onLinkClick, showProfile = false }) {
+  const { studioRole } = useAuth();
   const links = [
     { to: '/', icon: Wand2, label: 'Create Animation', end: true },
     { to: '/saved', icon: Database, label: 'Saved Simulations' },
     { to: '/curriculum', icon: Library, label: 'Curriculum' },
+    // Schools are managed by platform admins only.
+    ...(studioRole === 'platform_admin' ? [{ to: '/organizations', icon: School, label: 'Schools' }] : []),
     ...(showProfile ? [{ to: '/profile', icon: UserRound, label: 'Profile' }] : [])
   ];
 
