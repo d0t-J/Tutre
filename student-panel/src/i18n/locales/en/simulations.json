@@ -1,0 +1,53 @@
+{
+  "loader": {
+    "title": "Initializing...",
+    "message": "Preparing interactive environment",
+    "loadingTitle": "Loading Simulation...",
+    "loadingMessage": "Fetching data from server"
+  },
+  "tabs": {
+    "guide": "Guide",
+    "tutor": "AI Tutor"
+  },
+  "header": {
+    "subjectSimulation": "{{subject}} Simulation"
+  },
+  "guide": {
+    "title": "Simulation Details",
+    "empty": "No description provided."
+  },
+  "tutor": {
+    "thinking": "Thinking...",
+    "placeholder": "Ask about this simulation...",
+    "send": "Send",
+    "greeting": "Hello! I am your AI tutor for **{{topic}}**. Do you have any questions about this simulation or topic?",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "dailyLimit": "You have reached today's limit of tutor messages. Please try again tomorrow.",
+    "connectionError": "I'm sorry, I'm having trouble connecting right now. Please try again later."
+  },
+  "export": {
+    "word": "Notes",
+    "wordTitle": "Download notes (Word)",
+    "pdf": "PDF",
+    "pdfTitle": "Print or download as PDF",
+    "noGuide": "No study guide found for this simulation.",
+    "wordDone": "Study guide exported to Word.",
+    "failed": "Could not create the study guide. Please try again."
+  },
+  "whatsapp": {
+    "button": "Send to WhatsApp",
+    "send": "Send",
+    "phone": "Phone number...",
+    "enterNumber": "Please enter a WhatsApp number.",
+    "sent": "Notes sent to WhatsApp.",
+    "failed": "Could not send the WhatsApp message."
+  },
+  "frame": {
+    "emptyTitle": "No simulation selected",
+    "emptyMessage": "This simulation has no content yet."
+  },
+  "viewer": {
+    "notFound": "Simulation not found",
+    "backToDashboard": "Return to Dashboard"
+  }
+}

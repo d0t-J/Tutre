@@ -1,0 +1,51 @@
+{
+  "stats": {
+    "simulations": "Simulations",
+    "subjects": "Subjects",
+    "interactive": "Interactive"
+  },
+  "hero": {
+    "eyebrow": "Interactive STEM Learning",
+    "title": "Experience Science & Math",
+    "titleHighlight": "like never before.",
+    "message": "Manipulate variables in real-time, visualize complex theories, and learn directly alongside an AI-powered tutor built for curious minds.",
+    "cta": "Get Started Free"
+  },
+  "features": {
+    "eyebrow": "Core Benefits",
+    "title": "Everything you need to master STEM.",
+    "interactive": {
+      "title": "100% Interactive",
+      "description": "Manipulate variables in real-time and immediately visualize complex theories in action."
+    },
+    "tutor": {
+      "title": "AI-Powered Tutor",
+      "description": "Learn directly alongside a smart assistant that guides you step-by-step through tough concepts."
+    },
+    "curriculum": {
+      "title": "Curriculum Aligned",
+      "description": "Master subjects across Physics, Chemistry, Math, and Biology with structured, rigorous content."
+    },
+    "devices": {
+      "title": "Cross-Platform",
+      "description": "Flawless experience across massive desktop screens, tablets, and your mobile phone."
+    }
+  },
+  "preview": {
+    "eyebrow": "Inside the Portal",
+    "title": "Learn by doing, not just watching.",
+    "message": "Our interactive modules put you in the driver's seat. Manipulate variables, observe molecular structures, and watch complex STEM concepts come to life instantly in real-time.",
+    "points": {
+      "visual": "Interactive visual simulations",
+      "variables": "Real-time variable manipulation",
+      "tutor": "Side-by-side AI assistance"
+    },
+    "windowTitle": "Chemistry / {{title}}"
+  },
+  "footer": {
+    "title": "Ready to explore the universe?",
+    "message": "Join thousands of students mastering STEM subjects through real-time interactive simulations.",
+    "cta": "Create Free Account",
+    "copyright": "© {{year}} Tutre. All rights reserved."
+  }
+}

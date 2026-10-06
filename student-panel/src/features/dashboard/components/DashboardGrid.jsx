@@ -1,10 +1,12 @@
 import * as Icons from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { SimulationCard } from '../../../features/simulations';
 import { EmptyState } from '../../../components/common';
 import { slugify } from '../../../utils/slugify';
 import { FALLBACK_MAP } from '../hooks/useSubjectIcon';
 
 export default function DashboardGrid({ status, subjectIcon, simulations, isFetchingNextPage, lastElementRef }) {
+  const { t } = useTranslation('dashboard');
   if (status === 'pending' || !subjectIcon) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
@@ -19,7 +21,7 @@ export default function DashboardGrid({ status, subjectIcon, simulations, isFetc
   if (status === 'error') {
     return (
       <div className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-red-200 text-red-500 font-medium text-lg">
-        Error loading simulations. Please try again.
+        {t('simulations.error')}
       </div>
     );
   }
@@ -27,7 +29,7 @@ export default function DashboardGrid({ status, subjectIcon, simulations, isFetc
   if (simulations.length === 0) {
     return (
       <EmptyState 
-        message="We couldn't find any simulations matching your criteria. Try selecting a different class or clearing your search." 
+        message={t('simulations.emptyMessage')} 
       />
     );
   }

@@ -1,9 +1,11 @@
 import { Send, Bot, Brain } from 'lucide-react';
 import ChatMessage from './ChatMessage';
+import { useTranslation } from 'react-i18next';
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 import { useChatbotStream } from '../hooks/useChatbotStream';
 
 export default function Chatbot({ className = "" }) {
+  const { t } = useTranslation('simulations');
   const { simulation, messages, setMessages } = useSimulationViewer();
   const { topic, description: details } = simulation;
 
@@ -27,9 +29,9 @@ export default function Chatbot({ className = "" }) {
             <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
               <Bot className="w-4 h-4" />
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center gap-2">
+            <div className="bg-white border border-slate-200 rounded-2xl rounded-ss-none px-4 py-3 shadow-sm flex items-center gap-2">
               <Brain className="w-4 h-4 text-primary-400 animate-pulse" />
-              <span className="text-xs text-slate-500 font-medium animate-pulse">Thinking...</span>
+              <span className="text-xs text-slate-500 font-medium animate-pulse">{t('tutor.thinking')}</span>
             </div>
           </div>
         )}
@@ -43,16 +45,18 @@ export default function Chatbot({ className = "" }) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about this simulation..."
+            dir="auto"
+            placeholder={t('tutor.placeholder')}
             className="flex-1 bg-slate-100 border-transparent focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-200 rounded-xl px-4 py-3 text-sm transition-all"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
+            aria-label={t('tutor.send')}
             className="bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl p-3 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-5 h-5 rtl:-scale-x-100" />
           </button>
         </form>
       </div>

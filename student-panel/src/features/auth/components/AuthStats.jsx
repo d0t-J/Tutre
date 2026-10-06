@@ -1,10 +1,13 @@
+import { useTranslation } from 'react-i18next';
+
 export default function AuthStats({ loaded }) {
+  const { t } = useTranslation('landing');
   return (
     <div className={`w-full flex flex-wrap justify-center items-center gap-2 sm:gap-4 pointer-events-auto transition-all duration-1000 delay-300 ${loaded ? 'animate-fade-in-up' : 'opacity-0 translate-y-6'}`}>
       {[
-        { label: 'Simulations', value: '50+' },
-        { label: 'Subjects', value: '4' },
-        { label: 'Interactive', value: '100%' },
+        { label: t('stats.simulations'), value: '50+' },
+        { label: t('stats.subjects'), value: '4' },
+        { label: t('stats.interactive'), value: '100%' },
       ].map((stat, i) => (
         <div key={i} className="flex items-center gap-1.5 bg-white/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/50 shadow-sm">
           <span className="text-xs sm:text-sm font-bold text-primary-700">{stat.value}</span>

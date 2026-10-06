@@ -130,6 +130,30 @@ depth. Do not re-enable them.
 
 ---
 
+## Interface text: English and Urdu
+
+The student panel is bilingual (react-i18next). Text shown to users never goes
+straight into a component.
+
+- Put every string in `student-panel/src/i18n/locales/en/<namespace>.json` **and**
+  the matching `ur/<namespace>.json`, then use `t('key')` in the component. A key
+  missing from `ur` falls back to English, which is a bug, not a feature.
+- New Urdu text needs a check by a native speaker before release; say so in the
+  pull request if nobody has checked it yet.
+- Numbers stay in Western digits (0-9) in Urdu too. Dates go through
+  `formatDate` from `src/i18n`.
+- Urdu is right to left. Use logical Tailwind classes (`ms-`, `me-`, `ps-`,
+  `pe-`, `start-`, `end-`, `text-start`, `text-end`) instead of `ml-`/`mr-`/
+  `left-`/`right-`, and add `rtl:-scale-x-100` to arrow icons that point
+  forward or back.
+- Wrap names and other database values shown next to text in `<bdi>`, so a
+  section called "9-A" is not reordered inside an Urdu sentence. Values passed
+  to `t()` are isolated automatically.
+- Simulations always render left to right inside their frame; do not change the
+  frame's `dir`.
+
+---
+
 ## Database changes
 
 The Supabase project is shared and holds real content. Treat it accordingly.

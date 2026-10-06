@@ -22,15 +22,16 @@ export default function ChatMessage({ msg }) {
       }`}>
         {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
       </div>
-      <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm text-sm ${
+      <div dir="auto" className={`max-w-[80%] rounded-2xl p-4 shadow-sm text-sm ${
         msg.role === 'user' 
-          ? 'bg-primary-600 text-white rounded-tr-none' 
-          : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
+          ? 'bg-primary-600 text-white rounded-se-none' 
+          : 'bg-white border border-slate-200 text-slate-700 rounded-ss-none'
       }`}>
         {msg.role === 'user' ? (
-          <p className="whitespace-pre-wrap">{msg.content}</p>
+          <p dir="auto" className="whitespace-pre-wrap">{msg.content}</p>
         ) : (
           <div 
+            dir="auto"
             className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-slate-800 prose-pre:text-slate-50"
             dangerouslySetInnerHTML={{ __html: renderedContent }}
           />

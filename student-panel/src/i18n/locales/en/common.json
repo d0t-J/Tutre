@@ -1,0 +1,65 @@
+{
+  "brand": {
+    "student": "Student",
+    "studentPortal": "Student Portal"
+  },
+  "nav": {
+    "mySchool": "My school",
+    "mySections": "My sections",
+    "join": "Join a class",
+    "profile": "Your profile",
+    "logout": "Log out",
+    "login": "Log in",
+    "class": "Class"
+  },
+  "language": {
+    "switch": "Switch to Urdu"
+  },
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "edit": "Edit",
+    "remove": "Remove",
+    "search": "Search..."
+  },
+  "status": {
+    "loading": "Loading...",
+    "saved": "Saved"
+  },
+  "empty": {
+    "title": "No simulations found",
+    "message": "We couldn't find any simulations matching your criteria."
+  },
+  "logout": {
+    "title": "Sign out",
+    "message": "Are you sure you want to end your session?",
+    "confirm": "Sign out"
+  },
+  "confirm": {
+    "title": "Are you sure?",
+    "message": "This action cannot be undone."
+  },
+  "roles": {
+    "org_admin": "School admin",
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent"
+  },
+  "list": {
+    "separator": ", "
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "invalidCode": "This code is not valid. Ask your school for a new one.",
+    "permission": "You don't have permission to do that.",
+    "lastAdmin": "A school must keep at least one school admin.",
+    "notSchoolMember": "This person is not an active member of the school in that role.",
+    "codeDays": "A code can be valid for 1 to 90 days.",
+    "codeUses": "A code can be used 1 to 1000 times.",
+    "signIn": "Your session has expired. Please sign in again.",
+    "duplicate": "That already exists."
+  }
+}

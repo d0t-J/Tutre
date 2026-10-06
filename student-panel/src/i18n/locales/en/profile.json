@@ -1,0 +1,31 @@
+{
+  "title": "Your profile",
+  "loadFailed": "Could not load your profile. Please refresh the page.",
+  "notFound": "Your profile could not be found. Please contact support.",
+  "form": {
+    "email": "Email",
+    "name": "Name",
+    "nameRequired": "Enter your name.",
+    "nameHint": "Your school and teachers see this name.",
+    "class": "Class",
+    "notSet": "Not set",
+    "language": "Language",
+    "languageHint": "Tutre uses this language on every device you sign in to.",
+    "save": "Save changes",
+    "upToDate": "Saved",
+    "saved": "Profile saved.",
+    "saveFailed": "Could not save your profile."
+  },
+  "school": {
+    "title": "Your school",
+    "loadFailed": "Could not load your school. Please refresh the page.",
+    "none": "You are not part of a school on Tutre yet. You can still use every published simulation.",
+    "join": "Join with a code from your school",
+    "joinAnother": "Join another class with a code",
+    "suspended": "Suspended",
+    "noSections": "No sections yet.",
+    "youTeach": "You teach",
+    "taughtBy": "Taught by {{teachers}}",
+    "alsoTaughtBy": "Also taught by {{teachers}}"
+  }
+}

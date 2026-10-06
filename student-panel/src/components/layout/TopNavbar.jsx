@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import * as Icons from 'lucide-react';
 import { supabase } from '../../services/supabase';
 import { useAuth } from '../../features/auth';
 import Logo from '../../assets/tutre_new_logo.png';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 import ClassNavMenu from './ClassNavMenu';
 import { useProfile } from '../../features/profile';
 import { useMyRoles } from '../../features/school';
 
 export default function TopNavbar() {
+  const { t } = useTranslation();
   const [classes, setClasses] = useState([]);
   const { user, logout } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -18,9 +21,9 @@ export default function TopNavbar() {
 
   // School links depend on the user's roles; Join shows until they are in a school.
   const roleLinks = [
-    roles?.adminOrgs.length > 0 && { to: '/school', icon: Icons.School, label: 'My school' },
-    roles?.isTeacher && { to: '/teaching', icon: Icons.Presentation, label: 'My sections' },
-    roles && !roles.hasSchool && { to: '/join', icon: Icons.KeyRound, label: 'Join a class' },
+    roles?.adminOrgs.length > 0 && { to: '/school', icon: Icons.School, label: t('nav.mySchool') },
+    roles?.isTeacher && { to: '/teaching', icon: Icons.Presentation, label: t('nav.mySections') },
+    roles && !roles.hasSchool && { to: '/join', icon: Icons.KeyRound, label: t('nav.join') },
   ].filter(Boolean);
   
   useEffect(() => {
@@ -38,12 +41,12 @@ export default function TopNavbar() {
 
   return (
     <header className="relative bg-white border-b border-slate-200 h-15 shrink-0 z-40 px-4 flex items-center justify-between">
-      {/* Left: Logo */}
+      {/* Start: Logo */}
       <NavLink to="/dashboard" className="flex items-center gap-2.5 shrink-0 hover:bg-slate-50 transition-colors p-1 rounded-lg">
         <img src={Logo} alt="Tutre" className="h-[33px] w-auto object-contain shrink-0" />
         <div className="hidden sm:flex flex-col justify-center">
           <h1 className="text-xl font-extrabold text-[#62748d] tracking-tight leading-none mb-0.5">Tutre</h1>
-          <p className="text-[10px] text-primary-600 font-bold uppercase tracking-wider">Student</p>
+          <p className="text-[10px] text-primary-600 font-bold uppercase tracking-wider">{t('brand.student')}</p>
         </div>
       </NavLink>
 
@@ -52,8 +55,10 @@ export default function TopNavbar() {
         <ClassNavMenu classes={classes} />
       </nav>
 
-      {/* Right: User Menu */}
+      {/* End: User Menu */}
       <div className="flex items-center gap-3 shrink-0">
+        <LanguageSwitcher className="[&>span]:hidden xl:[&>span]:inline" />
+
         {roleLinks.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -72,7 +77,7 @@ export default function TopNavbar() {
 
         <NavLink
           to="/profile"
-          title="Your profile"
+          title={t('nav.profile')}
           className={({ isActive }) =>
             `flex items-center gap-2 p-2 rounded-lg transition-colors ${
               isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100'
@@ -88,7 +93,8 @@ export default function TopNavbar() {
         <button
           onClick={() => setIsLogoutModalOpen(true)}
           className="cursor-pointer flex items-center justify-center p-2 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
-          title="Logout"
+          title={t('nav.logout')}
+          aria-label={t('nav.logout')}
         >
           <Icons.LogOut className="w-4 h-4" />
         </button>

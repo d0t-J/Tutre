@@ -1,9 +1,11 @@
 import { BookOpen, MessageCircle } from 'lucide-react';
 import Chatbot from './Chatbot';
 import GuidePanel from './GuidePanel';
+import { useTranslation } from 'react-i18next';
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 
 export default function SimulationTabs({ className = "" }) {
+  const { t } = useTranslation('simulations');
   const { activeTab, setActiveTab } = useSimulationViewer();
 
   return (
@@ -14,14 +16,14 @@ export default function SimulationTabs({ className = "" }) {
           className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${activeTab === 'guide' ? 'text-primary-600 border-b-2 border-primary-600 bg-primary-50/50' : 'text-slate-500 hover:bg-slate-50'}`}
         >
           <BookOpen className="w-4 h-4" />
-          Guide
+          {t('tabs.guide')}
         </button>
         <button
           onClick={() => setActiveTab('chat')}
           className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${activeTab === 'chat' ? 'text-primary-600 border-b-2 border-primary-600 bg-primary-50/50' : 'text-slate-500 hover:bg-slate-50'}`}
         >
           <MessageCircle className="w-4 h-4" />
-          AI Tutor
+          {t('tabs.tutor')}
         </button>
       </div>
 

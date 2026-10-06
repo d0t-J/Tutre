@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import i18n from '../../../i18n';
 import html2canvas from 'html2canvas';
 import { preprocessLegacyMath } from '../../../utils/mathPreprocessor';
 
@@ -10,7 +11,7 @@ export function useStudyGuideGenerator(simulation, _messages, iframeRef) {
     if (!simulation) return null;
 
     if (!simulation.study_guide || !simulation.study_guide.trim()) {
-      toast.error('No study guide found for this simulation.');
+      toast.error(i18n.t('simulations:export.noGuide'));
       return null;
     }
 
@@ -34,7 +35,7 @@ export function useStudyGuideGenerator(simulation, _messages, iframeRef) {
       return { htmlContent, snapshotDataUrl };
     } catch (err) {
       console.error('Failed to generate Study Guide data:', err);
-      toast.error('Failed to generate Study Guide. Please try again.');
+      toast.error(i18n.t('simulations:export.failed'));
       return null;
     } finally {
       setIsGeneratingPDF(false);

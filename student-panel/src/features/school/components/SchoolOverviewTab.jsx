@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { Loader2, Save } from 'lucide-react';
 import { useRenameSchool } from '../hooks/useSchoolActions';
+import { translateError } from '../../../i18n/errors';
 import { codeState, inputClass, labelClass, primaryButtonClass } from '../utils/school';
 
 function Stat({ label, value }) {
@@ -14,12 +16,13 @@ function Stat({ label, value }) {
 }
 
 export default function SchoolOverviewTab({ data }) {
+  const { t } = useTranslation('school');
   const { school, members, sections, codes } = data;
   const [name, setName] = useState(school.name);
   const rename = useRenameSchool();
 
   const trimmed = name.trim();
-  const nameError = trimmed.length < 2 ? 'Use at least 2 characters.' : null;
+  const nameError = trimmed.length < 2 ? t('overview.nameTooShort') : null;
   const isDirty = trimmed !== school.name;
   const count = (role) => members.filter(m => m.role === role && m.status === 'active').length;
 
@@ -29,8 +32,8 @@ export default function SchoolOverviewTab({ data }) {
     rename.mutate(
       { orgId: school.id, name: trimmed },
       {
-        onSuccess: () => toast.success('School name saved.'),
-        onError: (err) => toast.error(err.message || 'Could not rename the school.'),
+        onSuccess: () => toast.success(t('overview.renamed')),
+        onError: (err) => toast.error(translateError(err, t, 'overview.renameFailed')),
       }
     );
   };
@@ -38,18 +41,19 @@ export default function SchoolOverviewTab({ data }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Stat label="Students" value={count('student')} />
-        <Stat label="Teachers" value={count('teacher')} />
-        <Stat label="Sections" value={sections.filter(s => !s.archived).length} />
-        <Stat label="Active codes" value={codes.filter(c => codeState(c) === 'active').length} />
+        <Stat label={t('overview.students')} value={count('student')} />
+        <Stat label={t('overview.teachers')} value={count('teacher')} />
+        <Stat label={t('overview.sections')} value={sections.filter(s => !s.archived).length} />
+        <Stat label={t('overview.activeCodes')} value={codes.filter(c => codeState(c) === 'active').length} />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3 max-w-md">
         <div>
-          <label htmlFor="school-name" className={labelClass}>School name</label>
+          <label htmlFor="school-name" className={labelClass}>{t('overview.schoolName')}</label>
           <input
             id="school-name"
             type="text"
+            dir="auto"
             maxLength={120}
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -59,7 +63,7 @@ export default function SchoolOverviewTab({ data }) {
         </div>
         <button type="submit" disabled={!isDirty || !!nameError || rename.isPending} className={primaryButtonClass}>
           {rename.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          {isDirty ? 'Save name' : 'Saved'}
+          {isDirty ? t('overview.saveName') : t('common:status.saved')}
         </button>
       </form>
     </div>

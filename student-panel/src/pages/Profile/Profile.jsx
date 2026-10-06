@@ -1,4 +1,5 @@
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../features/auth';
 import { ProfileForm, SchoolCard, useProfile, useClassOptions, useMySchool } from '../../features/profile';
 
@@ -12,14 +13,16 @@ function Card({ title, children }) {
 }
 
 function Loading() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 text-sm text-slate-500">
-      <Loader2 className="w-4 h-4 animate-spin" /> Loading...
+      <Loader2 className="w-4 h-4 animate-spin" /> {t('status.loading')}
     </div>
   );
 }
 
 export default function Profile() {
+  const { t } = useTranslation('profile');
   const { user } = useAuth();
   const profile = useProfile();
   const classes = useClassOptions();
@@ -27,23 +30,23 @@ export default function Profile() {
 
   return (
     <div className="max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-      <Card title="Your profile">
+      <Card title={t('title')}>
         {profile.isLoading || classes.isLoading ? (
           <Loading />
         ) : profile.error || classes.error ? (
-          <p className="text-sm text-red-600">Could not load your profile. Please refresh the page.</p>
+          <p className="text-sm text-red-600">{t('loadFailed')}</p>
         ) : !profile.data ? (
-          <p className="text-sm text-red-600">Your profile could not be found. Please contact support.</p>
+          <p className="text-sm text-red-600">{t('notFound')}</p>
         ) : (
           <ProfileForm profile={profile.data} email={user?.email} classes={classes.data} />
         )}
       </Card>
 
-      <Card title="Your school">
+      <Card title={t('school.title')}>
         {school.isLoading ? (
           <Loading />
         ) : school.error ? (
-          <p className="text-sm text-red-600">Could not load your school. Please refresh the page.</p>
+          <p className="text-sm text-red-600">{t('school.loadFailed')}</p>
         ) : (
           <SchoolCard schools={school.data} />
         )}

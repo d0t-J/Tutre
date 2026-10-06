@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next';
+
 export default function ViewerIframeSkeleton() {
+  const { t } = useTranslation('simulations');
   return (
     <div className="flex-none xl:flex-1 w-full xl:w-auto xl:h-full relative overflow-hidden items-center justify-center flex flex-col min-w-0 min-h-0 bg-slate-50 border border-slate-200 rounded-xl shadow-sm shrink-0">
       <div className="w-full h-full bg-slate-50 flex items-center justify-center relative overflow-hidden">
@@ -10,9 +13,9 @@ export default function ViewerIframeSkeleton() {
                <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-slate-400 animate-spin"></div>
             </div>
           </div>
-          <h3 className="text-xl font-bold text-slate-800 mb-1.5 mt-2">Loading Simulation...</h3>
+          <h3 className="text-xl font-bold text-slate-800 mb-1.5 mt-2">{t('loader.loadingTitle')}</h3>
           <p className="text-sm font-medium text-slate-500 animate-pulse max-w-50 text-center">
-            Fetching data from server
+            {t('loader.loadingMessage')}
           </p>
         </div>
       </div>

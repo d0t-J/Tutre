@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 import { preprocessLegacyMath } from '../../../utils/mathPreprocessor';
 import { sanitizeHTML } from '../../../utils/sanitizeHTML';
 
 export default function GuidePanel({ className = "" }) {
+  const { t } = useTranslation('simulations');
   const { simulation } = useSimulationViewer();
   const description = simulation?.description;
 
   const processedDescription = useMemo(() => {
     if (!description) {
-      return 'No description provided.';
+      return '';
     }
 
     let html = preprocessLegacyMath(description);
@@ -25,9 +27,11 @@ export default function GuidePanel({ className = "" }) {
       <div className="flex-1 overflow-y-auto relative p-6 xl:p-8">
         <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
           <span className="bg-primary-100 text-primary-700 w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm">i</span>
-          Simulation Details
+          {t('guide.title')}
         </h2>
+        {!description && <p className="text-sm text-slate-500">{t('guide.empty')}</p>}
         <div
+          dir="auto"
           className="prose prose-slate prose-primary prose-sm max-w-none text-slate-700 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: processedDescription }}
         />

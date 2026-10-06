@@ -1,35 +1,36 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { RotateCcw, UserMinus } from 'lucide-react';
 import { ConfirmationModal } from '../../../components/common';
 import { useSetMembershipStatus } from '../hooks/useSchoolActions';
+import { translateError } from '../../../i18n/errors';
+import { isolate } from '../../../i18n';
 import { formatDate, secondaryButtonClass, dangerButtonClass } from '../utils/school';
 
-const GROUPS = [
-  { role: 'org_admin', title: 'School admins' },
-  { role: 'teacher', title: 'Teachers' },
-  { role: 'student', title: 'Students' },
-];
+const ROLES = ['org_admin', 'teacher', 'student'];
 
 function MemberRow({ member, sectionNames, onRemove, onRestore, isPending }) {
+  const { t } = useTranslation('school');
   const removed = member.status !== 'active';
   return (
     <li className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
       <span className={`text-sm font-medium ${removed ? 'text-slate-400' : 'text-slate-800'}`}>
-        {member.name}
-        {member.isMe && <span className="ml-1.5 text-xs font-bold text-primary-600">(you)</span>}
+        <bdi>{member.name}</bdi>
+        {member.isMe && <span className="ms-1.5 text-xs font-bold text-primary-600">{t('members.you')}</span>}
       </span>
       <span className="text-xs text-slate-400">
-        {[sectionNames.join(', '), `joined ${formatDate(member.joinedAt)}`].filter(Boolean).join(' · ')}
+        {[sectionNames.map(isolate).join(t('common:list.separator')), t('members.joined', { date: formatDate(member.joinedAt) })]
+          .filter(Boolean).join(' · ')}
       </span>
-      <span className="ml-auto">
+      <span className="ms-auto">
         {removed ? (
           <button type="button" onClick={() => onRestore(member)} disabled={isPending} className={secondaryButtonClass}>
-            <RotateCcw className="w-3.5 h-3.5" /> Restore
+            <RotateCcw className="w-3.5 h-3.5" /> {t('members.restore')}
           </button>
         ) : member.role !== 'org_admin' && !member.isMe ? (
           <button type="button" onClick={() => onRemove(member)} disabled={isPending} className={dangerButtonClass}>
-            <UserMinus className="w-3.5 h-3.5" /> Remove
+            <UserMinus className="w-3.5 h-3.5" /> {t('common:actions.remove')}
           </button>
         ) : null}
       </span>
@@ -38,6 +39,7 @@ function MemberRow({ member, sectionNames, onRemove, onRestore, isPending }) {
 }
 
 export default function SchoolMembersTab({ data }) {
+  const { t } = useTranslation('school');
   const [removing, setRemoving] = useState(null);
   const setStatus = useSetMembershipStatus();
 
@@ -52,29 +54,29 @@ export default function SchoolMembersTab({ data }) {
       { membershipId: member.id, status },
       {
         onSuccess: () => { toast.success(message); done?.(); },
-        onError: (err) => toast.error(err.message || 'Could not change the membership.'),
+        onError: (err) => toast.error(translateError(err, t, 'members.changeFailed')),
       }
     );
   };
 
-  const restore = (member) => change(member, 'active', `${member.name} is a member again.`);
+  const restore = (member) => change(member, 'active', t('members.restored', { name: member.name }));
   const confirmRemove = () =>
-    change(removing, 'removed', `${removing.name} was removed from the school.`, () => setRemoving(null));
+    change(removing, 'removed', t('members.removed', { name: removing.name }), () => setRemoving(null));
 
   return (
     <div className="space-y-6">
-      {GROUPS.map(({ role, title }) => {
+      {ROLES.map(role => {
         const inRole = data.members.filter(m => m.role === role);
         const active = inRole.filter(m => m.status === 'active');
         const removed = inRole.filter(m => m.status !== 'active');
         return (
           <div key={role}>
-            <h3 className="text-sm font-bold text-slate-700">{title} ({active.length})</h3>
+            <h3 className="text-sm font-bold text-slate-700">{t(`members.group.${role}`, { count: active.length })}</h3>
             {role === 'org_admin' && (
-              <p className="text-xs text-slate-400">Only Tutre can remove a school admin. Add one with a school admin code.</p>
+              <p className="text-xs text-slate-400">{t('members.adminNote')}</p>
             )}
             {active.length === 0 ? (
-              <p className="text-xs text-slate-400 mt-1">Nobody yet. Create a code on the Invite codes tab.</p>
+              <p className="text-xs text-slate-400 mt-1">{t('members.nobody')}</p>
             ) : (
               <ul className="divide-y divide-slate-100">
                 {active.map(m => (
@@ -85,7 +87,7 @@ export default function SchoolMembersTab({ data }) {
             )}
             {removed.length > 0 && (
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs font-bold text-slate-500">Removed ({removed.length})</summary>
+                <summary className="cursor-pointer text-xs font-bold text-slate-500">{t('members.removedTitle', { count: removed.length })}</summary>
                 <ul className="divide-y divide-slate-100">
                   {removed.map(m => (
                     <MemberRow key={m.id} member={m} sectionNames={[]}
@@ -104,11 +106,11 @@ export default function SchoolMembersTab({ data }) {
         onConfirm={confirmRemove}
         isPending={setStatus.isPending}
         isDestructive
-        title="Remove from school?"
+        title={t('members.removeTitle')}
         message={removing
-          ? `${removing.name} will lose their ${removing.role} access to this school and be taken off all its sections. You can restore them later, but you will need to add them to sections again.`
+          ? t('members.removeMessage', { name: removing.name, role: t(`common:roles.${removing.role}`) })
           : ''}
-        confirmText="Remove"
+        confirmText={t('common:actions.remove')}
       />
     </div>
   );

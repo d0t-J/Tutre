@@ -1,10 +1,12 @@
 import { ArrowRight, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { DotField } from '../../../components/common';
 import { planetaryMotion } from '../../simulations/utils/planetaryMotion';
 
 export default function HeroSection({ loaded, navigate }) {
+  const { t } = useTranslation('landing');
   return (
-    <main className="relative min-h-dvh flex items-center justify-center pt-20 lg:pt-20 px-4 sm:px-6">
+    <main className="relative min-h-dvh flex items-center justify-center pt-20 lg:pt-20 rtl:pt-28 px-4 sm:px-6">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0">
         {/* Subtle Gradient Blobs */}
@@ -31,16 +33,16 @@ export default function HeroSection({ loaded, navigate }) {
       <div className={`relative z-10 text-center max-w-3xl mx-auto transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-primary-100 shadow-sm text-primary-700 text-xs font-bold mb-6 mx-auto uppercase tracking-widest">
           <BookOpen className="w-4 h-4" />
-          Interactive STEM Learning
+          {t('hero.eyebrow')}
         </div>
         
         <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-slate-800 tracking-tight leading-[1.05] mb-6">
-          Experience Science & Math <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-cyan-500 pb-2">like never before.</span>
+          {t('hero.title')} <br className="hidden sm:block" />
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-primary-600 to-cyan-500 pb-2">{t('hero.titleHighlight')}</span>
         </h2>
         
         <p className="text-base sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Manipulate variables in real-time, visualize complex theories, and learn directly alongside an AI-powered tutor built for curious minds.
+          {t('hero.message')}
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -48,17 +50,17 @@ export default function HeroSection({ loaded, navigate }) {
             onClick={() => navigate('/login')}
             className="px-8 py-4 bg-linear-to-r from-primary-600 to-primary-700 text-white font-bold rounded-2xl shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 text-base w-full sm:w-auto group cursor-pointer"
           >
-            Get Started Free
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            {t('hero.cta')}
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform rtl:-scale-x-100 rtl:group-hover:-translate-x-1" />
           </button>
         </div>
         
         {/* Stats */}
         <div className="mt-16 flex flex-wrap justify-center gap-6 sm:gap-12 opacity-80 border-t border-slate-200/60 pt-10">
           {[
-            { label: 'Simulations', value: '50+' },
-            { label: 'Subjects', value: '4' },
-            { label: 'Interactive', value: '100%' },
+            { label: t('stats.simulations'), value: '50+' },
+            { label: t('stats.subjects'), value: '4' },
+            { label: t('stats.interactive'), value: '100%' },
           ].map((stat, i) => (
             <div key={i} className="flex flex-col items-center">
               <span className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight">{stat.value}</span>

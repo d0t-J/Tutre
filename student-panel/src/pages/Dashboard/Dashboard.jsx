@@ -40,7 +40,7 @@ export default function Dashboard() {
         />
 
         <div 
-          className="flex flex-col flex-1 overflow-y-auto min-h-0 pr-1 sm:pr-2 [&::-webkit-scrollbar]:hidden mt-2 relative z-10"
+          className="flex flex-col flex-1 overflow-y-auto min-h-0 pe-1 sm:pe-2 [&::-webkit-scrollbar]:hidden mt-2 relative z-10"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {!subjectSlug ? (

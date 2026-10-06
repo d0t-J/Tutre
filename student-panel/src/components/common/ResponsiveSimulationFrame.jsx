@@ -23,7 +23,8 @@ export default function ResponsiveSimulationFrame({
   const Icon = iconName && Icons[iconName] ? Icons[iconName] : Icons.Settings2;
 
   return (
-    <div ref={containerRef} className={containerClassName}>
+    // Simulations are a fixed left-to-right canvas, whatever the page direction.
+    <div ref={containerRef} className={containerClassName} dir="ltr">
       <div 
         className={wrapperClassName}
         style={{ 

@@ -1,0 +1,23 @@
+{
+  "landing": {
+    "title": "Welcome to Tutre",
+    "message": "Please select a class below or from the top menu to begin exploring interactive simulations."
+  },
+  "subjects": {
+    "title": "Select a Subject",
+    "message": "Choose a subject from the list below to view its chapters and dive into interactive learning.",
+    "error": "Error loading subjects. Please try again.",
+    "emptyTitle": "No subjects found",
+    "emptyMessage": "No subjects available for this class yet."
+  },
+  "chapters": {
+    "number": "Chapter {{number}}",
+    "error": "Error loading chapters. Please try again.",
+    "emptyTitle": "No chapters found",
+    "emptyMessage": "No chapters available for this subject yet."
+  },
+  "simulations": {
+    "error": "Error loading simulations. Please try again.",
+    "emptyMessage": "We couldn't find any simulations matching your criteria. Try selecting a different class or clearing your search."
+  }
+}

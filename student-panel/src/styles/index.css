@@ -31,6 +31,49 @@
   }
 }
 
+/* Urdu: Nastaliq for Urdu text (Latin letters and digits still come from Inter
+   and Outfit, which have no Urdu letters, so each character finds its font), taller lines so its descenders are not clipped,
+   and no letter-spacing, which breaks the joins between Urdu letters. Maths and
+   code keep their own fonts and run left to right. */
+:root[lang="ur"] {
+  --font-sans: "Inter", "Noto Nastaliq Urdu", sans-serif;
+  --font-outfit: "Outfit", "Noto Nastaliq Urdu", sans-serif;
+}
+
+:root[lang="ur"] body {
+  line-height: 2;
+}
+
+:root[lang="ur"] body *:not(.font-mono) {
+  letter-spacing: normal !important;
+}
+
+:root[lang="ur"] [class*="leading-"] {
+  line-height: 1.9 !important;
+}
+
+/* Large headings need less extra room than body text. */
+:root[lang="ur"] :is(h1, h2)[class*="text-3xl"],
+:root[lang="ur"] :is(h1, h2)[class*="text-4xl"],
+:root[lang="ur"] :is(h1, h2)[class*="text-5xl"],
+:root[lang="ur"] :is(h1, h2)[class*="text-7xl"] {
+  line-height: 1.75 !important;
+}
+
+/* Nastaliq is hard to read below about 12px, so the smallest sizes grow a
+   little in Urdu. Layout spacing is unchanged. */
+:root[lang="ur"] .text-xs { font-size: 0.8125rem; }
+:root[lang="ur"] .text-\[9px\],
+:root[lang="ur"] .text-\[10px\] { font-size: 11.5px; }
+:root[lang="ur"] .text-\[11px\],
+:root[lang="ur"] .text-\[12px\] { font-size: 12.5px; }
+
+.katex,
+.font-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
 /* Hide global scrollbars to prevent horizontal shift between pages */
 html, body {
   scrollbar-width: none;

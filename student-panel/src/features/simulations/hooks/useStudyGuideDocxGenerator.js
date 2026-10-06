@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import i18n from '../../../i18n';
 import { preprocessMathForDocx } from '../../../utils/mathPreprocessor';
 import { formatHtmlForWord, buildWordDocumentHtml } from '../utils/wordExportFormatter';
 
@@ -10,7 +11,7 @@ export function useStudyGuideDocxGenerator(simulation) {
     if (!simulation) return null;
 
     if (!simulation.study_guide || !simulation.study_guide.trim()) {
-      toast.error('No study guide found for this simulation.');
+      toast.error(i18n.t('simulations:export.noGuide'));
       return null;
     }
 
@@ -44,10 +45,10 @@ export function useStudyGuideDocxGenerator(simulation) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      toast.success('Study guide exported to Word successfully!');
+      toast.success(i18n.t('simulations:export.wordDone'));
     } catch (err) {
       console.error('Failed to generate Word document:', err);
-      toast.error('Failed to generate Study Guide. Please try again.');
+      toast.error(i18n.t('simulations:export.failed'));
       return null;
     } finally {
       setIsGeneratingDOCX(false);

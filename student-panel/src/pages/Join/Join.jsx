@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
 import { useRedeemCode } from '../../features/school';
-import { ROLE_LABELS, inputClass, labelClass, primaryButtonClass } from '../../features/school/utils/school';
+import { inputClass, labelClass, primaryButtonClass } from '../../features/school/utils/school';
+import { translateError } from '../../i18n/errors';
 
 const NEXT_STEP = {
-  org_admin: { to: '/school', label: 'Open My school' },
-  teacher: { to: '/teaching', label: 'Open My sections' },
-  student: { to: '/dashboard', label: 'Start exploring' },
+  org_admin: { to: '/school', key: 'join.next.org_admin' },
+  teacher: { to: '/teaching', key: 'join.next.teacher' },
+  student: { to: '/dashboard', key: 'join.next.student' },
 };
 
 export default function Join() {
+  const { t } = useTranslation('school');
   const [code, setCode] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -26,29 +29,33 @@ export default function Join() {
         setResult(data);
         setCode('');
       },
-      onError: (err) => setError(err.message || 'Could not join. Please try again.'),
+      onError: (err) => setError(translateError(err, t, 'join.failed')),
     });
   };
 
   const next = result && NEXT_STEP[result.role];
+  const joinedAs = result && t(result.section_name ? 'join.joinedAsInSection' : 'join.joinedAs', {
+    school: result.org_name,
+    role: t(`common:roles.${result.role}`),
+    section: result.section_name,
+  });
 
   return (
     <div className="max-w-xl mx-auto p-4 sm:p-6 lg:p-8">
       <section className="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
         <div className="flex items-center gap-2 mb-1">
           <KeyRound className="w-5 h-5 text-primary-600" />
-          <h2 className="text-lg font-extrabold text-slate-800">Join your school or class</h2>
+          <h2 className="text-lg font-extrabold text-slate-800">{t('join.title')}</h2>
         </div>
-        <p className="text-sm text-slate-500 mb-5">
-          Enter the code your school or teacher gave you. It has 10 letters and numbers, like ABCDE-23456.
-        </p>
+        <p className="text-sm text-slate-500 mb-5">{t('join.message')}</p>
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label htmlFor="invite-code" className={labelClass}>Code</label>
+            <label htmlFor="invite-code" className={labelClass}>{t('join.code')}</label>
             <input
               id="invite-code"
               type="text"
+              dir="ltr"
               autoComplete="off"
               autoCapitalize="characters"
               spellCheck={false}
@@ -62,7 +69,7 @@ export default function Join() {
           </div>
           <button type="submit" disabled={cleaned.length !== 10 || redeem.isPending} className={primaryButtonClass}>
             {redeem.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-            Join
+            {t('join.submit')}
           </button>
         </form>
 
@@ -72,15 +79,12 @@ export default function Join() {
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <div className="text-sm text-slate-700">
                 <p className="font-bold">
-                  {result.already_member ? 'You are already a member.' : 'You joined!'}
+                  {result.already_member ? t('join.alreadyMember') : t('join.joined')}
                 </p>
-                <p>
-                  {result.org_name}, as {ROLE_LABELS[result.role]?.toLowerCase() ?? result.role}
-                  {result.section_name ? `, in ${result.section_name}` : ''}.
-                </p>
+                <p>{joinedAs}</p>
                 {next && (
                   <Link to={next.to} className="inline-block mt-2 text-sm font-bold text-primary-700 hover:underline">
-                    {next.label}
+                    {t(next.key)}
                   </Link>
                 )}
               </div>

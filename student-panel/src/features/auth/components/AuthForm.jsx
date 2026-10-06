@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/useAuth';
 import { AuthFormProvider } from '../context/AuthFormProvider';
 import { useAuthForm } from '../context/useAuthForm';
@@ -7,6 +8,7 @@ import AuthStats from './AuthStats';
 import AuthFormFields from './AuthFormFields';
 
 function AuthFormContent() {
+  const { t } = useTranslation('auth');
   const [loaded, setLoaded] = useState(false);
   const { isLogin, setIsLogin } = useAuthForm();
 
@@ -25,10 +27,10 @@ function AuthFormContent() {
           {/* Form Header */}
           <div className="text-center mb-2 sm:mb-5">
             <h2 className="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
-              {isLogin ? 'Welcome Back!' : 'Join Tutre'}
+              {isLogin ? t('login.title') : t('signup.title')}
             </h2>
             <p className="text-[11px] sm:text-sm text-slate-500 mt-0.5 leading-tight">
-              {isLogin ? 'Log in to explore interactive simulations' : 'Create your account to start learning'}
+              {isLogin ? t('login.subtitle') : t('signup.subtitle')}
             </p>
           </div>
 
@@ -39,12 +41,12 @@ function AuthFormContent() {
 
           <div className="mt-2 sm:mt-4 text-center">
             <p className="text-xs sm:text-sm text-slate-500">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              {isLogin ? t('login.noAccount') : t('signup.haveAccount')}{' '}
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary-600 font-bold hover:text-primary-700 cursor-pointer transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all hover:after:w-full"
+                className="text-primary-600 font-bold hover:text-primary-700 cursor-pointer transition-colors relative after:absolute after:bottom-0 after:start-0 after:w-0 after:h-0.5 after:bg-primary-500 after:transition-all hover:after:w-full"
               >
-                {isLogin ? 'Sign up free' : 'Log in'}
+                {isLogin ? t('login.switchToSignup') : t('signup.switchToLogin')}
               </button>
             </p>
           </div>

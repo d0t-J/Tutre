@@ -1,10 +1,12 @@
 import * as Icons from 'lucide-react';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function DashboardHeader({
   breadcrumbs, searchQuery, setSearchQuery, showSearch = true
 }) {
+  const { t } = useTranslation();
   const maxDepth = 3; // Class -> Subject -> Chapter
   const progressPercentage = breadcrumbs ? Math.min((breadcrumbs.length / maxDepth) * 100, 100) : 0;
 
@@ -20,12 +22,12 @@ export default function DashboardHeader({
                 const isLast = index === breadcrumbs.length - 1;
                 return (
                   <div key={crumb.path} className="flex items-center">
-                    {index > 0 && <Icons.ChevronRight className="w-4 h-4 mx-2 text-slate-300 shrink-0" />}
+                    {index > 0 && <Icons.ChevronRight className="w-4 h-4 mx-2 text-slate-300 shrink-0 rtl:-scale-x-100" />}
                     {isLast ? (
                       <div className="flex items-center">
-                        <span className="text-slate-800 font-bold">{crumb.label}</span>
+                        <span className="text-slate-800 font-bold"><bdi>{crumb.label}</bdi></span>
                         {breadcrumbs.length < maxDepth && (
-                          <Icons.ChevronRight className="w-4 h-4 ml-2 text-slate-300 shrink-0" />
+                          <Icons.ChevronRight className="w-4 h-4 ms-2 text-slate-300 shrink-0 rtl:-scale-x-100" />
                         )}
                       </div>
                     ) : (
@@ -33,14 +35,14 @@ export default function DashboardHeader({
                         to={crumb.path}
                         className="text-slate-500 hover:text-primary-600 transition-colors"
                       >
-                        {crumb.label}
+                        <bdi>{crumb.label}</bdi>
                       </Link>
                     )}
                   </div>
                 );
               })
             ) : (
-              <span className="text-slate-400 italic">Loading...</span>
+              <span className="text-slate-400 italic">{t('status.loading')}</span>
             )}
           </div>
           
@@ -56,13 +58,13 @@ export default function DashboardHeader({
         {/* Search Bar */}
         {showSearch && (
           <div className="relative w-full md:w-72 lg:w-96 shrink-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={t('actions.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all shadow-sm"
+              className="w-full ps-9 pe-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all shadow-sm"
             />
           </div>
         )}

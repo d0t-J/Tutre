@@ -1,11 +1,7 @@
 // Shared helpers for the school screens (joining, My sections, My school).
+// Role names are translated as common:roles.<role>.
 
-export const ROLE_LABELS = {
-  org_admin: 'School admin',
-  teacher: 'Teacher',
-  student: 'Student',
-  parent: 'Parent',
-};
+export { formatDate } from '../../../i18n';
 
 // Codes are stored as 10 characters and shown with a hyphen in the middle.
 export const formatCode = (code) => (code ? `${code.slice(0, 5)}-${code.slice(5)}` : '');
@@ -13,18 +9,16 @@ export const formatCode = (code) => (code ? `${code.slice(0, 5)}-${code.slice(5)
 export const codeState = (code) => {
   if (code.revoked) return 'revoked';
   if (new Date(code.expires_at) <= new Date()) return 'expired';
-  if (code.uses >= code.max_uses) return 'used up';
+  if (code.uses >= code.max_uses) return 'usedUp';
   return 'active';
 };
-
-export const formatDate = (value) =>
-  value ? new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 
 export const byName = (a, b) =>
   (a.name ?? '').localeCompare(b.name ?? '', undefined, { numeric: true, sensitivity: 'base' });
 
 // An update or delete that RLS filters out returns no rows instead of an error.
 export const requireRows = (data, message = "You don't have permission to do that.") => {
+  // The English message is matched by translateError and shown translated.
   if (!data || data.length === 0) throw new Error(message);
   return data;
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../../services/supabase';
+import i18n from '../../../i18n';
 
 export function useFetchSimulation(id) {
   const [simulation, setSimulation] = useState(null);
@@ -25,7 +26,7 @@ export function useFetchSimulation(id) {
         setMessages([
           {
             role: 'assistant',
-            content: `Hello! I am your AI tutor for **${data.topic}**. Do you have any questions about this simulation or topic?`
+            content: i18n.t('simulations:tutor.greeting', { topic: data.topic })
           }
         ]);
       }

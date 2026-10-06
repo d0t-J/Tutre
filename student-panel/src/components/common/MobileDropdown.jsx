@@ -7,7 +7,7 @@ export default function MobileDropdown({
   options, 
   selectedValue, 
   onSelect, 
-  placeholder = "Select Option",
+  placeholder,
   className = ""
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +37,7 @@ export default function MobileDropdown({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full flex items-center justify-between bg-slate-50 border text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all cursor-pointer ${
+          className={`w-full flex items-center justify-between bg-slate-50 border text-start px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all cursor-pointer ${
             isOpen ? 'border-primary-500 ring-1 ring-primary-100' : 'border-slate-300 hover:border-primary-400'
           }`}
         >
@@ -66,7 +66,7 @@ export default function MobileDropdown({
                     onSelect(opt.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2 transition-colors text-left cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3 py-2 transition-colors text-start cursor-pointer ${
                     isSelected 
                       ? 'bg-primary-50 text-primary-900' 
                       : 'hover:bg-slate-50 text-slate-700'

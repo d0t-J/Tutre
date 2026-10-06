@@ -1,34 +1,32 @@
 import { MousePointerClick, BrainCircuit, Smartphone, BookOpenCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const FEATURES = [
   {
     icon: <MousePointerClick className="w-6 h-6 text-primary-600" />,
-    title: '100% Interactive',
-    description: 'Manipulate variables in real-time and immediately visualize complex theories in action.',
+    key: 'interactive',
   },
   {
     icon: <BrainCircuit className="w-6 h-6 text-primary-600" />,
-    title: 'AI-Powered Tutor',
-    description: 'Learn directly alongside a smart assistant that guides you step-by-step through tough concepts.',
+    key: 'tutor',
   },
   {
     icon: <BookOpenCheck className="w-6 h-6 text-primary-600" />,
-    title: 'Curriculum Aligned',
-    description: 'Master subjects across Physics, Chemistry, Math, and Biology with structured, rigorous content.',
+    key: 'curriculum',
   },
   {
     icon: <Smartphone className="w-6 h-6 text-primary-600" />,
-    title: 'Cross-Platform',
-    description: 'Flawless experience across massive desktop screens, tablets, and your mobile phone.',
+    key: 'devices',
   },
 ];
 
 export default function Features() {
+  const { t } = useTranslation('landing');
   return (
     <section className="relative z-20 py-20 lg:py-32 px-4 sm:px-8 lg:px-16 max-w-360 mx-auto w-full">
       <div className="text-center mb-16 lg:mb-24">
-        <h3 className="text-[10px] sm:text-xs font-bold text-primary-600 tracking-[0.2em] uppercase mb-4">Core Benefits</h3>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 tracking-tight">Everything you need to <br className="hidden sm:block" />master STEM.</h2>
+        <h3 className="text-[10px] sm:text-xs font-bold text-primary-600 tracking-[0.2em] uppercase mb-4">{t('features.eyebrow')}</h3>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 tracking-tight">{t('features.title')}</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -45,8 +43,8 @@ export default function Features() {
                 {feature.icon}
               </div>
               <div>
-                <h4 className="text-lg font-bold text-slate-800 mb-2">{feature.title}</h4>
-                <p className="text-sm text-slate-500 leading-relaxed">{feature.description}</p>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">{t(`features.${feature.key}.title`)}</h4>
+                <p className="text-sm text-slate-500 leading-relaxed">{t(`features.${feature.key}.description`)}</p>
               </div>
             </div>
           </div>

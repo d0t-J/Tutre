@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import {
   SchoolCodesTab, SchoolMembersTab, SchoolOverviewTab, SchoolSectionsTab, useMyRoles, useSchoolAdmin,
@@ -6,40 +7,42 @@ import {
 import { inputClass } from '../../features/school/utils/school';
 
 const TABS = [
-  { id: 'overview', label: 'Overview', Component: SchoolOverviewTab },
-  { id: 'members', label: 'Members', Component: SchoolMembersTab },
-  { id: 'sections', label: 'Sections', Component: SchoolSectionsTab },
-  { id: 'codes', label: 'Invite codes', Component: SchoolCodesTab },
+  { id: 'overview', Component: SchoolOverviewTab },
+  { id: 'members', Component: SchoolMembersTab },
+  { id: 'sections', Component: SchoolSectionsTab },
+  { id: 'codes', Component: SchoolCodesTab },
 ];
 
 function Loading() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 text-sm text-slate-500">
-      <Loader2 className="w-4 h-4 animate-spin" /> Loading...
+      <Loader2 className="w-4 h-4 animate-spin" /> {t('status.loading')}
     </div>
   );
 }
 
 function SchoolAdmin({ orgId }) {
+  const { t } = useTranslation('school');
   const [tab, setTab] = useState('overview');
   const { data, isLoading, error } = useSchoolAdmin(orgId);
-  const { Component } = TABS.find(t => t.id === tab);
+  const { Component } = TABS.find(item => item.id === tab);
 
   return (
     <section className="bg-white rounded-2xl shadow-sm border border-slate-100">
       <div role="tablist" className="flex gap-1 p-2 border-b border-slate-100 overflow-x-auto">
-        {TABS.map(t => (
+        {TABS.map(item => (
           <button
-            key={t.id}
+            key={item.id}
             type="button"
             role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => setTab(t.id)}
+            aria-selected={tab === item.id}
+            onClick={() => setTab(item.id)}
             className={`cursor-pointer whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-bold transition-colors ${
-              tab === t.id ? 'bg-primary-50 text-primary-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              tab === item.id ? 'bg-primary-50 text-primary-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
             }`}
           >
-            {t.label}
+            {t(`tabs.${item.id}`)}
           </button>
         ))}
       </div>
@@ -47,7 +50,7 @@ function SchoolAdmin({ orgId }) {
         {isLoading ? (
           <Loading />
         ) : error ? (
-          <p className="text-sm text-red-600">Could not load the school. Please refresh the page.</p>
+          <p className="text-sm text-red-600">{t('loadFailed')}</p>
         ) : (
           <Component key={orgId} data={data} />
         )}
@@ -57,6 +60,7 @@ function SchoolAdmin({ orgId }) {
 }
 
 export default function School() {
+  const { t } = useTranslation('school');
   const { data: roles, isLoading } = useMyRoles();
   const [selected, setSelected] = useState(null);
 
@@ -67,10 +71,10 @@ export default function School() {
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-extrabold text-slate-800">{current?.name ?? 'My school'}</h1>
+        <h1 className="text-2xl font-extrabold text-slate-800"><bdi>{current?.name ?? t('common:nav.mySchool')}</bdi></h1>
         {schools.length > 1 && (
-          <select value={orgId} onChange={(e) => setSelected(e.target.value)} aria-label="Choose a school"
-            className={`${inputClass} w-auto ml-auto`}>
+          <select value={orgId} onChange={(e) => setSelected(e.target.value)} aria-label={t('chooseSchool')}
+            className={`${inputClass} w-auto ms-auto`}>
             {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         )}
@@ -79,9 +83,7 @@ export default function School() {
         <Loading />
       ) : !orgId ? (
         <p className="text-sm text-slate-500">
-          {roles?.hasSuspendedSchool
-            ? "Your school's Tutre account is suspended. Contact Tutre to reactivate it."
-            : 'You are not a school admin. School admins manage members, sections and invite codes here.'}
+          {roles?.hasSuspendedSchool ? t('suspended') : t('notAdmin')}
         </p>
       ) : (
         <SchoolAdmin key={orgId} orgId={orgId} />

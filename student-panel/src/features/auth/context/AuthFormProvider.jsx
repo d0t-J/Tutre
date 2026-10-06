@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { translateAuthError } from '../utils/authErrors';
 import { useAuth } from './useAuth';
 import { AuthFormContext } from './AuthFormContext';
 
@@ -12,6 +14,7 @@ export function AuthFormProvider({ children }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { login, signup } = useAuth();
+  const { t } = useTranslation('auth');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +29,7 @@ export function AuthFormProvider({ children }) {
         if (error) throw error;
       }
     } catch (err) {
-      toast.error(err.message || 'Authentication failed');
+      toast.error(translateAuthError(err, t));
       setIsSubmitting(false);
     } 
   };

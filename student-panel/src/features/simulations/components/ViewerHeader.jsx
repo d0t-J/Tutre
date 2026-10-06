@@ -1,12 +1,14 @@
 import { useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, PlayCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 import { useReactToPrint } from 'react-to-print';
 import StudyGuidePrintView from './StudyGuidePrintView';
 import ViewerHeaderActions from './ViewerHeaderActions';
 
 export default function ViewerHeader() {
+  const { t } = useTranslation('simulations');
   const { simulation, isGeneratingPDF, isGeneratingDOCX, generateStudyGuideData, generateStudyGuideDOCX } = useSimulationViewer();
   const { classSlug, subjectSlug, chapterSlug } = useParams();
   const [printData, setPrintData] = useState({ htmlContent: '', snapshotDataUrl: '' });
@@ -46,16 +48,17 @@ export default function ViewerHeader() {
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link 
             to={backLink} 
+            aria-label={t('common:actions.back')}
             className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-900 transition-colors shrink-0"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 rtl:-scale-x-100" />
           </Link>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">
               <PlayCircle className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-              <span className="truncate">{simulation.subject} Simulation</span>
+              <span className="truncate">{t('header.subjectSimulation', { subject: simulation.subject })}</span>
             </div>
-            <h1 className="text-base sm:text-lg font-extrabold text-slate-900 leading-none truncate">{simulation.topic}</h1>
+            <h1 dir="auto" className="text-base sm:text-lg font-extrabold text-slate-900 leading-none truncate">{simulation.topic}</h1>
           </div>
         </div>
 

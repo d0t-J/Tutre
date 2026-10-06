@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../../services/supabase';
+import { useTranslation } from 'react-i18next';
 import { readSseStream } from '../utils/streamChatResponse';
 
 export function useChatbotStream(topic, details, messages, setMessages) {
+  const { t } = useTranslation('simulations');
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -28,7 +30,11 @@ export function useChatbotStream(topic, details, messages, setMessages) {
     try {
       const { data: authData } = await supabase.auth.getSession();
       const token = authData.session?.access_token;
-      if (!token) throw new Error('Your session has expired. Please sign in again.');
+      if (!token) {
+        const error = new Error(t('tutor.sessionExpired'));
+        error.userFacing = true;
+        throw error;
+      }
 
       const payload = {
         topic,
@@ -48,11 +54,10 @@ export function useChatbotStream(topic, details, messages, setMessages) {
       });
 
       if (!response.ok) {
-        // 401 (signed out) and 429 (daily limit) carry a message worth showing.
-        let message = '';
-        try { message = (await response.json())?.error || ''; } catch { /* not JSON */ }
-        const error = new Error(message || `Edge function returned ${response.status}`);
-        error.userFacing = response.status === 401 || response.status === 429;
+        // 401 (signed out) and 429 (daily limit) get their own message.
+        const key = { 401: 'tutor.sessionExpired', 429: 'tutor.dailyLimit' }[response.status];
+        const error = new Error(key ? t(key) : `Edge function returned ${response.status}`);
+        error.userFacing = !!key;
         throw error;
       }
 
@@ -74,9 +79,7 @@ export function useChatbotStream(topic, details, messages, setMessages) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: error.userFacing || error.message.startsWith('Your session')
-          ? error.message
-          : "I'm sorry, I'm having trouble connecting right now. Please try again later." 
+        content: error.userFacing ? error.message : t('tutor.connectionError')
       }]);
     } finally {
       setIsLoading(false);

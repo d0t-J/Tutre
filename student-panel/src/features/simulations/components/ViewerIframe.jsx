@@ -1,7 +1,9 @@
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 import { ResponsiveSimulationFrame } from '../../../components/common';
+import { useTranslation } from 'react-i18next';
 
 export default function ViewerIframe() {
+  const { t } = useTranslation('simulations');
   const { iframeRef, iframeLoading, setIframeLoading, simulation } = useSimulationViewer();
 
   if (!simulation?.code_payload) {
@@ -12,8 +14,8 @@ export default function ViewerIframe() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
           </svg>
         </div>
-        <h3 className="text-lg font-bold text-slate-700 mb-2">No Simulation Selected</h3>
-        <p className="text-sm text-slate-500 max-w-sm">Select a simulation from the sidebar to view it here, or generate a new one.</p>
+        <h3 className="text-lg font-bold text-slate-700 mb-2">{t('frame.emptyTitle')}</h3>
+        <p className="text-sm text-slate-500 max-w-sm">{t('frame.emptyMessage')}</p>
       </div>
     );
   }

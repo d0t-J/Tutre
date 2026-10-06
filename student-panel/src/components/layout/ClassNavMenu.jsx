@@ -1,9 +1,11 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { slugify } from '../../utils/slugify';
 import MobileDropdown from '../common/MobileDropdown';
 
 export default function ClassNavMenu({ classes }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const isRootDashboard = location.pathname === '/dashboard' || location.pathname === '/dashboard/';
@@ -28,7 +30,7 @@ export default function ClassNavMenu({ classes }) {
               }`}
             >
               <Icons.GraduationCap className="w-4 h-4" />
-              {cls.name}
+              <bdi>{cls.name}</bdi>
             </NavLink>
           );
         })}
@@ -43,7 +45,7 @@ export default function ClassNavMenu({ classes }) {
             const cls = classes.find(c => c.id === val);
             if (cls) navigate(`/class/${slugify(cls.name)}`);
           }}
-          placeholder="Class"
+          placeholder={t('nav.class')}
           className="p-0! border-none! shadow-none bg-transparent!"
         />
       </div>

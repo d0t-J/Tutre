@@ -4,7 +4,7 @@ import { useAuth } from '../../auth';
 
 // The profiles row is created by a database trigger at sign-up. Its owner may
 // change only display_name, preferred_language and class_id.
-const PROFILE_COLUMNS = 'id, display_name, preferred_language, class_id';
+const PROFILE_COLUMNS = 'id, display_name, preferred_language, class_id, updated_at';
 
 export const useProfile = () => {
   const { user } = useAuth();

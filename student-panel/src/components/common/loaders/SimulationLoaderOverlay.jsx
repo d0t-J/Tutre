@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next';
+
 export default function SimulationLoaderOverlay({ Icon, loaderBgClass }) {
+  const { t } = useTranslation('simulations');
   return (
     <div className={`absolute inset-0 flex flex-col items-center justify-center z-20 w-full ${loaderBgClass}`}>
       <div className="relative mb-8 mt-4">
@@ -12,9 +15,9 @@ export default function SimulationLoaderOverlay({ Icon, loaderBgClass }) {
         </div>
       </div>
       
-      <h3 className="text-xl font-bold text-slate-800 mb-1.5 mt-2">Initializing...</h3>
+      <h3 className="text-xl font-bold text-slate-800 mb-1.5 mt-2">{t('loader.title')}</h3>
       <p className="text-sm font-medium text-slate-500 animate-pulse max-w-50 text-center">
-        Preparing interactive environment
+        {t('loader.message')}
       </p>
     </div>
   );

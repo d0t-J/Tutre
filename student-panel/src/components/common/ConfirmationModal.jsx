@@ -1,17 +1,19 @@
 import { createPortal } from 'react-dom';
 import { AlertTriangle, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ConfirmationModal({ 
   isOpen, 
   onClose, 
   onConfirm, 
-  title = 'Are you sure?', 
-  message = 'This action cannot be undone.',
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  title,
+  message,
+  confirmText,
+  cancelText,
   isDestructive = false,
   isPending = false
 }) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return createPortal(
@@ -23,7 +25,7 @@ export default function ConfirmationModal({
       
       <div className="w-full max-w-[320px] bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white/50 p-5 relative z-10 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
         {/* Subtle top gradient */}
-        <div className={`absolute top-0 left-0 w-full h-24 bg-linear-to-b ${isDestructive ? 'from-red-50/50' : 'from-primary-50/50'} to-transparent pointer-events-none rounded-t-2xl`}></div>
+        <div className={`absolute top-0 start-0 w-full h-24 bg-linear-to-b ${isDestructive ? 'from-red-50/50' : 'from-primary-50/50'} to-transparent pointer-events-none rounded-t-2xl`}></div>
 
         <div className="relative">
           <div className="flex items-start justify-between mb-3">
@@ -31,19 +33,19 @@ export default function ConfirmationModal({
               <div className={`w-10 h-10 bg-linear-to-br ${isDestructive ? 'from-red-100 to-red-50 border-red-100/50' : 'from-primary-100 to-primary-50 border-primary-100/50'} rounded-xl flex items-center justify-center shrink-0 shadow-sm border`}>
                 <AlertTriangle className={`w-5 h-5 ${isDestructive ? 'text-red-600' : 'text-primary-600'}`} />
               </div>
-              <h3 className="text-base font-bold text-slate-800 tracking-tight">{title}</h3>
+              <h3 className="text-base font-bold text-slate-800 tracking-tight">{title ?? t('confirm.title')}</h3>
             </div>
             <button
               onClick={onClose}
               disabled={isPending}
-              aria-label="Close"
+              aria-label={t('actions.close')}
               className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1.5 rounded-lg transition-colors cursor-pointer focus:outline-none bg-white/50 backdrop-blur-sm disabled:opacity-50"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
           <p className="text-[13px] text-slate-500 mb-5 leading-relaxed">
-            {message}
+            {message ?? t('confirm.message')}
           </p>
 
           <div className="flex items-center gap-2">
@@ -52,7 +54,7 @@ export default function ConfirmationModal({
               disabled={isPending}
               className="flex-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[13px] font-bold rounded-xl transition-colors focus:outline-none cursor-pointer disabled:opacity-50"
             >
-              {cancelText}
+              {cancelText ?? t('actions.cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -62,7 +64,7 @@ export default function ConfirmationModal({
               }`}
             >
               {isPending && <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-              {confirmText}
+              {confirmText ?? t('actions.confirm')}
             </button>
           </div>
         </div>
