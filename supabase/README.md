@@ -215,7 +215,8 @@ group by user_id, scope order by completion_tokens desc nulls last;
 
 ## Organisations, roles and profiles (Phase 2a, 2026-10-04)
 
-Migrations `20261004130000`–`20261004130300`, plus the follow-up `20261005090000`.
+Migrations `20261004130000`–`20261004130300`, plus the follow-ups `20261005090000` and
+`20261006090000` (Phase 2d).
 
 | Table | What it holds |
 | --- | --- |
@@ -240,7 +241,8 @@ Joining is only through these functions (`invite_codes` has no write policies):
 Who sees what: users see their own profile and memberships; every section member
 sees the names of that section's teachers; teachers see the sections they teach,
 those sections' members, and their students' profiles (students do not see
-classmates); org admins see and manage everything in their own school; platform
+classmates); org admins see and manage everything in their own school, including
+the names of removed members so they can restore the right person; platform
 admins see all. Nobody sees another school's data, and a suspended school's
 members lose access to it.
 
@@ -254,8 +256,15 @@ Access checks live in the `private` schema (`has_org_role`, `is_section_member`,
 Policies call these SECURITY DEFINER helpers instead of querying membership
 tables directly, which would recurse.
 
-Tests: `tests/database/phase2a_orgs_profiles.test.sql` (89 assertions). Run them
-with `npx supabase test db` on the local stack.
+Tests: `tests/database/phase2a_orgs_profiles.test.sql` (89 assertions) and
+`tests/database/phase2d_school_management.test.sql` (9). Run them with
+`npx supabase test db` on the local stack.
+
+The screens: school admins manage members, sections (archive rather than delete)
+and invite codes on **My school** in the student app, teachers see their sections
+and hand out student codes on **My sections**, anyone joins with a code on
+**Join**, and platform admins create, suspend and reactivate schools on the
+Studio's **Schools** page.
 
 ## Schema
 
