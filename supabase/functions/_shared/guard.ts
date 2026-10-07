@@ -22,12 +22,13 @@ export interface Caller {
   db: SupabaseClient;
 }
 
-export type QuotaScope = 'simulation_generation' | 'tutor_message' | 'authoring_assist';
+export type QuotaScope = 'simulation_generation' | 'tutor_message' | 'authoring_assist' | 'translation';
 
 const SCOPE_LABEL: Record<QuotaScope, string> = {
   simulation_generation: 'simulation generations',
   tutor_message: 'AI tutor messages',
   authoring_assist: 'authoring requests',
+  translation: 'AI translation drafts',
 };
 
 // The key PostgREST and GoTrue expect in the apikey header. It is public; it

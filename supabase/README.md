@@ -107,11 +107,13 @@ anywhere in the repository.
 | `AIMLAPI_MODEL_EXTRACT_HTML_DETAILS` | no | `anthropic/claude-sonnet-5-5` | `extract-html-details` |
 | `AIMLAPI_MODEL_GENERATE_SIMULATION` | no | `deepseek/deepseek-v4-pro` | `generate-simulation` |
 | `AIMLAPI_MODEL_GENERATE_SIMULATION_3D` | no | `deepseek/deepseek-v4-pro` | `generate-simulation-3d` |
+| `AIMLAPI_MODEL_TRANSLATE_CONTENT` | no | `anthropic/claude-sonnet-5-5` | `translate-content` |
 | `AIMLAPI_MAX_TOKENS_GENERATE_SIMULATION` | no | `32768` | `generate-simulation` |
 | `AIMLAPI_MAX_TOKENS_GENERATE_SIMULATION_3D` | no | `16384` | `generate-simulation-3d` |
 | `AIMLAPI_MAX_TOKENS_CHAT_TUTOR` | no | `8192` | `chat-tutor` |
 | `AIMLAPI_MAX_TOKENS_SUGGEST_REQUIREMENTS` | no | `8192` | `suggest-requirements` |
 | `AIMLAPI_MAX_TOKENS_EXTRACT_HTML_DETAILS` | no | `2048` | `extract-html-details` |
+| `AIMLAPI_MAX_TOKENS_TRANSLATE_CONTENT` | no | `16384` | `translate-content` |
 | `ALLOWED_ORIGINS` | no (set it in production) | unset = any origin | all functions (CORS) |
 | `WHATSAPP_ENABLED` | no | unset = off | `send-whatsapp` runs only when this is exactly `true` |
 
@@ -145,6 +147,7 @@ server, so expired or tampered tokens are refused.
 | `extract-html-details` | admins | `authoring_assist` (logged, no limit) |
 | `generate-simulation-prompt` | admins | none (no model call) |
 | `chat-tutor` | any signed-in user | `tutor_message` |
+| `translate-content` | admins (any Studio role) | `translation` (300 per user per 24 h) |
 | `send-whatsapp` | any signed-in user, only if `WHATSAPP_ENABLED=true` | none. Off by default. |
 
 Responses: `401` not signed in or session expired, `403` signed in but not an
@@ -265,6 +268,42 @@ and invite codes on **My school** in the student app, teachers see their section
 and hand out student codes on **My sections**, anyone joins with a code on
 **Join**, and platform admins create, suspend and reactivate schools on the
 Studio's **Schools** page.
+
+## Urdu translations of the curriculum (Phase 3c, 2026-10-07)
+
+Migration `20261007090000_content_translations.sql`.
+
+| Object | What it holds |
+| --- | --- |
+| `content_translations` | The Urdu text of one field of one item: class, subject or chapter name, chapter description, or topic name, description or study guide. `status` draft/verified, `source` human/ai, `source_md5` (fingerprint of the English it was made from), who edited and who verified. One row per item, field and language |
+| `glossary_terms` | The agreed Urdu for a technical term, per subject slug or for all subjects (`subject_slug` NULL). Same draft/verified workflow |
+| `translation_overview` | View: every translatable field with its English, its Urdu, status and `outdated` (the English changed after it was translated). Used by the Studio's Translations page |
+
+English stays in the curriculum tables and is always the fallback: the student
+app shows Urdu only for **verified** rows (RLS hides drafts from everyone outside
+the Studio). Review workflow, enforced by the `*_b_workflow` triggers for API
+callers:
+
+| Studio role | May |
+| --- | --- |
+| `author` | add and edit drafts; delete their own drafts. Cannot verify, and cannot change or delete a verified row |
+| `reviewer`, `platform_admin` | everything: verify, edit verified text (it stays verified, re-signed), send back to draft, delete |
+
+A row with no English source cannot be created (`23503`), and rows are deleted
+with their item. A reviewer re-saving a verified row refreshes `source_md5`,
+which clears "outdated"; sending it back to draft does not.
+
+`translate-content` drafts one field with the model, using verified glossary
+terms for that subject, and saves it as a draft (`source = 'ai'`) through the
+caller's own client. It never verifies, and refuses (`409`) to replace a
+verified translation. The AI tutor (`chat-tutor`) takes `language: 'ur'` from the
+student app and answers in Urdu script; it always gets the **English**
+description as context, because that is the checked source.
+
+Translations we write ourselves are imported from `content/translations/` (local,
+not in the repository) with `build_import.py`; see the README there.
+
+Tests: `tests/database/phase3c_content_translations.test.sql` (43 assertions).
 
 ## Schema
 
