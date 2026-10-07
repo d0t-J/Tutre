@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Save } from 'lucide-react';
 import { useUpdateProfile } from '../hooks/useProfile';
+import { useContentText } from '../../../i18n/content';
 
 const NAME_MAX = 80;
 
@@ -14,6 +15,7 @@ const LANGUAGES = [
 
 export default function ProfileForm({ profile, email, classes }) {
   const { t } = useTranslation('profile');
+  const text = useContentText();
   const [displayName, setDisplayName] = useState(profile.display_name ?? '');
   const [language, setLanguage] = useState(profile.preferred_language ?? 'en');
   const [classId, setClassId] = useState(profile.class_id ?? '');
@@ -77,7 +79,7 @@ export default function ProfileForm({ profile, email, classes }) {
         >
           <option value="">{t('form.notSet')}</option>
           {classes.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>{text('class', c.id, c.name)}</option>
           ))}
         </select>
       </div>

@@ -8,6 +8,7 @@ import { useRemoveSectionMember } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
 import { InviteCodeList, CreateInviteCodeForm } from './InviteCodes';
 import { formatDate, dangerButtonClass } from '../utils/school';
+import { useContentText } from '../../../i18n/content';
 
 // One section on the My sections page: its students, and the student codes a
 // teacher can hand out for it.
@@ -16,8 +17,9 @@ export default function TeachingSection({ section }) {
   const { user } = useAuth();
   const [removing, setRemoving] = useState(null);
   const removeStudent = useRemoveSectionMember();
+  const text = useContentText();
 
-  const details = [section.className, section.academicYear, section.orgName].filter(Boolean).join(' · ');
+  const details = [text('class', section.classId, section.className), section.academicYear, section.orgName].filter(Boolean).join(' · ');
 
   const confirmRemove = () => {
     removeStudent.mutate(

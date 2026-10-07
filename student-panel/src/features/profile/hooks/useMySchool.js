@@ -21,7 +21,7 @@ export const useMySchool = () => {
 
       const { data: mySections, error: sectionError } = await supabase
         .from('section_members')
-        .select('role, sections(id, org_id, name, academic_year, archived, classes(name))')
+        .select('role, sections(id, org_id, name, academic_year, archived, classes(id, name))')
         .eq('user_id', user.id);
       if (sectionError) throw new Error(sectionError.message);
 
@@ -73,6 +73,7 @@ export const useMySchool = () => {
         school.sections.push({
           id: row.sections.id,
           name: row.sections.name,
+          classId: row.sections.classes?.id ?? null,
           className: row.sections.classes?.name ?? null,
           academicYear: row.sections.academic_year,
           role: row.role,

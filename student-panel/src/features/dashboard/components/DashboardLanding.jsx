@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useContentText } from '../../../i18n/content';
 import { slugify } from '../../../utils/slugify';
 import { DotField } from '../../../components/common';
 
 export default function DashboardLanding({ classes, isLoading }) {
   const navigate = useNavigate();
   const { t } = useTranslation('dashboard');
+  const text = useContentText();
 
   return (
     <div className="absolute inset-0 p-0 sm:p-4 lg:p-6 flex flex-col">
@@ -48,7 +50,7 @@ export default function DashboardLanding({ classes, isLoading }) {
                   <div className="p-2.5 bg-slate-50 group-hover:bg-primary-50 rounded-xl transition-colors">
                     <Icons.GraduationCap className="w-6 h-6 text-slate-400 group-hover:text-primary-600 transition-colors" />
                   </div>
-                  <bdi>{cls.name}</bdi>
+                  <bdi>{text('class', cls.id, cls.name)}</bdi>
                 </button>
               ))
             )}

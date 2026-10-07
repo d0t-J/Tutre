@@ -7,7 +7,8 @@ import { useChatbotStream } from '../hooks/useChatbotStream';
 export default function Chatbot({ className = "" }) {
   const { t } = useTranslation('simulations');
   const { simulation, messages, setMessages } = useSimulationViewer();
-  const { topic, description: details } = simulation;
+  // The tutor always gets the English topic and description: the checked source.
+  const { topic_en: topic, description_en: details } = simulation;
 
   const { input, setInput, isLoading, messagesEndRef, handleSubmit } = useChatbotStream(
     topic,
@@ -21,7 +22,7 @@ export default function Chatbot({ className = "" }) {
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, idx) => (
-          <ChatMessage key={idx} msg={msg} />
+          <ChatMessage key={idx} msg={msg.greeting ? { ...msg, content: t('tutor.greeting', { topic: simulation.topic }) } : msg} />
         ))}
         
         {isLoading && (

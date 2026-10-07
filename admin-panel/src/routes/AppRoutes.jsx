@@ -11,6 +11,7 @@ const SavedSimulationsPage = lazy(() => import('../pages/Simulations/SavedSimula
 const CurriculumManager = lazy(() => import('../pages/Curriculum/CurriculumManager'));
 const ProfilePage = lazy(() => import('../pages/Profile/ProfilePage'));
 const OrganizationsPage = lazy(() => import('../pages/Organizations/OrganizationsPage'));
+const TranslationsPage = lazy(() => import('../pages/Translations/TranslationsPage'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -52,6 +53,11 @@ export default function AppRoutes() {
                 <Suspense fallback={<CurriculumSkeleton />}>
                   <CurriculumManager />
                 </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/translations" element={
+              <ProtectedRoute>
+                <TranslationsPage />
               </ProtectedRoute>
             } />
             <Route path="/organizations" element={

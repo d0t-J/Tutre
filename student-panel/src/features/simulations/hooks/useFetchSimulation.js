@@ -26,6 +26,8 @@ export function useFetchSimulation(id) {
         setMessages([
           {
             role: 'assistant',
+            // Re-rendered by Chatbot in the current language and with the Urdu topic name.
+            greeting: true,
             content: i18n.t('simulations:tutor.greeting', { topic: data.topic })
           }
         ]);

@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useContentText } from '../../../i18n/content';
 import { slugify } from '../../../utils/slugify';
 import { EmptyState } from '../../../components/common';
 import { getDeterministicIcon } from '../../../utils/iconHelper';
 
 export default function ChapterGrid({ classSlug, subjectSlug, chapters, status, subjectIcon }) {
   const { t } = useTranslation('dashboard');
+  const text = useContentText();
   const Icon = subjectIcon ? (Icons[subjectIcon] || Icons.BookOpen) : Icons.BookOpen;
 
   if (status === 'pending') {
@@ -57,11 +59,11 @@ export default function ChapterGrid({ classSlug, subjectSlug, chapters, status, 
             </div>
             
             <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-1.5 sm:mb-2 group-hover:text-primary-600 transition-colors line-clamp-2 leading-tight min-h-[2.5em]">
-              <bdi>{chapter.name}</bdi>
+              <bdi>{text('chapter', chapter.id, chapter.name)}</bdi>
             </h3>
             
             <p className="text-[10px] sm:text-[11px] text-slate-500 mt-auto pt-2 border-t border-slate-100 w-full line-clamp-2 leading-snug" title={chapter.description}>
-              {chapter.description ? chapter.description : <span className="capitalize">{subjectSlug.replace(/-/g, ' ')}</span>}
+              {chapter.description ? <bdi>{text('chapter', chapter.id, chapter.description, 'description')}</bdi> : <span className="capitalize">{subjectSlug.replace(/-/g, ' ')}</span>}
             </p>
           </Link>
         );

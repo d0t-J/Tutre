@@ -5,6 +5,7 @@ import { Archive, ArchiveRestore, Loader2, Pencil, Plus, UserMinus, UserPlus } f
 import { useClassOptions } from '../../profile';
 import { useAddSectionMember, useCreateSection, useRemoveSectionMember, useUpdateSection } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
+import { useContentText } from '../../../i18n/content';
 import {
   inputClass, labelClass, primaryButtonClass, secondaryButtonClass, dangerButtonClass,
 } from '../utils/school';
@@ -14,6 +15,7 @@ const YEAR_PATTERN = /^[0-9]{4}(-[0-9]{2,4})?$/;
 // Name, class and academic year: used to create a section and to edit one.
 function SectionFields({ idPrefix, values, onChange, classes }) {
   const { t } = useTranslation('school');
+  const text = useContentText();
   return (
     <>
       <div className="min-w-32 flex-1">
@@ -26,7 +28,7 @@ function SectionFields({ idPrefix, values, onChange, classes }) {
         <select id={`${idPrefix}-class`} value={values.classId}
           onChange={(e) => onChange({ ...values, classId: e.target.value })} className={inputClass}>
           <option value="">{t('sections.notSet')}</option>
-          {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          {classes.map(c => <option key={c.id} value={c.id}>{text('class', c.id, c.name)}</option>)}
         </select>
       </div>
       <div className="w-32">
@@ -120,8 +122,9 @@ function SectionCard({ section, members, classes }) {
   });
   const updateSection = useUpdateSection();
   const removeMember = useRemoveSectionMember();
+  const text = useContentText();
 
-  const details = [section.className, section.academicYear].filter(Boolean).join(' · ');
+  const details = [text('class', section.classId, section.className), section.academicYear].filter(Boolean).join(' · ');
   const editError = validate(values);
 
   const save = (changes, message, done) => {

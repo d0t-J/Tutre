@@ -27,7 +27,8 @@ export function useStudyGuideDocxGenerator(simulation) {
       const fullHtml = buildWordDocumentHtml(
         simulation.topic,
         simulation.subject,
-        formattedBody
+        formattedBody,
+        simulation.study_guide_language
       );
 
       const blob = new Blob(['\ufeff', fullHtml], { type: 'application/msword' });

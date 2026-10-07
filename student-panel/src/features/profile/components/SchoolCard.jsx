@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { KeyRound, School, Users } from 'lucide-react';
+import { useContentText } from '../../../i18n/content';
 
 function SectionRow({ section }) {
   const { t } = useTranslation('profile');
-  const details = [section.className, section.academicYear].filter(Boolean).join(' · ');
+  const text = useContentText();
+  const details = [text('class', section.classId, section.className), section.academicYear].filter(Boolean).join(' · ');
   const teachers = section.teachers.join(t('common:list.separator'));
   return (
     <li className="flex items-start gap-3 py-2.5">

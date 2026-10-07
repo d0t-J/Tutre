@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useContentText } from '../../../i18n/content';
 import { slugify } from '../../../utils/slugify';
 import { EmptyState } from '../../../components/common';
 
 export default function SubjectGrid({ classSlug, subjects, status }) {
   const { t } = useTranslation('dashboard');
+  const text = useContentText();
   if (status === 'pending') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
@@ -68,7 +70,7 @@ export default function SubjectGrid({ classSlug, subjects, status }) {
             <div className="p-2.5 bg-slate-50 group-hover:bg-primary-50 rounded-xl transition-colors">
               <Icon className="w-6 h-6 text-slate-400 group-hover:text-primary-600 transition-colors" />
             </div>
-            <bdi>{subject.name}</bdi>
+            <bdi>{text('subject', subject.id, subject.name)}</bdi>
           </Link>
         );
       })}

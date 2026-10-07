@@ -151,6 +151,10 @@ straight into a component.
   to `t()` are isolated automatically.
 - Simulations always render left to right inside their frame; do not change the
   frame's `dir`.
+- Curriculum text (class, subject, chapter and topic names, descriptions, study
+  guides) is **not** interface text: its Urdu lives in the `content_translations`
+  table and is managed on the Studio's Translations page. Show it with
+  `useContentText()` / `useTopicTranslation()` from `src/i18n/content.js`.
 
 ---
 

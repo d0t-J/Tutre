@@ -3,9 +3,11 @@ import * as Icons from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { slugify } from '../../utils/slugify';
 import MobileDropdown from '../common/MobileDropdown';
+import { useContentText } from '../../i18n/content';
 
 export default function ClassNavMenu({ classes }) {
   const { t } = useTranslation();
+  const text = useContentText();
   const location = useLocation();
   const navigate = useNavigate();
   const isRootDashboard = location.pathname === '/dashboard' || location.pathname === '/dashboard/';
@@ -30,7 +32,7 @@ export default function ClassNavMenu({ classes }) {
               }`}
             >
               <Icons.GraduationCap className="w-4 h-4" />
-              <bdi>{cls.name}</bdi>
+              <bdi>{text('class', cls.id, cls.name)}</bdi>
             </NavLink>
           );
         })}
@@ -39,7 +41,7 @@ export default function ClassNavMenu({ classes }) {
       <div className="block lg:hidden w-full">
         <MobileDropdown 
           icon={Icons.GraduationCap}
-          options={classes.map(c => ({ value: c.id, label: c.name }))}
+          options={classes.map(c => ({ value: c.id, label: text('class', c.id, c.name) }))}
           selectedValue={classes.find(c => decodeURIComponent(location.pathname).startsWith(`/class/${slugify(c.name)}`))?.id}
           onSelect={(val) => {
             const cls = classes.find(c => c.id === val);

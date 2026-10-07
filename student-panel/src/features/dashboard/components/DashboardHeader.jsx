@@ -1,12 +1,14 @@
 import * as Icons from 'lucide-react';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useContentText } from '../../../i18n/content';
 import { useTranslation } from 'react-i18next';
 
 export default function DashboardHeader({
   breadcrumbs, searchQuery, setSearchQuery, showSearch = true
 }) {
   const { t } = useTranslation();
+  const text = useContentText();
   const maxDepth = 3; // Class -> Subject -> Chapter
   const progressPercentage = breadcrumbs ? Math.min((breadcrumbs.length / maxDepth) * 100, 100) : 0;
 
@@ -25,7 +27,7 @@ export default function DashboardHeader({
                     {index > 0 && <Icons.ChevronRight className="w-4 h-4 mx-2 text-slate-300 shrink-0 rtl:-scale-x-100" />}
                     {isLast ? (
                       <div className="flex items-center">
-                        <span className="text-slate-800 font-bold"><bdi>{crumb.label}</bdi></span>
+                        <span className="text-slate-800 font-bold"><bdi>{text(crumb.type, crumb.id, crumb.label)}</bdi></span>
                         {breadcrumbs.length < maxDepth && (
                           <Icons.ChevronRight className="w-4 h-4 ms-2 text-slate-300 shrink-0 rtl:-scale-x-100" />
                         )}
@@ -35,7 +37,7 @@ export default function DashboardHeader({
                         to={crumb.path}
                         className="text-slate-500 hover:text-primary-600 transition-colors"
                       >
-                        <bdi>{crumb.label}</bdi>
+                        <bdi>{text(crumb.type, crumb.id, crumb.label)}</bdi>
                       </Link>
                     )}
                   </div>

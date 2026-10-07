@@ -15,7 +15,7 @@ export const useTeaching = () => {
     queryFn: async () => {
       const { data: rows, error } = await supabase
         .from('section_members')
-        .select('sections(id, org_id, name, academic_year, archived, classes(name), organizations(name))')
+        .select('sections(id, org_id, name, academic_year, archived, classes(id, name), organizations(name))')
         .eq('user_id', user.id)
         .eq('role', 'teacher');
       if (error) throw new Error(error.message);
@@ -57,6 +57,7 @@ export const useTeaching = () => {
           orgId: s.org_id,
           orgName: s.organizations?.name ?? '',
           name: s.name,
+          classId: s.classes?.id ?? null,
           className: s.classes?.name ?? null,
           academicYear: s.academic_year,
           students: students
