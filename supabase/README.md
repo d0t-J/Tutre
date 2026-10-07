@@ -141,12 +141,12 @@ server, so expired or tampered tokens are refused.
 
 | Function | Who may call | Usage limit (scope) |
 | --- | --- | --- |
-| `generate-simulation` | admins | `simulation_generation` (one request = one use, although it makes three model calls) |
-| `generate-simulation-3d` | admins | `simulation_generation` |
-| `suggest-requirements` | admins | `authoring_assist` (logged, no limit) |
-| `extract-html-details` | admins | `authoring_assist` (logged, no limit) |
-| `generate-simulation-prompt` | admins | none (no model call) |
-| `chat-tutor` | any signed-in user | `tutor_message` |
+| `generate-simulation` | Studio; teachers and school admins (Phase 5d) | `simulation_generation`; teachers `teacher_simulation_generation` (one request = one use, although it makes three model calls) |
+| `generate-simulation-3d` | Studio; teachers and school admins | `simulation_generation`; teachers `teacher_simulation_generation` |
+| `suggest-requirements` | Studio; teachers and school admins | `authoring_assist` (logged, no limit); teachers `teacher_authoring_assist` |
+| `extract-html-details` | Studio; teachers and school admins | `authoring_assist` (logged, no limit); teachers `teacher_authoring_assist` |
+| `generate-simulation-prompt` | Studio; teachers and school admins | none (no model call) |
+| `chat-tutor` | any signed-in user; with `purpose: "notes"` staff only | `tutor_message`; teachers' notes drafts `teacher_notes_draft` |
 | `translate-content` | admins (any Studio role) | `translation` (300 per user per 24 h) |
 | `send-whatsapp` | any signed-in user, only if `WHATSAPP_ENABLED=true` | none. Off by default. |
 
@@ -166,6 +166,9 @@ The window is a rolling 24 hours per user:
 | `simulation_generation` | 30 |
 | `tutor_message` | 200 |
 | `authoring_assist` | none (`NULL`) |
+| `teacher_simulation_generation` | 10 (Phase 5d) |
+| `teacher_notes_draft` | 30 |
+| `teacher_authoring_assist` | 50 |
 
 Change a limit in the SQL editor; `NULL` means unlimited:
 
@@ -396,6 +399,55 @@ Tests: `tests/database/phase5b_head_admins.test.sql` (47 assertions). Two Phase
 2a assertions changed with the approved rules (a head cannot remove themselves;
 the "not even a platform admin can remove the last admin" test moved here as
 its opposite).
+
+## Teachers' own material and class codes (Phase 5c-5f, 2026-10-08)
+
+Migrations `20261010090000_teacher_materials.sql` and `20261010090100_class_codes.sql`.
+
+**Teachers' simulations and notes live apart from Tutre's.** Nothing a teacher
+makes is written to `simulations` or `topics`, so Tutre's library and curriculum
+cannot be changed from a school. Copying a Tutre simulation or Tutre's notes
+makes an independent copy owned by the teacher.
+
+| Object | What it holds |
+| --- | --- |
+| `teacher_materials` | One simulation or one set of notes: school (`org_id`), author (`owner_id`, set by the database), `kind`, chapter and optional topic, `title`, `summary` (a simulation's description, also the AI tutor's context), `content` (simulation HTML up to 2 MB, notes HTML up to 300 KB), `language`, `visibility` private/school, `status` active/archived, `version`, and where a copy came from (`based_on_simulation_id`, `based_on_topic_id`, `based_on_material_id`, set only by the copy functions) |
+| `material_shares` | Which sections a material is shared with |
+| `copy_library_simulation(sim, org)`, `copy_library_notes(topic, org)` | Copy a published Tutre simulation, or a topic's notes, into the caller's materials |
+| `copy_teacher_material(id)` | Copy from the school library (or your own) |
+| `shared_materials(chapter, material)` | What is shared with the caller's sections, with the teacher's name (students cannot read every teacher's profile) |
+| `school_library(org)` | Other staff's material marked "school", with names |
+
+| Who | May |
+| --- | --- |
+| The author (while a teacher or school admin of the school) | create, edit, delete, share with sections they teach (a school admin: any section of the school), mark for the school library |
+| School admins of the school, Tutre platform admins | read everything in the school, archive and restore it, unshare it. Never edit another person's work (`42501`) |
+| Teachers and school admins of the school | read and copy material marked "school" |
+| Members of a section | read active material shared with that section |
+| Everyone else, anonymous visitors | nothing |
+
+A teacher who leaves the school loses access to its material; the school keeps
+it. Teachers' simulations are not tracked for learning progress (decided
+2026-10-08). The apps render teacher simulations only in the `allow-scripts`
+sandbox and notes only after DOMPurify, as for any HTML from the database.
+
+**Class codes.** `invite_codes.is_class_code` marks each section's standing
+student code (one live code per section, unique index): up to 1000 students,
+valid for a year. `class_code(section, replace)` returns it, creating it when
+there is none or it has expired or is used up, and `replace` revokes the old one
+at once. For the section's teachers, the school's admins and platform admins.
+The staff portal shows it with a join link (`<student app>/join?code=...`) and a
+QR code; the student app fills in the code from the link, also after signing
+in or up.
+
+**AI for teachers.** `generate-simulation`, `generate-simulation-3d`,
+`suggest-requirements`, `extract-html-details` and `generate-simulation-prompt`
+accept teachers and school admins of an active school as well as the Studio;
+`chat-tutor` with `purpose: "notes"` drafts notes. Teachers are counted against
+their own scopes (below), the Studio against its existing ones.
+
+Tests: `tests/database/phase5c_teacher_materials.test.sql` (54 assertions) and
+`tests/database/phase5f_class_codes.test.sql` (14).
 
 ## Schema
 
