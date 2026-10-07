@@ -3,6 +3,7 @@ import { SimulationCardSkeleton } from '../../../../components/common/SkeletonLo
 import ConfirmationModal from '../../../../components/common/ConfirmationModal';
 import EmptyState from '../../../../components/common/EmptyState';
 import SimulationGridCard from './SimulationGridCard';
+import { useTopicUrduStatus } from '../../../translations/hooks/useTranslations';
 
 const COLORS = [
   { color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -20,6 +21,7 @@ export default function SimulationsGrid({
   deleteSimulation
 }) {
   const [simToDelete, setSimToDelete] = useState(null);
+  const { data: urduStatus = {} } = useTopicUrduStatus((savedSimulations ?? []).map(sim => sim.topic_id));
 
   if (isLoading) {
     return (
@@ -56,6 +58,7 @@ export default function SimulationsGrid({
           theme={COLORS[index % COLORS.length]}
           onSelect={loadSavedSimulation}
           onDelete={setSimToDelete}
+          urduStatus={urduStatus[sim.topic_id]}
         />
       ))}
 

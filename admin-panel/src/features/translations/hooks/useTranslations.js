@@ -23,13 +23,19 @@ const requireRows = (data) => {
   return data;
 };
 
-// Every translatable field in the chosen part of the curriculum.
-export const useTranslationOverview = ({ classId, subjectId, chapterId, field }) => {
+// Every translatable field in the chosen part of the curriculum, or every
+// field of one topic when topicId is given.
+export const useTranslationOverview = ({ classId, subjectId, chapterId, field, topicId }) => {
   const { user } = useAuth();
   return useQuery({
-    queryKey: ['translation-overview', classId || null, subjectId || null, chapterId || null, field || null],
+    queryKey: ['translation-overview', classId || null, subjectId || null, chapterId || null, field || null, topicId || null],
     queryFn: async () => {
       let query = supabase.from('translation_overview').select('*');
+      if (topicId) {
+        const { data, error } = await query.eq('entity_type', 'topic').eq('entity_id', topicId);
+        if (error) throw new Error(error.message);
+        return data.sort((a, b) => FIELD_ORDER[a.field] - FIELD_ORDER[b.field]);
+      }
       if (chapterId) query = query.eq('chapter_id', chapterId);
       else if (subjectId) query = query.eq('subject_id', subjectId);
       else if (classId) query = query.eq('class_id', classId);
@@ -43,6 +49,33 @@ export const useTranslationOverview = ({ classId, subjectId, chapterId, field })
         || FIELD_ORDER[a.field] - FIELD_ORDER[b.field]);
     },
     enabled: !!user,
+  });
+};
+
+// Urdu readiness of several topics at once, for the Saved Simulations cards:
+// { [topicId]: { verified, total } }, counting verified, up-to-date texts.
+export const useTopicUrduStatus = (topicIds) => {
+  const { user } = useAuth();
+  const ids = [...new Set(topicIds.filter(Boolean))].sort();
+  return useQuery({
+    queryKey: ['translation-overview', 'topic-status', ids.join(',')],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('translation_overview')
+        .select('entity_id, status, outdated')
+        .eq('entity_type', 'topic')
+        .in('entity_id', ids);
+      if (error) throw new Error(error.message);
+      const result = {};
+      for (const row of data) {
+        const entry = result[row.entity_id] ?? { verified: 0, total: 0 };
+        entry.total += 1;
+        if (row.status === 'verified' && !row.outdated) entry.verified += 1;
+        result[row.entity_id] = entry;
+      }
+      return result;
+    },
+    enabled: !!user && ids.length > 0,
   });
 };
 

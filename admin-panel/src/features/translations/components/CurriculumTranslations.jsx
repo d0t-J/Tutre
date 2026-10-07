@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Loader2, Sparkles, Square } from 'lucide-react';
@@ -29,13 +30,16 @@ export default function CurriculumTranslations() {
   const [chapterId, setChapterId] = useState('');
   const [field, setField] = useState('name');
   const [stateFilter, setStateFilter] = useState('');
+  // ?topic=<id> (from a Saved Simulations card): every text of one topic.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const topicId = searchParams.get('topic');
   const [bulk, setBulk] = useState(null); // { done, total }
   const stopRef = useRef(false);
 
   const { data: classes = [] } = useClasses();
   const { data: subjects = [] } = useSubjects(classId || null);
   const { data: chapters = [] } = useChapters(subjectId || null);
-  const { data: rows = [], isLoading, error } = useTranslationOverview({ classId, subjectId, chapterId, field });
+  const { data: rows = [], isLoading, error } = useTranslationOverview({ classId, subjectId, chapterId, field, topicId });
 
   const counts = useMemo(() => {
     const c = { missing: 0, draft: 0, verified: 0, outdated: 0 };
@@ -69,6 +73,16 @@ export default function CurriculumTranslations() {
 
   return (
     <div className="space-y-4">
+      {topicId ? (
+        <div className="flex flex-wrap items-center gap-2 p-3 rounded-xl bg-primary-50 border border-primary-100 text-sm">
+          <span className="text-slate-600">Every text of one topic:</span>
+          <span className="font-bold text-slate-800">{rows.find(r => r.field === 'name')?.english ?? '…'}</span>
+          <button type="button" onClick={() => setSearchParams({})}
+            className="cursor-pointer ms-auto text-xs font-bold text-primary-700 hover:underline">
+            Show all topics
+          </button>
+        </div>
+      ) : (
       <div className="flex flex-wrap items-end gap-2">
         <select aria-label="Class" value={classId} className={selectClass}
           onChange={(e) => { setClassId(e.target.value); setSubjectId(''); setChapterId(''); }}>
@@ -89,6 +103,7 @@ export default function CurriculumTranslations() {
           {FIELDS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
         </select>
       </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" onClick={() => setStateFilter('')}

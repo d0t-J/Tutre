@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../../../services/supabase';
 import StatusBadge from '../StatusBadge';
+import UrduStatusBadge from '../../../translations/components/UrduStatusBadge';
 
 function ChapterNameLabel({ chapterId }) {
   const { data: chapterName, isLoading } = useQuery({
@@ -37,7 +38,7 @@ const FALLBACK_MAP = {
   'english': 'BookOpen'
 };
 
-export default function SimulationGridCard({ sim, theme, onSelect, onDelete }) {
+export default function SimulationGridCard({ sim, theme, onSelect, onDelete, urduStatus }) {
   const iconName = FALLBACK_MAP[sim.subject] || sim.icon_name || 'Book';
   const Icon = Icons[iconName] || Icons.Book;
 
@@ -77,6 +78,7 @@ export default function SimulationGridCard({ sim, theme, onSelect, onDelete }) {
         <p className="text-[9px] sm:text-xs text-slate-400 truncate flex-1 min-w-0">
           {sim.chapter_id ? <ChapterNameLabel chapterId={sim.chapter_id} /> : <span>&nbsp;</span>}
         </p>
+        <UrduStatusBadge topicId={sim.topic_id} status={urduStatus} />
         <StatusBadge status={sim.status} />
       </div>
     </div>
