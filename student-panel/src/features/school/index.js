@@ -7,6 +7,6 @@ export { default as SchoolSectionsTab } from './components/SchoolSectionsTab';
 export { default as SchoolCodesTab } from './components/SchoolCodesTab';
 
 // Hooks
-export { useMyRoles, useRedeemCode } from './hooks/useMyRoles';
+export { useMyRoles, useRedeemCode, peekInviteCode } from './hooks/useMyRoles';
 export { useTeaching } from './hooks/useTeaching';
 export { useSchoolAdmin } from './hooks/useSchoolAdmin';

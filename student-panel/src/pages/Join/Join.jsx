@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, KeyRound, Loader2 } from 'lucide-react';
-import { useRedeemCode } from '../../features/school';
+import { CheckCircle2, ExternalLink, KeyRound, Loader2 } from 'lucide-react';
+import { peekInviteCode, useRedeemCode } from '../../features/school';
 import { inputClass, labelClass, primaryButtonClass } from '../../features/school/utils/school';
 import { translateError } from '../../i18n/errors';
+import { STAFF_PORTAL_URL } from '../../services/portals';
 
 const NEXT_STEP = {
-  org_admin: { to: '/school', key: 'join.next.org_admin' },
-  teacher: { to: '/teaching', key: 'join.next.teacher' },
   student: { to: '/dashboard', key: 'join.next.student' },
 };
 
@@ -17,13 +16,31 @@ export default function Join() {
   const [code, setCode] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [staffCode, setStaffCode] = useState(null);
+  const [checking, setChecking] = useState(false);
   const redeem = useRedeemCode();
 
   const cleaned = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-  const handleSubmit = (e) => {
+  // Staff codes (teacher, school admin) are used in the staff portal, so the
+  // code is checked before it is redeemed here.
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setStaffCode(null);
+    setChecking(true);
+    try {
+      const info = await peekInviteCode(cleaned);
+      if (info?.valid && info.role !== 'student') {
+        setStaffCode(info);
+        return;
+      }
+    } catch (err) {
+      setError(translateError(err, t, 'join.failed'));
+      return;
+    } finally {
+      setChecking(false);
+    }
     redeem.mutate(cleaned, {
       onSuccess: (data) => {
         setResult(data);
@@ -67,11 +84,22 @@ export default function Join() {
             />
             {error && <p className="mt-1.5 text-xs text-red-600">{error}</p>}
           </div>
-          <button type="submit" disabled={cleaned.length !== 10 || redeem.isPending} className={primaryButtonClass}>
-            {redeem.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+          <button type="submit" disabled={cleaned.length !== 10 || checking || redeem.isPending} className={primaryButtonClass}>
+            {(checking || redeem.isPending) && <Loader2 className="w-4 h-4 animate-spin" />}
             {t('join.submit')}
           </button>
         </form>
+
+        {staffCode && (
+          <div className="mt-5 p-4 rounded-xl bg-amber-50 border border-amber-100 space-y-2">
+            <p className="text-sm text-slate-700">{t('joinStaff.staffCode', { school: staffCode.org_name })}</p>
+            {STAFF_PORTAL_URL && (
+              <a href={`${STAFF_PORTAL_URL}/join`} className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 hover:underline">
+                <ExternalLink className="w-4 h-4" /> {t('joinStaff.open')}
+              </a>
+            )}
+          </div>
+        )}
 
         {result && (
           <div className="mt-5 p-4 rounded-xl bg-emerald-50 border border-emerald-100">

@@ -1,6 +1,7 @@
 // Supabase Auth reports errors in English. Known ones are shown in the
 // interface language; anything else falls back to a general message.
 const BY_CODE = {
+  staff_account: 'errors.staffAccount',
   invalid_credentials: 'errors.invalidCredentials',
   user_already_exists: 'errors.userExists',
   email_exists: 'errors.userExists',

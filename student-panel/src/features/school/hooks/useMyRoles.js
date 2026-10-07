@@ -48,3 +48,11 @@ export const useRedeemCode = () => {
     onSuccess: () => invalidateSchoolQueries(queryClient),
   });
 };
+
+// What a code is for, without using it (Phase 5a): staff codes are redeemed in
+// the staff portal, not here.
+export const peekInviteCode = async (code) => {
+  const { data, error } = await supabase.rpc('peek_invite_code', { p_code: code });
+  if (error) throw new Error(error.message);
+  return data;
+};

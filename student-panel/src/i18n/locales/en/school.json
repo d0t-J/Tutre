@@ -135,5 +135,15 @@
       "teacher": "Open My sections",
       "student": "Start exploring"
     }
+  },
+  "moved": {
+    "title": "This page has moved",
+    "message": "My school and My sections are now in the Tutre staff portal, where teachers and school admins sign in.",
+    "open": "Open the staff portal",
+    "noLink": "Ask your school admin for the staff portal's address."
+  },
+  "joinStaff": {
+    "staffCode": "This is a staff code for {{school}}. Teachers and school admins join in the Tutre staff portal.",
+    "open": "Open the staff portal"
   }
 }

@@ -19,10 +19,9 @@ export default function TopNavbar() {
   const { data: profile } = useProfile();
   const { data: roles } = useMyRoles();
 
-  // School links depend on the user's roles; Join shows until they are in a school.
+  // Join shows until the student is in a school. My school and My sections
+  // moved to the staff portal in Phase 5a.
   const roleLinks = [
-    roles?.adminOrgs.length > 0 && { to: '/school', icon: Icons.School, label: t('nav.mySchool') },
-    roles?.isTeacher && { to: '/teaching', icon: Icons.Presentation, label: t('nav.mySections') },
     roles && !roles.hasSchool && { to: '/join', icon: Icons.KeyRound, label: t('nav.join') },
   ].filter(Boolean);
   
