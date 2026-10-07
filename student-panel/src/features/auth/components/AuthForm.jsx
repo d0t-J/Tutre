@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/useAuth';
 import { AuthFormProvider } from '../context/AuthFormProvider';
@@ -61,10 +61,16 @@ function AuthFormContent() {
 
 export default function AuthForm() {
   const { user } = useAuth();
+  const location = useLocation();
 
-  // Redirect if already logged in
+  // Signed in: back to the page that asked for it (a join link, for example),
+  // or the dashboard. Only paths inside this app are followed.
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    const from = location.state?.from;
+    const back = from?.pathname?.startsWith('/') && !from.pathname.startsWith('//') && from.pathname !== '/login'
+      ? `${from.pathname}${from.search ?? ''}`
+      : '/dashboard';
+    return <Navigate to={back} replace />;
   }
 
   return (

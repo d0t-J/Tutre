@@ -1,0 +1,13 @@
+{
+  "tutreVerified": "Tutre verified",
+  "fromTeacher": "From your teacher",
+  "yourTeacher": "your teacher",
+  "by": "by {{name}}",
+  "kind": {
+    "simulation": "Simulation",
+    "notes": "Notes"
+  },
+  "teacherSimulation": "Simulation by {{name}}",
+  "teacherNotes": "Notes by {{name}}",
+  "notFound": "This material is not available. Your teacher may have removed it."
+}

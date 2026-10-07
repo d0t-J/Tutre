@@ -58,21 +58,28 @@ export default function ViewerHeader() {
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">
               <PlayCircle className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-              <span className="truncate">{t('header.subjectSimulation', { subject: simulation.subject })}</span>
-              <ProgressBadge level={progress[simulation.topic_id]?.level} className="normal-case tracking-normal" />
+              {simulation.isTeacherMaterial ? (
+                // A teacher's own version: say whose it is; it is not tracked.
+                <span className="truncate">{t('materials:teacherSimulation', { name: simulation.teacherName ?? t('materials:yourTeacher') })}</span>
+              ) : (
+                <>
+                  <span className="truncate">{t('header.subjectSimulation', { subject: simulation.subject })}</span>
+                  <ProgressBadge level={progress[simulation.topic_id]?.level} className="normal-case tracking-normal" />
+                </>
+              )}
             </div>
             <h1 dir="auto" className="text-base sm:text-lg font-extrabold text-slate-900 leading-none truncate">{simulation.topic}</h1>
           </div>
         </div>
 
-        <ViewerHeaderActions
+        {!simulation.isTeacherMaterial && <ViewerHeaderActions
           onDownloadDocxClick={onDownloadDocxClick}
           onDownloadClick={onDownloadClick}
           isGeneratingPDF={isGeneratingPDF}
           isGeneratingDOCX={isGeneratingDOCX}
           simulation={simulation}
           generateStudyGuideData={generateStudyGuideData}
-        />
+        />}
       </header>
 
       {/* Hidden Printable Component */}

@@ -1,6 +1,10 @@
 import { DashboardHeader, DashboardGrid, DashboardLanding, SubjectGrid, ChapterGrid, useDashboardState } from '../../features/dashboard';
+import { useTranslation } from 'react-i18next';
+import { ShieldCheck } from 'lucide-react';
 import { DotField } from '../../components/common';
+import TeacherMaterials from '../../features/materials/components/TeacherMaterials';
 export default function Dashboard() {
+  const { t } = useTranslation('materials');
   const {
     classSlug,
     subjectSlug,
@@ -19,6 +23,7 @@ export default function Dashboard() {
     isFetchingNextPage,
     lastElementRef,
     breadcrumbs,
+    chapterId,
   } = useDashboardState();
 
   if (!classSlug) {
@@ -48,13 +53,22 @@ export default function Dashboard() {
           ) : !chapterSlug ? (
             <ChapterGrid classSlug={classSlug} subjectSlug={subjectSlug} chapters={chapters} status={chaptersStatus} subjectIcon={subjectIcon} />
           ) : (
-            <DashboardGrid 
-              status={status}
-              subjectIcon={subjectIcon}
-              simulations={simulations}
-              isFetchingNextPage={isFetchingNextPage}
-              lastElementRef={lastElementRef}
-            />
+            // A plain block, so the grid does not stretch and push the teacher's
+            // section to the bottom.
+            <div>
+              {/* Tutre's own simulations first, then the student's teachers' (Phase 5e). */}
+              <h2 className="flex items-center gap-2 text-sm font-extrabold text-slate-700 mb-3">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" /> {t('tutreVerified')}
+              </h2>
+              <DashboardGrid 
+                status={status}
+                subjectIcon={subjectIcon}
+                simulations={simulations}
+                isFetchingNextPage={isFetchingNextPage}
+                lastElementRef={lastElementRef}
+              />
+              <TeacherMaterials chapterId={chapterId} />
+            </div>
           )}
         </div>
       </div>

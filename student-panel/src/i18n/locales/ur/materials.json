@@ -1,0 +1,13 @@
+{
+  "tutreVerified": "ٹیوٹر سے تصدیق شدہ",
+  "fromTeacher": "آپ کے استاد کی طرف سے",
+  "yourTeacher": "آپ کے استاد",
+  "by": "از {{name}}",
+  "kind": {
+    "simulation": "سمولیشن",
+    "notes": "نوٹس"
+  },
+  "teacherSimulation": "سمولیشن از {{name}}",
+  "teacherNotes": "نوٹس از {{name}}",
+  "notFound": "یہ مواد دستیاب نہیں۔ ہو سکتا ہے آپ کے استاد نے اسے ہٹا دیا ہو۔"
+}

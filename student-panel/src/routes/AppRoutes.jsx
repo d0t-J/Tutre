@@ -11,6 +11,7 @@ const SimulationViewer = lazy(() => import('../pages/Simulations/SimulationViewe
 const Profile = lazy(() => import('../pages/Profile/Profile'));
 const Join = lazy(() => import('../pages/Join/Join'));
 const MovedToStaffPortal = lazy(() => import('../pages/School/MovedToStaffPortal'));
+const MaterialViewer = lazy(() => import('../pages/Materials/MaterialViewer'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -64,6 +65,11 @@ export default function AppRoutes() {
         <Route path="/class/:classSlug/subject/:subjectSlug/chapter/:chapterSlug/simulation/:id" element={
           <ProtectedRoute>
             <SimulationViewer />
+          </ProtectedRoute>
+        } />
+        <Route path="/class/:classSlug/subject/:subjectSlug/chapter/:chapterSlug/material/:id" element={
+          <ProtectedRoute>
+            <MaterialViewer />
           </ProtectedRoute>
         } />
         <Route path="/class/:classSlug/subject/:subjectSlug/simulation/:id" element={

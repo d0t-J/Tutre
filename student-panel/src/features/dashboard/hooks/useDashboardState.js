@@ -70,6 +70,7 @@ export function useDashboardState() {
   return {
     classSlug, subjectSlug, chapterSlug, searchQuery, setSearchQuery,
     classes, isLoadingClasses, subjects, subjectsStatus, chapters, chaptersStatus,
-    status, subjectIcon, simulations, isFetchingNextPage, lastElementRef, breadcrumbs
+    status, subjectIcon, simulations, isFetchingNextPage, lastElementRef, breadcrumbs,
+    chapterId: matchedChapter?.id ?? null,
   };
 }

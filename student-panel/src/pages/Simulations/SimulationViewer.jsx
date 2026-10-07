@@ -6,7 +6,8 @@ import { useSimulationViewer } from '../../features/simulations/context/Simulati
 import { ViewerHeader, ViewerIframe, SimulationTabs, GuidePanel, Chatbot } from '../../features/simulations';
 import { SimulationViewerSkeleton } from '../../components/common';
 
-function SimulationViewerContent() {
+// Also used for teachers' simulations (pages/Materials/MaterialViewer.jsx).
+export function SimulationViewerContent() {
   const { t } = useTranslation('simulations');
   const { loading, simulation } = useSimulationViewer();
 
