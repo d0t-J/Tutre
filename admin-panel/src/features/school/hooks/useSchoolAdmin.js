@@ -3,7 +3,8 @@ import { supabase } from '../../../services/supabase';
 import { useAuth } from '../../../context/AuthContext';
 import { byName } from '../utils/school';
 
-const CODE_COLUMNS = 'id, code, role, section_id, max_uses, uses, expires_at, revoked, created_by, created_at';
+// Class codes (Phase 5f) are shown on their own card, not in these lists.
+const CODE_COLUMNS = 'id, code, role, section_id, max_uses, uses, expires_at, revoked, created_by, created_at, is_class_code';
 
 // Everything the org admin screen shows for one school: the school, its members
 // (with names, including removed members), its sections with their members, and
@@ -80,7 +81,7 @@ export const useSchoolAdmin = (orgId) => {
               .sort(byName),
           }))
           .sort(byName),
-        codes: codes.data,
+        codes: codes.data.filter(c => !c.is_class_code),
       };
     },
     enabled: !!user && !!orgId,

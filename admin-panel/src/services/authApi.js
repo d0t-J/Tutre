@@ -23,6 +23,10 @@ export const deriveRoles = (context) => {
   const adminOrgs = active
     .filter(m => m.role === 'org_admin')
     .map(m => ({ id: m.org_id, name: m.org_name, isHead: m.is_head }));
+  // Schools where the user may create teaching material (Phase 5c).
+  const staffOrgs = [...new Map(active
+    .filter(m => m.role === 'teacher' || m.role === 'org_admin')
+    .map(m => [m.org_id, { id: m.org_id, name: m.org_name }])).values()];
   const isPlatformAdmin = studioRole === 'platform_admin';
   const isTeacher = active.some(m => m.role === 'teacher');
 
@@ -36,6 +40,7 @@ export const deriveRoles = (context) => {
     canTeach: isTeacher || adminOrgs.length > 0,
     isStaff: !!studioRole || isTeacher || adminOrgs.length > 0,
     hasSuspendedSchool: memberships.some(m => m.org_status !== 'active' && m.role !== 'student'),
+    staffOrgs,
     sections: context?.sections ?? [],
   };
 };

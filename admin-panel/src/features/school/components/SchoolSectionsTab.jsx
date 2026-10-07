@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { Archive, ArchiveRestore, Loader2, Pencil, Plus, UserMinus, UserPlus } from 'lucide-react';
+import { Archive, ArchiveRestore, KeyRound, Loader2, Pencil, Plus, UserMinus, UserPlus } from 'lucide-react';
+import ClassCodeCard from './ClassCodeCard';
 import { useClasses } from '../../simulations/hooks/useClassQueries';
 import { useAddSectionMember, useCreateSection, useRemoveSectionMember, useUpdateSection } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
@@ -115,6 +116,7 @@ function AddMemberForm({ section, candidates, role }) {
 function SectionCard({ section, members, classes }) {
   const { t } = useTranslation('school');
   const [editing, setEditing] = useState(false);
+  const [showCode, setShowCode] = useState(false);
   const [values, setValues] = useState({
     name: section.name, classId: section.classId ?? '', academicYear: section.academicYear ?? '',
   });
@@ -188,6 +190,9 @@ function SectionCard({ section, members, classes }) {
           <h4 className="text-base font-extrabold text-slate-800"><bdi>{section.name}</bdi></h4>
           {details && <span className="text-xs text-slate-500"><bdi>{details}</bdi></span>}
           <span className="ms-auto flex gap-1">
+            <button type="button" onClick={() => setShowCode(v => !v)} aria-expanded={showCode} className={secondaryButtonClass}>
+              <KeyRound className="w-3.5 h-3.5" /> {t('classCode.button')}
+            </button>
             <button type="button" onClick={() => setEditing(true)} className={secondaryButtonClass}>
               <Pencil className="w-3.5 h-3.5" /> {t('common:actions.edit')}
             </button>
@@ -198,6 +203,8 @@ function SectionCard({ section, members, classes }) {
           </span>
         </div>
       )}
+
+      {showCode && !editing && <ClassCodeCard sectionId={section.id} sectionName={section.name} />}
 
       {['teacher', 'student'].map(role => {
         const inRole = section.members.filter(m => m.role === role);

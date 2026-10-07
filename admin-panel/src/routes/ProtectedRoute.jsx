@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Sparkles } from 'lucide-react';
 
@@ -19,6 +19,7 @@ const ALLOWED = {
 
 export default function ProtectedRoute({ children, fallback, area }) {
   const roles = useAuth();
+  const location = useLocation();
   const { user, loading, isStaff } = roles;
 
   if (loading) {
@@ -35,7 +36,7 @@ export default function ProtectedRoute({ children, fallback, area }) {
     );
   }
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
   if (area === 'signedIn') return children;
   // Signed in but not on any school's staff (yet): they can only join.
   if (!isStaff) return <Navigate to="/join" replace />;

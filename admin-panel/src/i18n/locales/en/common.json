@@ -39,6 +39,11 @@
     "codeDays": "A code can be valid for 1 to 90 days.",
     "codeUses": "A code can be used 1 to 1000 times.",
     "signIn": "Your session has expired. Please sign in again.",
-    "duplicate": "That already exists."
+    "duplicate": "That already exists.",
+    "authorOnly": "Only the author can change this material. School admins can archive it.",
+    "topicChapter": "That topic is not in the chosen chapter.",
+    "noNotes": "Tutre has no notes for this topic yet.",
+    "noChapter": "This simulation is not in a chapter, so it cannot be copied.",
+    "dailyLimit": "You have reached today's limit for this. Try again tomorrow."
   }
 }

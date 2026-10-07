@@ -3,7 +3,8 @@
     "overview": "Overview",
     "members": "Members",
     "sections": "Sections",
-    "codes": "Invite codes"
+    "codes": "Invite codes",
+    "materials": "Materials"
   },
   "loadFailed": "Could not load the school. Please refresh the page.",
   "chooseSchool": "Choose a school",
@@ -132,7 +133,9 @@
     "removed": "{{name}} was taken off {{section}}.",
     "removeFailed": "Could not remove the student.",
     "codes": "Student codes",
-    "noCodes": "No student codes for this section yet."
+    "noCodes": "No student codes for this section yet.",
+    "otherCodes": "Other student codes ({{count}})",
+    "otherCodesNote": "One-off codes with your own limits, for example for a single new student."
   },
   "join": {
     "title": "Join your school",
@@ -157,5 +160,21 @@
       "teacher": "Open My sections"
     }
   },
-  "allSchools": "All schools (Tutre)"
+  "allSchools": "All schools (Tutre)",
+  "classCode": {
+    "title": "Class code",
+    "button": "Class code",
+    "usage": "{{uses}} joined · valid until {{date}}",
+    "note": "Students enter this code, or open the link, to join this section. It works for the whole class all year.",
+    "copyCode": "Copy code",
+    "copyLink": "Copy join link",
+    "showQr": "Show QR code",
+    "hideQr": "Hide QR code",
+    "qrAlt": "QR code to join {{section}}",
+    "replace": "Replace code",
+    "replaceTitle": "Replace the class code?",
+    "replaceMessage": "The current code for {{section}} stops working at once. Students who already joined stay in the section.",
+    "replaced": "New class code ready.",
+    "failed": "Could not load the class code."
+  }
 }

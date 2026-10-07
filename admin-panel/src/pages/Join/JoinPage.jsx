@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ExternalLink, KeyRound, Loader2 } from 'lucide-react';
 import { peekInviteCode, useRedeemCode } from '../../features/school';
@@ -19,7 +19,9 @@ const NEXT_STEP = {
 export default function JoinPage() {
   const { t } = useTranslation('school');
   const { isStaff, hasSuspendedSchool } = useAuth();
-  const [code, setCode] = useState('');
+  const [params] = useSearchParams();
+  // A join link (…/join?code=ABCDE-23456) fills in the code.
+  const [code, setCode] = useState(() => (params.get('code') ?? '').slice(0, 14));
   const [peek, setPeek] = useState(null);
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState(null);

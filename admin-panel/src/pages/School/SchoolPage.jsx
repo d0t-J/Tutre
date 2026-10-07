@@ -5,6 +5,7 @@ import {
   SchoolCodesTab, SchoolMembersTab, SchoolOverviewTab, SchoolSectionsTab, useAdminSchools, useSchoolAdmin,
 } from '../../features/school';
 import { inputClass } from '../../features/school/utils/school';
+import SchoolMaterialsTab from '../../features/school/components/SchoolMaterialsTab';
 import { useAuth } from '../../context/AuthContext';
 
 const TABS = [
@@ -12,6 +13,7 @@ const TABS = [
   { id: 'members', Component: SchoolMembersTab },
   { id: 'sections', Component: SchoolSectionsTab },
   { id: 'codes', Component: SchoolCodesTab },
+  { id: 'materials', Component: SchoolMaterialsTab },
 ];
 
 function Loading() {

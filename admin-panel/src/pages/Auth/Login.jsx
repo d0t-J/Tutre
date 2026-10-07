@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Loader2, Mail, UserRound, MailCheck } from 'lucide-react';
 import { toast } from 'sonner';
@@ -8,11 +8,21 @@ import { STUDENT_APP_URL } from '../../services/portals';
 
 const fieldClass = 'w-full pl-9 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-[13px]';
 
+// Where to go after signing in: back to the page that asked for it (a join
+// link, for example), or home. Only paths inside this app are followed.
+const returnPath = (location, fallback) => {
+  const from = location.state?.from;
+  return from?.pathname?.startsWith('/') && !from.pathname.startsWith('//') && from.pathname !== '/login'
+    ? `${from.pathname}${from.search ?? ''}`
+    : fallback;
+};
+
 // A new teacher or principal creates an account here, then joins their school
 // with the staff code they were given (the Join page).
 function SignupForm({ onDone }) {
   const { signup } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +36,7 @@ function SignupForm({ onDone }) {
       if (error) throw error;
       // With email confirmation on there is no session until the address is
       // confirmed.
-      if (data?.session) navigate('/join');
+      if (data?.session) navigate(returnPath(location, '/join'));
       else onDone(email);
     } catch (err) {
       toast.error(err.message || 'Could not create the account.');
@@ -82,6 +92,7 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -90,7 +101,7 @@ export default function Login() {
     try {
       const { error } = await login(email, password);
       if (error) throw error;
-      navigate('/');
+      navigate(returnPath(location, '/'));
     } catch (err) {
       toast.error(err.message || 'Failed to login');
     } finally {

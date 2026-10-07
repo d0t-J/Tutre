@@ -12,6 +12,11 @@ const KNOWN = [
   [/not an active .* of the section's school/i, 'errors.notSchoolMember'],
   [/valid for 1 to 90 days/i, 'errors.codeDays'],
   [/used 1 to 1000 times/i, 'errors.codeUses'],
+  [/Only the author can edit this material/i, 'errors.authorOnly'],
+  [/topic must belong to the chosen chapter/i, 'errors.topicChapter'],
+  [/no notes to copy/i, 'errors.noNotes'],
+  [/not in a chapter/i, 'errors.noChapter'],
+  [/Daily limit reached[^]*/i, 'errors.dailyLimit'],
   [/Sign in required|JWT|session/i, 'errors.signIn'],
   [/duplicate key/i, 'errors.duplicate'],
 ];

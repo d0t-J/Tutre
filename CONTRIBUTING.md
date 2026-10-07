@@ -170,6 +170,11 @@ Route guards and hidden links are for usability. Who can read or change what is
 decided by RLS policies and database functions, and every new rule needs pgTAP
 tests for each role.
 
+Teachers' own simulations and notes (`teacher_materials`) never go into the
+`simulations` or `topics` tables: Tutre's library is changed only in the
+Studio. Show a teacher's simulation only in the sandboxed simulation frame and
+a teacher's notes only after `sanitizeHTML`, exactly like AI output.
+
 ---
 
 ## Simulations and the Bridge

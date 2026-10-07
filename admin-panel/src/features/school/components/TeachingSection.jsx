@@ -7,6 +7,7 @@ import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import { useRemoveSectionMember } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
 import { InviteCodeList, CreateInviteCodeForm } from './InviteCodes';
+import ClassCodeCard from './ClassCodeCard';
 import { formatDate, dangerButtonClass } from '../utils/school';
 
 // One section on the My sections page: its students, and the student codes a
@@ -65,8 +66,11 @@ export default function TeachingSection({ section }) {
         )}
       </div>
 
-      <div>
-        <h3 className="text-sm font-bold text-slate-700 mb-2">{t('teaching.codes')}</h3>
+      <ClassCodeCard sectionId={section.id} sectionName={section.name} />
+
+      <details>
+        <summary className="cursor-pointer text-sm font-bold text-slate-500">{t('teaching.otherCodes', { count: section.codes.length })}</summary>
+        <p className="text-xs text-slate-400 mt-1 mb-2">{t('teaching.otherCodesNote')}</p>
         <CreateInviteCodeForm orgId={section.orgId} roles={['student']} fixedSectionId={section.id} />
         <div className="mt-3">
           <InviteCodeList
@@ -76,7 +80,7 @@ export default function TeachingSection({ section }) {
             emptyText={t('teaching.noCodes')}
           />
         </div>
-      </div>
+      </details>
 
       <ConfirmationModal
         isOpen={!!removing}

@@ -1,0 +1,152 @@
+{
+  "title": "Classroom",
+  "tabs": {
+    "sections": "My sections",
+    "materials": "My materials",
+    "library": "School library",
+    "tutre": "Tutre library"
+  },
+  "school": "School",
+  "noSchool": "Join a school as a teacher to create your own material.",
+  "loadFailed": "Could not load. Please refresh the page.",
+  "empty": "You have not made any material yet. Create a simulation or notes, or copy one from the Tutre library and change it.",
+  "updated": "updated {{date}}",
+  "kind": {
+    "simulation": "Simulation",
+    "notes": "Notes"
+  },
+  "origin": {
+    "tutre": "copied from Tutre",
+    "school": "copied from the school library"
+  },
+  "visibility": {
+    "inLibrary": "in the school library"
+  },
+  "status": {
+    "archived": "archived"
+  },
+  "new": {
+    "simulation": "New simulation",
+    "notes": "New notes"
+  },
+  "picker": {
+    "choose": "Choose...",
+    "anyTopic": "Whole chapter",
+    "class": "Class",
+    "subject": "Subject",
+    "chapter": "Chapter",
+    "topic": "Topic"
+  },
+  "share": {
+    "button": "Share",
+    "title": "Share with sections",
+    "saved": "Sharing for {{title}} saved.",
+    "failed": "Could not change the sharing.",
+    "archived": "Archived material cannot be shared. Restore it first.",
+    "noSections": "You don't teach any sections in this school yet.",
+    "none": "not shared",
+    "with_one": "shared with {{sections}}",
+    "with_other": "shared with {{count}} sections: {{sections}}",
+    "unshareAll": "Unshare",
+    "removedAll": "{{title}} is no longer shared with any section."
+  },
+  "archive": {
+    "button": "Archive",
+    "restore": "Restore",
+    "done": "{{title}} archived. Students no longer see it.",
+    "restored": "{{title}} restored.",
+    "failed": "Could not change it.",
+    "listTitle_one": "Archived ({{count}})",
+    "listTitle_other": "Archived ({{count}})"
+  },
+  "delete": {
+    "button": "Delete",
+    "title": "Delete this material?",
+    "message": "{{title}} will be deleted for good, and students lose it. This cannot be undone.",
+    "done": "{{title}} deleted.",
+    "failed": "Could not delete it."
+  },
+  "copy": {
+    "done": "Copied to your materials. Change it, then share it with your sections.",
+    "failed": "Could not copy it."
+  },
+  "tutre": {
+    "intro": "Tutre's verified simulations and notes. Copy one to make your own version: the copy is yours to change, and Tutre's original stays as it is.",
+    "none": "Tutre has no simulations in this chapter yet.",
+    "copySimulation": "Copy simulation",
+    "copyNotes": "Copy notes"
+  },
+  "library": {
+    "intro": "Material other teachers in your school have added to the school library. Copy it to use and change it.",
+    "none": "Nothing in the school library yet.",
+    "copy": "Copy"
+  },
+  "editor": {
+    "back": "Back to my materials",
+    "new": {
+      "simulation": "New simulation",
+      "notes": "New notes"
+    },
+    "edit": {
+      "simulation": "Edit simulation",
+      "notes": "Edit notes"
+    },
+    "notFound": "This material does not exist, or you cannot open it.",
+    "readOnly": "You are viewing a teacher's material. Only its author can change it.",
+    "title": "Title",
+    "language": "Language",
+    "shareWithStaff": "Add to my school's library, so other teachers can copy it",
+    "description": "Description",
+    "descriptionNote": "Students see this beside the simulation, and the AI tutor uses it to answer their questions.",
+    "descriptionPlaceholder": "What the simulation shows and how to use it...",
+    "notesPlaceholder": "Write your notes here, or draft them with AI above...",
+    "noPreview": "Your simulation will appear here. Describe it above and create it with AI, or upload an HTML file.",
+    "save": "Save",
+    "saved": "Saved.",
+    "saveFailed": "Could not save.",
+    "version": "Version {{version}}",
+    "needSchool": "Choose a school.",
+    "needChapter": "Choose a class, subject and chapter.",
+    "needTitle": "Give it a title (at least 2 characters).",
+    "needSimulation": "Create or upload the simulation first.",
+    "needNotes": "Write the notes first.",
+    "view": {
+      "simulation": "Teacher's simulation",
+      "notes": "Teacher's notes"
+    }
+  },
+  "ai": {
+    "createTitle": "Create with AI",
+    "changeTitle": "Change with AI",
+    "notesTitle": "Draft with AI",
+    "createPlaceholder": "Describe the simulation: what students should see and control. For example: a binary counter with 8 switches that shows the decimal value.",
+    "changePlaceholder": "Describe what to change. For example: make the labels bigger and add a reset button.",
+    "notesPlaceholder": "What should the notes cover? Leave empty to cover the whole topic.",
+    "requestLabel": "Your request",
+    "dimension": "2D or 3D",
+    "create": "Create",
+    "change": "Change",
+    "draft": "Draft notes",
+    "working": "Working... this can take a minute or two.",
+    "created": "Simulation created. Check it, then save.",
+    "updated": "Simulation changed. Check it, then save.",
+    "drafted": "Notes drafted. Check and edit them, then save.",
+    "failed": "The AI request failed. Please try again.",
+    "needRequest": "Describe what you want first.",
+    "simulationLimit": "Teachers can create or change 10 simulations a day.",
+    "notesLimit": "Teachers can draft notes 30 times a day."
+  },
+  "upload": {
+    "button": "Upload HTML",
+    "notHtml": "Choose an HTML file (.html or .htm).",
+    "tooBig": "The file is too large. The limit is 2 MB.",
+    "done": "Loaded {{name}}. Check it, then save.",
+    "failed": "Could not read the file."
+  },
+  "schoolTab": {
+    "note": "Everything your school's teachers have made. You can view it, unshare it and archive it; only its author can change it.",
+    "none": "Your teachers have not made any material yet.",
+    "formerStaff": "a former member of staff",
+    "view": "View"
+  }
+}

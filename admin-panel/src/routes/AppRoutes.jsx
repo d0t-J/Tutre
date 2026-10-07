@@ -15,6 +15,7 @@ const OrganizationsPage = lazy(() => import('../pages/Organizations/Organization
 const TranslationsPage = lazy(() => import('../pages/Translations/TranslationsPage'));
 const SchoolPage = lazy(() => import('../pages/School/SchoolPage'));
 const ClassroomPage = lazy(() => import('../pages/Classroom/ClassroomPage'));
+const MaterialEditorPage = lazy(() => import('../pages/Classroom/MaterialEditorPage'));
 const JoinPage = lazy(() => import('../pages/Join/JoinPage'));
 
 export default function AppRoutes() {
@@ -79,6 +80,17 @@ export default function AppRoutes() {
             <Route path="/classroom" element={
               <ProtectedRoute area="classroom">
                 <ClassroomPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/classroom/materials/new" element={
+              <ProtectedRoute area="classroom">
+                <MaterialEditorPage />
+              </ProtectedRoute>
+            } />
+            {/* School admins and Tutre also open teachers' material (read-only); RLS decides. */}
+            <Route path="/classroom/materials/:id" element={
+              <ProtectedRoute>
+                <MaterialEditorPage />
               </ProtectedRoute>
             } />
             <Route path="/join" element={

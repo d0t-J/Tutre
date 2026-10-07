@@ -3,7 +3,8 @@ import { supabase } from '../../../services/supabase';
 import { useAuth } from '../../../context/AuthContext';
 import { byName } from '../utils/school';
 
-const CODE_COLUMNS = 'id, code, role, section_id, max_uses, uses, expires_at, revoked, created_by, created_at';
+// Class codes (Phase 5f) are shown on their own card, not in these lists.
+const CODE_COLUMNS = 'id, code, role, section_id, max_uses, uses, expires_at, revoked, created_by, created_at, is_class_code';
 
 // The sections the signed-in user teaches, with their students and the student
 // codes tied to each section.
@@ -64,7 +65,7 @@ export const useTeaching = () => {
             .filter(st => st.section_id === s.id)
             .map(st => ({ userId: st.user_id, name: names[st.user_id] ?? 'Unknown', joinedAt: st.created_at }))
             .sort(byName),
-          codes: codes.filter(c => c.section_id === s.id),
+          codes: codes.filter(c => c.section_id === s.id && !c.is_class_code),
         }))
         .sort(byName);
     },
