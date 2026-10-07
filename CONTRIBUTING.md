@@ -158,6 +158,20 @@ straight into a component.
 
 ---
 
+## Two apps: staff portal and student app
+
+`admin-panel/` is the **staff portal**: the Tutre content team's Studio, school
+admins' My school and teachers' My sections, each shown only to the people who
+hold that role (`deriveRoles` in `admin-panel/src/services/authApi.js`).
+`student-panel/` is for students only. Put a screen in the app its users sign
+in to; never add teacher or school-admin screens to the student app again.
+
+Route guards and hidden links are for usability. Who can read or change what is
+decided by RLS policies and database functions, and every new rule needs pgTAP
+tests for each role.
+
+---
+
 ## Simulations and the Bridge
 
 A simulation can report a student's progress through the **Simulation Bridge**.

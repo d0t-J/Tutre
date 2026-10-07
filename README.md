@@ -48,10 +48,10 @@ AI tutor questions about what they are seeing.
 
 It ships as **two separate React applications** that share one Supabase backend:
 
-| | Admin panel | Student panel |
+| | Staff portal (admin panel) | Student panel |
 | --- | --- | --- |
-| Who | Teachers and admins | Students |
-| Does | Generates, previews, edits and publishes simulations | Browses curriculum, runs simulations, chats with the AI tutor, exports study guides |
+| Who | Teachers, principals and the Tutre content team | Students |
+| Does | Studio: generates, previews, reviews and publishes simulations. My school: members, sections and invite codes. My sections: a teacher's classes | Browses curriculum, runs simulations, chats with the AI tutor, exports study guides |
 | Dev port | `5173` | `5174` |
 | Directory | `admin-panel/` | `student-panel/` |
 | Live | [co-tutor-admin.vercel.app](https://co-tutor-admin.vercel.app/) | [co-tutor-std.vercel.app](https://co-tutor-std.vercel.app/) |
@@ -239,10 +239,13 @@ Both panels redirect to a login screen; neither shows data to an anonymous
 visitor, by design.
 
 - **Student panel** — sign up at `/login` and use the new account.
-- **Admin panel** — requires an account whose `auth.users.id` also exists in the
-  `admin_users` table. Signing up as a student is *not* enough. If you have no
-  admin account yet, an existing admin or the project owner must add your user id
-  to `admin_users`.
+- **Staff portal (admin panel)** — anyone can create an account at `/login`,
+  but it only opens up after joining a school with a staff code (teacher or
+  school admin) on the Join page, or for the Tutre content team, whose user id is
+  in `admin_users`. Teachers and principals cannot use the student panel; it
+  sends them to the staff portal. Set `VITE_STUDENT_APP_URL` and
+  `VITE_STAFF_PORTAL_URL` (see the `.env.example` files) so each app can link to
+  the other.
 
 If the dashboard loads but shows no classes or subjects, you are almost certainly
 not signed in, or your account lacks the rows RLS requires. That is expected

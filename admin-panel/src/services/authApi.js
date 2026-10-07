@@ -1,58 +1,58 @@
 import { supabase } from './supabase';
-import { toast } from 'sonner';
 
-// studio_role is the Content Studio role: author, reviewer or platform_admin.
-export const checkAdminStatus = async (userId, setIsAdmin, setLoading, setStudioRole = () => {}) => {
-  try {
-    const { data } = await supabase
-      .from('admin_users')
-      .select('id, studio_role')
-      .eq('id', userId)
-      .single();
-    
-    if (data) {
-      setIsAdmin(true);
-      setStudioRole(data.studio_role);
-    } else {
-      setIsAdmin(false);
-      await supabase.auth.signOut();
-    }
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    toast.error('Could not verify admin permissions. Please sign in again.');
-    setIsAdmin(false);
-    await supabase.auth.signOut();
-  } finally {
-    setLoading(false);
-  }
+// Everything the portal needs to know about the signed-in user in one call:
+// Studio role (author, reviewer or platform_admin, or null), active school
+// memberships and sections. See get_my_context() in
+// supabase/migrations/20261009090000_head_admins_staff_portal.sql.
+export const fetchMyContext = async () => {
+  const { data, error } = await supabase.rpc('get_my_context');
+  if (error) throw new Error(error.message);
+  return data;
 };
 
-export const loginApi = async (email, password) => {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  
-  if (error) return { error };
+// Who gets which part of the staff portal.
+//  * Studio: members of the Tutre content team (admin_users).
+//  * School: school admins (principals) of an active school, and Tutre
+//    platform admins, who are admins of every school.
+//  * Classroom: teachers and school admins of an active school.
+// Anyone else who signs in (a new teacher, or a student) only gets the Join page.
+export const deriveRoles = (context) => {
+  const memberships = context?.memberships ?? [];
+  const active = memberships.filter(m => m.org_status === 'active');
+  const studioRole = context?.studio_role ?? null;
+  const adminOrgs = active
+    .filter(m => m.role === 'org_admin')
+    .map(m => ({ id: m.org_id, name: m.org_name, isHead: m.is_head }));
+  const isPlatformAdmin = studioRole === 'platform_admin';
+  const isTeacher = active.some(m => m.role === 'teacher');
 
-  if (data?.user) {
-    try {
-      const { data: adminData } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('id', data.user.id)
-        .single();
-      
-      if (!adminData) {
-        await supabase.auth.signOut();
-        return { error: new Error('Invalid login credentials') };
-      }
-    } catch {
-      await supabase.auth.signOut();
-      return { error: new Error('Invalid login credentials') };
-    }
-  }
-  
-  return { data, error };
+  return {
+    studioRole,
+    isAdmin: !!studioRole,
+    isPlatformAdmin,
+    adminOrgs,
+    isTeacher,
+    isSchoolAdmin: isPlatformAdmin || adminOrgs.length > 0,
+    canTeach: isTeacher || adminOrgs.length > 0,
+    isStaff: !!studioRole || isTeacher || adminOrgs.length > 0,
+    hasSuspendedSchool: memberships.some(m => m.org_status !== 'active' && m.role !== 'student'),
+    sections: context?.sections ?? [],
+  };
 };
 
-export const logoutApi = async () => {
-  return supabase.auth.signOut();
-};
+export const loginApi = (email, password) => supabase.auth.signInWithPassword({ email, password });
+
+// Staff accounts are ordinary accounts; joining a school with a staff code is
+// what gives access. If email confirmation is on, there is no session until
+// the address is confirmed.
+export const signupApi = (email, password, fullName) =>
+  supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: fullName },
+      emailRedirectTo: `${window.location.origin}/login`,
+    },
+  });
+
+export const logoutApi = () => supabase.auth.signOut();

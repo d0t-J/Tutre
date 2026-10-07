@@ -1,0 +1,44 @@
+{
+  "nav": {
+    "mySchool": "My school",
+    "mySections": "My sections",
+    "join": "Join with a code"
+  },
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "edit": "Edit",
+    "remove": "Remove"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saved": "Saved"
+  },
+  "roles": {
+    "org_admin": "School admin",
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent"
+  },
+  "list": {
+    "separator": ", "
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "invalidCode": "This code is not valid. Ask your school for a new one.",
+    "permission": "You don't have permission to do that.",
+    "lastAdmin": "A school must keep at least one school admin.",
+    "headCannotBeRemoved": "The head admin cannot be removed. Make another admin the head first.",
+    "headOnly": "Only the school's head admin or Tutre can do that.",
+    "adminMustBeTeacher": "Only an active teacher of this school can be made an admin.",
+    "headMustBeAdmin": "Only an admin of this school can become its head.",
+    "notSchoolMember": "This person is not an active member of the school in that role.",
+    "codeDays": "A code can be valid for 1 to 90 days.",
+    "codeUses": "A code can be used 1 to 1000 times.",
+    "signIn": "Your session has expired. Please sign in again.",
+    "duplicate": "That already exists."
+  }
+}

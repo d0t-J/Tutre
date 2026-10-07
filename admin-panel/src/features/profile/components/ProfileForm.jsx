@@ -46,10 +46,13 @@ export default function ProfileForm({ profile, email, studioRole }) {
           <p className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Email</p>
           <p className="text-sm text-slate-700 break-all">{email}</p>
         </div>
-        <div>
-          <p className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio role</p>
-          <p className="text-sm text-slate-700">{STUDIO_ROLE_LABELS[studioRole] ?? 'Not set'}</p>
-        </div>
+        {/* Only the Tutre content team has a Studio role. */}
+        {studioRole && (
+          <div>
+            <p className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Studio role</p>
+            <p className="text-sm text-slate-700">{STUDIO_ROLE_LABELS[studioRole] ?? studioRole}</p>
+          </div>
+        )}
       </div>
 
       <div>

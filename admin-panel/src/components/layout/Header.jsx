@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Menu, LogOut, Wand2, LayoutDashboard, UserRound } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useWizard } from '../../features/simulations/context/WizardContext';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
@@ -11,17 +11,20 @@ import MobileMenu from './Header/MobileMenu';
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, isAdmin, isStaff } = useAuth();
   const { viewMode, setViewMode } = useWizard();
+  const { pathname } = useLocation();
+  // The Classic/Wizard switch belongs to the Studio's Create page.
+  const showWizardToggle = isAdmin && pathname === '/';
 
   return (
     <header className="bg-white border-b border-slate-200 py-2 px-4 lg:px-6 flex items-center justify-between sticky top-0 z-20 h-[53px]">
       <div className="flex-1 flex items-center justify-start">
         <NavLink to="/" className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
-          <img src={Logo} alt="Tutre Admin" className="h-[33px] w-auto object-contain shrink-0" />
+          <img src={Logo} alt="Tutre" className="h-[33px] w-auto object-contain shrink-0" />
           <div className="flex flex-col justify-center mt-1">
             <h1 className="text-xl font-extrabold text-[#62748d] tracking-tight leading-none mb-0.5">Tutre</h1>
-            <p className="text-[10px] text-primary-600 font-bold uppercase tracking-wider">Admin Portal</p>
+            <p className="text-[10px] text-primary-600 font-bold uppercase tracking-wider">Staff Portal</p>
           </div>
         </NavLink>
       </div>
@@ -35,6 +38,7 @@ export default function Header() {
 
       <div className="flex-1 flex items-center justify-end gap-2">
         {/* Wizard Mode Toggle */}
+        {showWizardToggle && (
         <div className="flex bg-slate-100 sm:bg-white rounded-md p-0.5 sm:border sm:border-slate-200 shadow-sm">
           <button
             onClick={() => setViewMode('classic')}
@@ -55,8 +59,10 @@ export default function Header() {
             <span className="hidden sm:inline lg:hidden xl:inline">Wizard</span>
           </button>
         </div>
+        )}
 
         {/* Desktop Profile */}
+        {isStaff && (
         <NavLink
           to="/profile"
           title="Your profile"
@@ -69,6 +75,7 @@ export default function Header() {
         >
           <UserRound className="w-4 h-4" />
         </NavLink>
+        )}
 
         {/* Desktop Logout */}
         <button 

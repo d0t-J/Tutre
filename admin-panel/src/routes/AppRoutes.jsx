@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import Header from '../components/layout/Header';
 import ProtectedRoute from './ProtectedRoute';
+import HomeRoute from './HomeRoute';
 import Login from '../pages/Auth/Login';
 import { HomeScreenSkeleton, SavedSimulationsSkeleton, CurriculumSkeleton } from '../components/common/SkeletonLoaders';
 import { Sparkles } from 'lucide-react';
@@ -12,6 +13,9 @@ const CurriculumManager = lazy(() => import('../pages/Curriculum/CurriculumManag
 const ProfilePage = lazy(() => import('../pages/Profile/ProfilePage'));
 const OrganizationsPage = lazy(() => import('../pages/Organizations/OrganizationsPage'));
 const TranslationsPage = lazy(() => import('../pages/Translations/TranslationsPage'));
+const SchoolPage = lazy(() => import('../pages/School/SchoolPage'));
+const ClassroomPage = lazy(() => import('../pages/Classroom/ClassroomPage'));
+const JoinPage = lazy(() => import('../pages/Join/JoinPage'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -28,7 +32,7 @@ export default function AppRoutes() {
               <div className="w-12 h-12 bg-linear-to-br from-primary-100 to-primary-50 rounded-xl flex items-center justify-center shadow-sm border border-primary-100/50 animate-bounce">
                 <Sparkles className="w-6 h-6 text-primary-600" />
               </div>
-              <p className="text-sm font-medium text-slate-500 animate-pulse">Loading dashboard...</p>
+              <p className="text-sm font-medium text-slate-500 animate-pulse">Loading...</p>
             </div>
           </div>
         }>
@@ -36,33 +40,50 @@ export default function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={
               <ProtectedRoute fallback={<HomeScreenSkeleton />}>
-                <Suspense fallback={<HomeScreenSkeleton />}>
-                  <CreateSimulation />
-                </Suspense>
+                <HomeRoute>
+                  <Suspense fallback={<HomeScreenSkeleton />}>
+                    <CreateSimulation />
+                  </Suspense>
+                </HomeRoute>
               </ProtectedRoute>
             } />
             <Route path="/saved" element={
-              <ProtectedRoute fallback={<SavedSimulationsSkeleton />}>
+              <ProtectedRoute area="studio" fallback={<SavedSimulationsSkeleton />}>
                 <Suspense fallback={<SavedSimulationsSkeleton />}>
                   <SavedSimulationsPage />
                 </Suspense>
               </ProtectedRoute>
             } />
             <Route path="/curriculum" element={
-              <ProtectedRoute fallback={<CurriculumSkeleton />}>
+              <ProtectedRoute area="studio" fallback={<CurriculumSkeleton />}>
                 <Suspense fallback={<CurriculumSkeleton />}>
                   <CurriculumManager />
                 </Suspense>
               </ProtectedRoute>
             } />
             <Route path="/translations" element={
-              <ProtectedRoute>
+              <ProtectedRoute area="studio">
                 <TranslationsPage />
               </ProtectedRoute>
             } />
             <Route path="/organizations" element={
-              <ProtectedRoute>
+              <ProtectedRoute area="studio">
                 <OrganizationsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/school" element={
+              <ProtectedRoute area="school">
+                <SchoolPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/classroom" element={
+              <ProtectedRoute area="classroom">
+                <ClassroomPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/join" element={
+              <ProtectedRoute area="signedIn">
+                <JoinPage />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={

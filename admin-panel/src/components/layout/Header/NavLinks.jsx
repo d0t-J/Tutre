@@ -1,20 +1,29 @@
 import { NavLink } from 'react-router-dom';
-import { Wand2, Database, Library, Languages, School, UserRound } from 'lucide-react';
+import { Wand2, Database, Library, Languages, School, UserRound, Building2, Presentation, KeyRound } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 
 // The desktop header shows Profile as an icon next to Logout; the mobile menu
 // lists it with the other links. Between 1024 and 1280px the desktop links show
-// icons only (with the label as a tooltip) so five of them fit.
+// icons only (with the label as a tooltip) so they fit.
+// Each person sees only their own parts of the staff portal (Phase 5a):
+// Studio for the Tutre content team, My school for school admins and Tutre
+// platform admins, My sections for teachers and school admins.
 export default function NavLinks({ onLinkClick, showProfile = false }) {
-  const { studioRole } = useAuth();
+  const { isAdmin, isPlatformAdmin, isSchoolAdmin, canTeach, isStaff } = useAuth();
   const links = [
-    { to: '/', icon: Wand2, label: 'Create Animation', end: true },
-    { to: '/saved', icon: Database, label: 'Saved Simulations' },
-    { to: '/curriculum', icon: Library, label: 'Curriculum' },
-    { to: '/translations', icon: Languages, label: 'Translations' },
-    // Schools are managed by platform admins only.
-    ...(studioRole === 'platform_admin' ? [{ to: '/organizations', icon: School, label: 'Schools' }] : []),
-    ...(showProfile ? [{ to: '/profile', icon: UserRound, label: 'Profile' }] : [])
+    ...(isAdmin ? [
+      { to: '/', icon: Wand2, label: 'Create Animation', end: true },
+      { to: '/saved', icon: Database, label: 'Saved Simulations' },
+      { to: '/curriculum', icon: Library, label: 'Curriculum' },
+      { to: '/translations', icon: Languages, label: 'Translations' },
+    ] : []),
+    // Schools (create, suspend) are managed by platform admins only.
+    ...(isPlatformAdmin ? [{ to: '/organizations', icon: School, label: 'Schools' }] : []),
+    ...(isSchoolAdmin ? [{ to: '/school', icon: Building2, label: 'My school' }] : []),
+    ...(canTeach ? [{ to: '/classroom', icon: Presentation, label: 'My sections' }] : []),
+    // The content team joins schools rarely; everyone else may need another code.
+    ...(!isAdmin || !isStaff ? [{ to: '/join', icon: KeyRound, label: 'Join with a code' }] : []),
+    ...(showProfile && isStaff ? [{ to: '/profile', icon: UserRound, label: 'Profile' }] : [])
   ];
 
   return (
