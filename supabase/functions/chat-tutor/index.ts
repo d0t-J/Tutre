@@ -3,13 +3,29 @@ import { corsHeaders, preflight } from "../_shared/cors.ts";
 import { requireUser, consumeQuota, recordTokens, errorResponse } from "../_shared/guard.ts";
 // Any signed-in user: students (tutor chat) and admins (study-guide drafts).
 // Counts against the tutor_message limit.
+
+// The reply language follows the student's interface language. Only these two
+// values are accepted; anything else is treated as English.
+const LANGUAGE_RULES: Record<string, string> = {
+  en: `LANGUAGE:
+- Reply in English.
+- Students may write in Roman Urdu (Urdu typed in Latin letters, for example "velocity kya hoti hai?") or in Urdu script. Understand it and reply in English.`,
+  ur: `LANGUAGE:
+- Reply in Urdu, written in Urdu script. Never reply in Roman Urdu, even when the student writes in Roman Urdu or English.
+- Students may write in Roman Urdu (Urdu typed in Latin letters, for example "velocity kya hoti hai?"), Urdu script or English. Understand all three.
+- Use simple, standard Urdu of the kind used in Pakistani Urdu-medium textbooks.
+- The first time you use a technical term, put the English term in brackets after it, for example: رفتار (velocity).
+- Keep every mathematical expression, symbol, unit and number exactly as the math rules below require, with Western digits (0-9). Do not translate symbols or units. Keep code and code keywords in English.`,
+};
+
 serve(async (req)=>{
   if (req.method === 'OPTIONS') {
     return preflight(req);
   }
   try {
     const caller = await requireUser(req);
-    const { topic, details, messages, stream } = await req.json();
+    const { topic, details, messages, stream, language } = await req.json();
+    const languageRules = language === 'ur' ? LANGUAGE_RULES.ur : LANGUAGE_RULES.en;
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
       throw new Error("AIMLAPI_API_KEY is missing in environment variables");
@@ -27,7 +43,9 @@ Your goal is to answer their questions accurately and concisely, specifically fo
 CRITICAL FORMATTING RULES FOR MATH:
 - For ALL inline mathematical expressions, wrap them in single dollar signs: $expression$
 - For ALL display/block mathematical equations, wrap them in double dollar signs: $$expression$$
-- NEVER use plain parentheses ( ) or brackets [ ] to wrap math expressions or variables.`;
+- NEVER use plain parentheses ( ) or brackets [ ] to wrap math expressions or variables.
+
+${languageRules}`;
     if (!stream) {
       systemPrompt += `\n\nCRITICAL INSTRUCTION: You MUST output your response in pure JSON format exactly like this:\n{ "reply": "Your markdown formatted response goes here" }\nDo not output any other text outside of the JSON object. Do not include markdown code block backticks around the JSON.`;
     }

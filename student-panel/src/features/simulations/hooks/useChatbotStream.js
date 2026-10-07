@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { readSseStream } from '../utils/streamChatResponse';
 
 export function useChatbotStream(topic, details, messages, setMessages) {
-  const { t } = useTranslation('simulations');
+  const { t, i18n } = useTranslation('simulations');
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -40,6 +40,8 @@ export function useChatbotStream(topic, details, messages, setMessages) {
         topic,
         details,
         stream: true,
+        // The tutor replies in the interface language (en or ur).
+        language: i18n.language,
         messages: newMessages
       };
 
