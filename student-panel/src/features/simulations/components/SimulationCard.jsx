@@ -3,6 +3,7 @@ import { slugify } from '../../../utils/slugify';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useContentText } from '../../../i18n/content';
+import { ProgressBadge, useMyProgress } from '../../progress';
 import { supabase } from '../../../services/supabase';
 
 function ChapterNameLabel({ chapterId }) {
@@ -27,6 +28,7 @@ function ChapterNameLabel({ chapterId }) {
 export default function SimulationCard({ sim, icon: Icon, color, bg }) {
   const { chapterSlug } = useParams();
   const text = useContentText();
+  const { data: progress = {} } = useMyProgress();
 
   const linkTo = chapterSlug 
     ? `/class/${slugify(sim.class_name)}/subject/${slugify(sim.subject)}/chapter/${chapterSlug}/simulation/${sim.sim_id}`
@@ -42,6 +44,7 @@ export default function SimulationCard({ sim, icon: Icon, color, bg }) {
           <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
         <span className="font-bold text-[10px] sm:text-xs text-slate-500 truncate"><bdi>{text('subject', sim.subject_id, sim.subject)}</bdi></span>
+        <ProgressBadge level={progress[sim.topic_id]?.level} className="ms-auto shrink-0" />
       </div>
       
       <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-1.5 sm:mb-2 group-hover:text-primary-600 transition-colors line-clamp-2 leading-tight pe-6 min-h-[2.5em]">

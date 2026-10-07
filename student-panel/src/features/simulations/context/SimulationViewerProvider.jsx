@@ -1,9 +1,13 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { useFetchSimulation } from '../hooks/useFetchSimulation';
 import { useStudyGuideGenerator } from '../hooks/useStudyGuideGenerator';
 import { useStudyGuideDocxGenerator } from '../hooks/useStudyGuideDocxGenerator';
 import { SimulationViewerContext } from './SimulationViewerContext';
 import { useContentText, useTopicTranslation } from '../../../i18n/content';
+import { useSimulationBridge } from '../bridge/useSimulationBridge';
+import { useProgressReporter } from '../../progress';
 
 export function SimulationViewerProvider({ id, children }) {
   const { simulation: source, loading, messages, setMessages } = useFetchSimulation(id);
@@ -27,6 +31,13 @@ export function SimulationViewerProvider({ id, children }) {
   const [activeTab, setActiveTab] = useState('guide');
   const iframeRef = useRef(null);
   
+  // Learning progress: "explored" is reported by the app; checkpoints and
+  // challenges come from Bridge-ready simulations (bridge/protocol.js).
+  const { t, i18n } = useTranslation('progress');
+  const onLevelUp = useCallback((level) => toast.success(t(`levelUp.${level}`)), [t]);
+  const reportBridgeMessage = useProgressReporter(source, iframeRef, onLevelUp);
+  useSimulationBridge(iframeRef, { language: i18n.language, onMessage: reportBridgeMessage });
+
   const { isGeneratingPDF, generateStudyGuideData } = useStudyGuideGenerator(simulation, messages, iframeRef);
   const { isGeneratingDOCX, generateStudyGuideDOCX } = useStudyGuideDocxGenerator(simulation);
 

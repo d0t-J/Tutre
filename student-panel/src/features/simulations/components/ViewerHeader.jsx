@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, PlayCircle } from 'lucide-react';
+import { ProgressBadge, useMyProgress } from '../../progress';
 import { useTranslation } from 'react-i18next';
 import { useSimulationViewer } from '../context/SimulationViewerContext';
 import { useReactToPrint } from 'react-to-print';
@@ -11,6 +12,7 @@ export default function ViewerHeader() {
   const { t } = useTranslation('simulations');
   const { simulation, isGeneratingPDF, isGeneratingDOCX, generateStudyGuideData, generateStudyGuideDOCX } = useSimulationViewer();
   const { classSlug, subjectSlug, chapterSlug } = useParams();
+  const { data: progress = {} } = useMyProgress();
   const [printData, setPrintData] = useState({ htmlContent: '', snapshotDataUrl: '' });
   const printComponentRef = useRef(null);
 
@@ -57,6 +59,7 @@ export default function ViewerHeader() {
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 truncate">
               <PlayCircle className="w-3.5 h-3.5 text-primary-500 shrink-0" />
               <span className="truncate">{t('header.subjectSimulation', { subject: simulation.subject })}</span>
+              <ProgressBadge level={progress[simulation.topic_id]?.level} className="normal-case tracking-normal" />
             </div>
             <h1 dir="auto" className="text-base sm:text-lg font-extrabold text-slate-900 leading-none truncate">{simulation.topic}</h1>
           </div>

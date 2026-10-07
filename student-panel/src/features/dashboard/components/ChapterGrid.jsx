@@ -5,10 +5,12 @@ import { useContentText } from '../../../i18n/content';
 import { slugify } from '../../../utils/slugify';
 import { EmptyState } from '../../../components/common';
 import { getDeterministicIcon } from '../../../utils/iconHelper';
+import { ChapterProgressBar, useChapterProgress } from '../../progress';
 
 export default function ChapterGrid({ classSlug, subjectSlug, chapters, status, subjectIcon }) {
   const { t } = useTranslation('dashboard');
   const text = useContentText();
+  const chapterProgress = useChapterProgress(chapters?.[0]?.subject_id);
   const Icon = subjectIcon ? (Icons[subjectIcon] || Icons.BookOpen) : Icons.BookOpen;
 
   if (status === 'pending') {
@@ -65,6 +67,7 @@ export default function ChapterGrid({ classSlug, subjectSlug, chapters, status, 
             <p className="text-[10px] sm:text-[11px] text-slate-500 mt-auto pt-2 border-t border-slate-100 w-full line-clamp-2 leading-snug" title={chapter.description}>
               {chapter.description ? <bdi>{text('chapter', chapter.id, chapter.description, 'description')}</bdi> : <span className="capitalize">{subjectSlug.replace(/-/g, ' ')}</span>}
             </p>
+            <ChapterProgressBar progress={chapterProgress[chapter.id]} />
           </Link>
         );
       })}

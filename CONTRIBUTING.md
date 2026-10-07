@@ -158,6 +158,25 @@ straight into a component.
 
 ---
 
+## Simulations and the Bridge
+
+A simulation can report a student's progress through the **Simulation Bridge**.
+The message format is in `student-panel/src/features/simulations/bridge/protocol.js`.
+To make a simulation Bridge-ready:
+
+- Paste `tutre-bridge.client.js` (same folder) into a script tag in the
+  simulation. Never put a closing script tag inside pasted code or its comments:
+  the browser ends the script there.
+- Declare what it reports in a `<script type="application/json" id="tutre-manifest">`
+  block: checkpoint and challenge ids (lower-case, digits, hyphens).
+- Call `Tutre.checkpoint(id)` and `Tutre.challenge(id, correct)` from the
+  simulation's code. The database refuses ids that are not in the manifest.
+
+Progress is self-reported by code in the student's browser. Never use it as a
+grade.
+
+---
+
 ## Database changes
 
 The Supabase project is shared and holds real content. Treat it accordingly.

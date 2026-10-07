@@ -2,6 +2,7 @@ import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../features/auth';
 import { ProfileForm, SchoolCard, useProfile, useClassOptions, useMySchool } from '../../features/profile';
+import { MyProgressCard } from '../../features/progress';
 
 function Card({ title, children }) {
   return (
@@ -40,6 +41,10 @@ export default function Profile() {
         ) : (
           <ProfileForm profile={profile.data} email={user?.email} classes={classes.data} />
         )}
+      </Card>
+
+      <Card title={t('progress:profile.title')}>
+        <MyProgressCard />
       </Card>
 
       <Card title={t('school.title')}>

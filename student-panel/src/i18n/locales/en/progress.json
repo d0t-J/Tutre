@@ -1,0 +1,30 @@
+{
+  "levels": {
+    "explored": {
+      "label": "Explored",
+      "hint": "You have used this simulation."
+    },
+    "practised": {
+      "label": "Practised",
+      "hint": "You reached every step, or tried enough of its challenges."
+    },
+    "mastered": {
+      "label": "Mastered",
+      "hint": "You answered enough of its challenges correctly."
+    }
+  },
+  "chapter": {
+    "summary": "{{done}} of {{total}} explored",
+    "detail": "Of {{total}} simulations: {{explored}} explored, {{practised}} practised, {{mastered}} mastered"
+  },
+  "levelUp": {
+    "explored": "Explored. Keep going!",
+    "practised": "Practised! You have worked through this simulation.",
+    "mastered": "Mastered! Well done."
+  },
+  "profile": {
+    "title": "My progress",
+    "none": "You have not started any simulations yet.",
+    "note": "Progress only goes up. Practised and mastered need simulations with challenges; more are on the way."
+  }
+}

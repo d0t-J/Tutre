@@ -5,5 +5,6 @@ import dashboard from './dashboard.json';
 import simulations from './simulations.json';
 import profile from './profile.json';
 import school from './school.json';
+import progress from './progress.json';
 
-export default { common, landing, auth, dashboard, simulations, profile, school };
+export default { common, landing, auth, dashboard, simulations, profile, school, progress };
