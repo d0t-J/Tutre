@@ -250,9 +250,9 @@ admins see all. Nobody sees another school's data, and a suspended school's
 members lose access to it.
 
 Org admins can appoint more org admins (with an `org_admin` code) and restore a
-removed one, but **only platform admins can remove an org admin**, so a newly
-added org admin cannot lock out the principal. A school always keeps at least one
-active org admin, even against a platform admin.
+removed one. Since Phase 5b only the school's **head admin** or a platform admin
+can remove an org admin, so a newly added org admin cannot lock out the
+principal; see "Staff portal and head admins" below.
 
 Access checks live in the `private` schema (`has_org_role`, `is_section_member`,
 `can_view_profile`, `is_platform_admin`, ...), which the API does not expose.
@@ -263,11 +263,12 @@ Tests: `tests/database/phase2a_orgs_profiles.test.sql` (89 assertions) and
 `tests/database/phase2d_school_management.test.sql` (9). Run them with
 `npx supabase test db` on the local stack.
 
-The screens: school admins manage members, sections (archive rather than delete)
-and invite codes on **My school** in the student app, teachers see their sections
-and hand out student codes on **My sections**, anyone joins with a code on
-**Join**, and platform admins create, suspend and reactivate schools on the
-Studio's **Schools** page.
+The screens (since Phase 5a, in the staff portal): school admins manage
+members, sections (archive rather than delete) and invite codes on **My
+school**, teachers see their sections and hand out student codes on **My
+sections**, staff join with a code on the portal's **Join** page and students on
+the student app's, and platform admins create, suspend and reactivate schools on
+**Schools**.
 
 ## Urdu translations of the curriculum (Phase 3c, 2026-10-07)
 
@@ -340,6 +341,61 @@ The message protocol is documented in
 `tutre-bridge.client.js` from the same folder.
 
 Tests: `tests/database/phase4_learning_progress.test.sql` (37 assertions).
+
+## Staff portal and head admins (Phase 5a/5b, 2026-10-08)
+
+Migration `20261009090000_head_admins_staff_portal.sql`.
+
+**Two apps, two audiences.** The admin-panel app is now the **staff portal**:
+Studio (the Tutre content team), My school (school admins and Tutre platform
+admins) and My sections (teachers and school admins). The student app is for
+students only: an account that is on the Tutre content team, or a teacher or
+school admin of an active school without also being a student somewhere, is
+signed out there and pointed to the staff portal. My school and My sections
+moved from the student app to the staff portal; the old student routes show a
+"this page has moved" notice for one release.
+
+**Head admins.** `org_memberships.is_head` marks one head per school (unique
+partial index; only an active org admin can be head). The longest-serving
+active org admin of each school became its head when the migration ran, the
+first org admin to join a school without a head becomes head, and when a head
+is removed the longest-serving remaining admin takes over.
+
+| Action | Who |
+| --- | --- |
+| Appoint an org admin (an `org_admin` code, or `make_org_admin(org, user)` for an active teacher of the school) | any org admin of the school, platform admins |
+| Remove an org admin | the head, platform admins. Nobody else |
+| Remove the head | platform admins only; a head hands over first |
+| `transfer_head_admin(org, user)` to another active org admin | the head, platform admins |
+| Restore a removed org admin | any org admin of the school, platform admins |
+
+**Tutre is an admin of every school.** Platform admins pass every org-admin
+check without a membership row (as before), and the "a school must keep at least
+one org admin" rule no longer binds them: a platform admin may remove a school's
+last admin, and Tutre then acts for the school. The staff portal shows them as
+"Tutre support" in each school's admin list.
+
+**One call for the user's context.** `get_my_context()` returns the caller's
+Studio role, active memberships (with school name, status and `is_head`) and
+non-archived sections of active schools. Both apps use it to decide which
+portal and which screens a person gets. It returns only the caller's own rows.
+
+**Checking a code before using it.** `peek_invite_code(code)` returns the
+school, role and section of a usable code, and whether the caller already
+joined, without using it. Every unusable code gives `{"valid": false}`, as
+`redeem_invite_code` gives one message, so neither reveals which codes exist.
+The student app refuses staff codes and the staff portal refuses student codes
+this way (in the interface; the database itself does not care which app redeems).
+
+The two rule triggers (`restrict_org_admin_removal`, `protect_last_org_admin`)
+became `SECURITY INVOKER`: they check `current_user = 'authenticated'` to tell
+API callers from trusted owner code, and inside a `SECURITY DEFINER` function
+`current_user` is always the owner.
+
+Tests: `tests/database/phase5b_head_admins.test.sql` (47 assertions). Two Phase
+2a assertions changed with the approved rules (a head cannot remove themselves;
+the "not even a platform admin can remove the last admin" test moved here as
+its opposite).
 
 ## Schema
 

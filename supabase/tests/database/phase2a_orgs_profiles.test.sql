@@ -245,27 +245,29 @@ SELECT throws_ok(format('INSERT INTO section_members (section_id, user_id, role)
 SELECT lives_ok(format('INSERT INTO section_members (section_id, user_id, role) VALUES (%L, %L, %L)', current_setting('test.sec_9b'), '00000000-0000-0000-0000-0000000000a3', 'teacher'),
     'an org admin can assign a teacher to another section');
 SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2'$$, '42501',
-    'Only Tutre platform admins can remove an org admin.', 'an org admin cannot remove an org admin, not even themselves');
+    'The head admin cannot be removed. Make another admin the head first.', 'the head admin cannot remove themselves');
 SELECT lives_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a5'$$,
     'an org admin can remove a student from the school');
 SELECT test_helpers.logout();
 SELECT is((SELECT count(*)::int FROM section_members WHERE user_id = '00000000-0000-0000-0000-0000000000a5'), 0,
     'removing a student from the school removes them from its sections');
 
--- Org admins can appoint another org admin, but only a platform admin can remove one.
+-- Org admins can appoint another org admin, but only the head or a platform admin can remove one.
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a2');
 SELECT set_config('test.code_admin_a_2', create_invite_code(current_setting('test.org_a')::uuid, 'org_admin') ->> 'code', true);
 SELECT test_helpers.logout();
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a7');
 SELECT is((redeem_invite_code(current_setting('test.code_admin_a_2')) ->> 'role'), 'org_admin', 'an org admin can appoint another org admin');
 SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2' AND role = 'org_admin'$$, '42501',
-    'Only Tutre platform admins can remove an org admin.', 'a newly appointed org admin cannot remove the principal');
+    'The head admin cannot be removed. Make another admin the head first.', 'a newly appointed org admin cannot remove the principal, who is the head');
 SELECT test_helpers.logout();
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a1');
 SELECT lives_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'org_admin'$$,
     'a platform admin can remove an org admin when another remains');
-SELECT throws_ok($$UPDATE org_memberships SET status = 'removed' WHERE user_id = '00000000-0000-0000-0000-0000000000a2' AND role = 'org_admin'$$, '23514', NULL,
-    'not even a platform admin can remove a school''s last org admin');
+-- Since Phase 5b a platform admin may also remove a school's last org admin
+-- (Tutre is an admin of every school); that is tested in phase5b_head_admins.
+SELECT is((SELECT is_head FROM org_memberships WHERE user_id = '00000000-0000-0000-0000-0000000000a2' AND role = 'org_admin'), true,
+    'the principal, School A''s first org admin, is its head admin');
 SELECT test_helpers.logout();
 SELECT is((SELECT status FROM org_memberships WHERE user_id = '00000000-0000-0000-0000-0000000000a7' AND role = 'teacher'), 'active',
     'removing someone''s org admin role leaves their teacher role');
