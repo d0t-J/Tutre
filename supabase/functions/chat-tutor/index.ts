@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders, preflight } from "../_shared/cors.ts";
-import { requireUser, consumeQuota, recordTokens, errorResponse } from "../_shared/guard.ts";
+import { requireUser, consumeQuota, scopeFor, recordTokens, errorResponse } from "../_shared/guard.ts";
 // Any signed-in user: students (tutor chat) and admins (study-guide drafts).
 // Counts against the tutor_message limit.
 
@@ -23,8 +23,11 @@ serve(async (req)=>{
     return preflight(req);
   }
   try {
-    const caller = await requireUser(req);
-    const { topic, details, messages, stream, language } = await req.json();
+    const { topic, details, messages, stream, language, purpose } = await req.json();
+    // purpose "notes": a teacher (or the Tutre team) drafting notes, counted
+    // against the drafting limit rather than the tutor's (Phase 5d).
+    const draftingNotes = purpose === 'notes';
+    const caller = await requireUser(req, { staff: draftingNotes });
     const languageRules = language === 'ur' ? LANGUAGE_RULES.ur : LANGUAGE_RULES.en;
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -59,7 +62,11 @@ ${languageRules}`;
           content: m.content
         }))
     ];
-    const usageId = await consumeQuota(caller, 'tutor_message', 'chat-tutor');
+    const usageId = await consumeQuota(
+      caller,
+      draftingNotes ? scopeFor(caller, 'tutor_message', 'teacher_notes_draft') : 'tutor_message',
+      'chat-tutor',
+    );
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: "POST",
       headers: {

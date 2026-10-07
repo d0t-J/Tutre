@@ -1,11 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { json, preflight } from "../_shared/cors.ts";
-import { requireUser, consumeQuota, recordTokens, errorResponse } from "../_shared/guard.ts";
+import { requireUser, consumeQuota, scopeFor, recordTokens, errorResponse } from "../_shared/guard.ts";
 
 // Caller: admin-panel/src/features/simulations/hooks/useHtmlDetailsExtraction.js
 // Request:  { htmlContent: string }
 // Response: { topic: string, details: string } | { error: string }
-// Admins only. Logged under authoring_assist (no limit).
+// The Tutre team (authoring_assist, logged, no limit), teachers and school
+// admins (teacher_authoring_assist, 50 per day).
 
 // Simulation payloads can be hundreds of kilobytes. Send the model the head and
 // the tail: the head carries the title, headings and control markup, the tail
@@ -39,7 +40,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const caller = await requireUser(req, { admin: true });
+    const caller = await requireUser(req, { staff: true });
     const { htmlContent } = await req.json();
 
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
@@ -68,7 +69,7 @@ Describe only what the HTML actually implements. Do not invent controls or outpu
 ${trimPayload(htmlContent)}
 \`\`\``;
 
-    const usageId = await consumeQuota(caller, 'authoring_assist', 'extract-html-details');
+    const usageId = await consumeQuota(caller, scopeFor(caller, 'authoring_assist', 'teacher_authoring_assist'), 'extract-html-details');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {

@@ -1,7 +1,8 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { json, preflight } from "../_shared/cors.ts";
 import { requireUser, errorResponse, HttpError } from "../_shared/guard.ts";
-// Admins only. Builds a prompt string locally; no model call, so no usage limit.
+// The Tutre team, teachers and school admins. Builds a prompt string locally; no
+// model call, so no usage limit.
 // (Previously wrapped in withSupabase({ auth: ["publishable", "secret"] }), which
 // accepted the public publishable key, i.e. any visitor.)
 export default {
@@ -11,7 +12,7 @@ export default {
       return preflight(req);
     }
     try {
-      await requireUser(req, { admin: true });
+      await requireUser(req, { staff: true });
       const { topic, details, uiTheme, animationArchitecture, interactionType, dimension } = await req.json();
       // Ensure topic is provided
       if (!topic) {

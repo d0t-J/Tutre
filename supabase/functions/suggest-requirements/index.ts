@@ -1,13 +1,14 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { json, preflight } from "../_shared/cors.ts";
-import { requireUser, consumeQuota, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
-// Admins only. Logged under authoring_assist (no limit).
+import { requireUser, consumeQuota, scopeFor, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
+// The Tutre team (authoring_assist, logged, no limit), teachers and school
+// admins (teacher_authoring_assist, 50 per day).
 Deno.serve(async (req)=>{
   if (req.method === 'OPTIONS') {
     return preflight(req);
   }
   try {
-    const caller = await requireUser(req, { admin: true });
+    const caller = await requireUser(req, { staff: true });
     const { subject, className, topic, existingDetails, imageBase64 } = await req.json();
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -52,7 +53,7 @@ Topic Name: ${topic}
     } else {
       userContent = promptText;
     }
-    const usageId = await consumeQuota(caller, 'authoring_assist', 'suggest-requirements');
+    const usageId = await consumeQuota(caller, scopeFor(caller, 'authoring_assist', 'teacher_authoring_assist'), 'suggest-requirements');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {

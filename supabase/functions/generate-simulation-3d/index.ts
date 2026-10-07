@@ -1,13 +1,14 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { json, preflight } from "../_shared/cors.ts";
-import { requireUser, consumeQuota, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
-// Admins only. Counts as one simulation_generation.
+import { requireUser, consumeQuota, scopeFor, recordTokens, addUsage, errorResponse } from "../_shared/guard.ts";
+// The Tutre team, teachers and school admins (Phase 5d). Counts as one
+// generation, against the team's or the teachers' limit.
 Deno.serve(async (req)=>{
   if (req.method === 'OPTIONS') {
     return preflight(req);
   }
   try {
-    const caller = await requireUser(req, { admin: true });
+    const caller = await requireUser(req, { staff: true });
     const { subject, className, topic, details, customPrompt, imageBase64, existingCode, updateTarget } = await req.json();
     const apiKey = Deno.env.get('AIMLAPI_API_KEY');
     if (!apiKey) {
@@ -74,7 +75,7 @@ CRITICAL 3D LAYOUT RULE: The Three.js canvas MUST have CSS 'position: absolute; 
     } else {
       userContent = promptText;
     }
-    const usageId = await consumeQuota(caller, 'simulation_generation', 'generate-simulation-3d');
+    const usageId = await consumeQuota(caller, scopeFor(caller, 'simulation_generation', 'teacher_simulation_generation'), 'generate-simulation-3d');
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {

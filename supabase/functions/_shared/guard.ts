@@ -3,7 +3,9 @@
 // Every function calls requireUser() before doing any work. The browser's
 // publishable key is public, so it cannot prove who is calling: only a signed-in
 // user's access token can. Admin-only functions also require a row in
-// admin_users. Functions that call a model then call consumeQuota(), which
+// admin_users (the Tutre content team, "Studio"). Staff functions (Phase 5d)
+// also accept teachers and school admins of an active school, who are counted
+// against their own, lower limits (see scopeFor). Functions that call a model then call consumeQuota(), which
 // enforces the per-user limits in public.ai_quota_limits (see
 // supabase/migrations/20261004120100_ai_usage_quota.sql).
 
@@ -20,16 +22,29 @@ export interface Caller {
   userId: string;
   // A client that acts as the caller, so every query is subject to RLS.
   db: SupabaseClient;
+  // A member of the Tutre content team (admin_users), as opposed to a teacher
+  // or school admin.
+  isStudio: boolean;
 }
 
-export type QuotaScope = 'simulation_generation' | 'tutor_message' | 'authoring_assist' | 'translation';
+export type QuotaScope =
+  | 'simulation_generation' | 'tutor_message' | 'authoring_assist' | 'translation'
+  | 'teacher_simulation_generation' | 'teacher_notes_draft' | 'teacher_authoring_assist';
 
 const SCOPE_LABEL: Record<QuotaScope, string> = {
   simulation_generation: 'simulation generations',
   tutor_message: 'AI tutor messages',
   authoring_assist: 'authoring requests',
   translation: 'AI translation drafts',
+  teacher_simulation_generation: 'simulation generations',
+  teacher_notes_draft: 'AI notes drafts',
+  teacher_authoring_assist: 'authoring requests',
 };
+
+// The content team and teachers have separate limits for the same work.
+export function scopeFor(caller: Caller, studioScope: QuotaScope, teacherScope: QuotaScope): QuotaScope {
+  return caller.isStudio ? studioScope : teacherScope;
+}
 
 // The key PostgREST and GoTrue expect in the apikey header. It is public; it
 // only identifies the project.
@@ -50,7 +65,7 @@ function projectKey(req: Request): string {
   throw new HttpError(500, 'The function cannot find the project key.');
 }
 
-export async function requireUser(req: Request, options: { admin?: boolean } = {}): Promise<Caller> {
+export async function requireUser(req: Request, options: { admin?: boolean; staff?: boolean } = {}): Promise<Caller> {
   const authorization = req.headers.get('Authorization') ?? '';
   const token = authorization.startsWith('Bearer ') ? authorization.slice(7).trim() : '';
 
@@ -74,7 +89,8 @@ export async function requireUser(req: Request, options: { admin?: boolean } = {
     throw new HttpError(401, 'Your session has expired. Sign in again.');
   }
 
-  if (options.admin) {
+  let isStudio = false;
+  if (options.admin || options.staff) {
     // admin_users lets a user read only their own row, so this returns a row
     // exactly when the caller is an admin.
     const { data: row, error: adminError } = await db
@@ -83,10 +99,22 @@ export async function requireUser(req: Request, options: { admin?: boolean } = {
       .eq('id', data.user.id)
       .maybeSingle();
     if (adminError) throw new HttpError(500, 'Could not check admin access.');
-    if (!row) throw new HttpError(403, 'Admin access required.');
+    isStudio = !!row;
+    if (options.admin && !isStudio) throw new HttpError(403, 'Admin access required.');
   }
 
-  return { userId: data.user.id, db };
+  if (options.staff && !isStudio) {
+    // get_my_context() returns only the caller's own memberships.
+    const { data: context, error: contextError } = await db.rpc('get_my_context');
+    if (contextError || !context) throw new HttpError(500, 'Could not check staff access.');
+    const memberships: { role: string; org_status: string }[] = context.memberships ?? [];
+    const isSchoolStaff = memberships.some(
+      (m) => m.org_status === 'active' && (m.role === 'teacher' || m.role === 'org_admin'),
+    );
+    if (!isSchoolStaff) throw new HttpError(403, 'Only teachers, school admins and the Tutre team can do that.');
+  }
+
+  return { userId: data.user.id, db, isStudio };
 }
 
 // Counts one use against the caller's limit for this scope, or throws 429.
