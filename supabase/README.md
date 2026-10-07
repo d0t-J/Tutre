@@ -301,9 +301,45 @@ student app and answers in Urdu script; it always gets the **English**
 description as context, because that is the checked source.
 
 Translations we write ourselves are imported from `content/translations/` (local,
-not in the repository) with `build_import.py`; see the README there.
+not in the repository) with `build_import.py`; see the README there. Imports
+always arrive as **drafts**: only a reviewer verifies, in the Studio, so every
+verified translation records who checked it (decided 2026-10-08).
 
 Tests: `tests/database/phase3c_content_translations.test.sql` (43 assertions).
+
+## Simulation Bridge and learning progress (Phase 4, 2026-10-08)
+
+Migration `20261008090000_learning_progress.sql`.
+
+**Manifest.** A Bridge-ready simulation declares what it can report in a
+`<script type="application/json" id="tutre-manifest">` block inside its own
+HTML. The `simulations_manifest` trigger reads it into `simulations.manifest`
+whenever the payload changes (so it can never drift from the code), checks it,
+and stores it in a fixed shape (`checkpoints`, `challenges`, `practice_attempts`,
+`mastery_correct`, `mastery_types`). Invalid JSON or ids refuse the save
+(`22023`). No API caller can write the column. All 137 existing simulations
+have no manifest and are "explore only" until they are converted.
+
+**Progress.**
+
+| Object | What it holds |
+| --- | --- |
+| `learning_events` | Append-only log: student, simulation, topic, `kind` (explored / checkpoint / challenge), `ref` (manifest id), `correct`. Exploring and each checkpoint are stored once per student and simulation |
+| `topic_progress` | One row per student and topic: `level` explored / practised / mastered, with the time each level was reached. Never goes down |
+| `record_learning_event(sim, kind, ref, correct)` | The only way in. Published simulations only; ids must be in the manifest; 60 reports per student per minute (`54000` after that). Works out the level and returns `{level, changed}` |
+
+Levels (defaults; a manifest can change the numbers): **explored** = any report
+(the app sends one after a minute in view or a click into the simulation);
+**practised** = every checkpoint reached, or 3 challenge attempts; **mastered**
+= 5 correct answers across at least 2 challenge types (never more types than
+the simulation has). Students read only their own rows; nobody else reads them
+yet. This is self-reported learning progress, never a grade.
+
+The message protocol is documented in
+`student-panel/src/features/simulations/bridge/protocol.js`; simulations embed
+`tutre-bridge.client.js` from the same folder.
+
+Tests: `tests/database/phase4_learning_progress.test.sql` (37 assertions).
 
 ## Schema
 
