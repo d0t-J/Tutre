@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { Archive, ArchiveRestore, KeyRound, Loader2, Pencil, Plus, UserMinus, UserPlus } from 'lucide-react';
+import { Archive, ArchiveRestore, ClipboardList, Clock, KeyRound, Loader2, Pencil, Plus, UserMinus, UserPlus } from 'lucide-react';
 import ClassCodeCard from './ClassCodeCard';
+import JoinRequestsPanel from './JoinRequestsPanel';
+import ClassListPanel from './ClassListPanel';
 import { useClasses } from '../../simulations/hooks/useClassQueries';
 import { useAddSectionMember, useCreateSection, useRemoveSectionMember, useUpdateSection } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
@@ -117,6 +119,8 @@ function SectionCard({ section, members, classes }) {
   const { t } = useTranslation('school');
   const [editing, setEditing] = useState(false);
   const [showCode, setShowCode] = useState(false);
+  const [panel, setPanel] = useState(null);
+  const toggle = (name) => setPanel(current => (current === name ? null : name));
   const [values, setValues] = useState({
     name: section.name, classId: section.classId ?? '', academicYear: section.academicYear ?? '',
   });
@@ -190,6 +194,12 @@ function SectionCard({ section, members, classes }) {
           <h4 className="text-base font-extrabold text-slate-800"><bdi>{section.name}</bdi></h4>
           {details && <span className="text-xs text-slate-500"><bdi>{details}</bdi></span>}
           <span className="ms-auto flex gap-1">
+            <button type="button" onClick={() => toggle('requests')} aria-expanded={panel === 'requests'} className={secondaryButtonClass}>
+              <Clock className="w-3.5 h-3.5" /> {t('requests.button')}
+            </button>
+            <button type="button" onClick={() => toggle('list')} aria-expanded={panel === 'list'} className={secondaryButtonClass}>
+              <ClipboardList className="w-3.5 h-3.5" /> {t('classList.button')}
+            </button>
             <button type="button" onClick={() => setShowCode(v => !v)} aria-expanded={showCode} className={secondaryButtonClass}>
               <KeyRound className="w-3.5 h-3.5" /> {t('classCode.button')}
             </button>
@@ -205,6 +215,8 @@ function SectionCard({ section, members, classes }) {
       )}
 
       {showCode && !editing && <ClassCodeCard sectionId={section.id} sectionName={section.name} />}
+      {panel === 'requests' && !editing && <JoinRequestsPanel sectionId={section.id} />}
+      {panel === 'list' && !editing && <ClassListPanel sectionId={section.id} />}
 
       {['teacher', 'student'].map(role => {
         const inRole = section.members.filter(m => m.role === role);

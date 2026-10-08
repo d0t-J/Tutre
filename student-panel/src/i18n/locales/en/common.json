@@ -60,6 +60,11 @@
     "codeDays": "A code can be valid for 1 to 90 days.",
     "codeUses": "A code can be used 1 to 1000 times.",
     "signIn": "Your session has expired. Please sign in again.",
-    "duplicate": "That already exists."
+    "duplicate": "That already exists.",
+    "notOpen": "This school is not open to students on Tutre yet.",
+    "fullName": "Write your full name as your school has it.",
+    "rollNumber": "Write your roll number.",
+    "tooManyRequests": "Too many join requests today. Try again tomorrow.",
+    "staffCode": "This is a staff code. Teachers and school admins join in the staff portal."
   }
 }

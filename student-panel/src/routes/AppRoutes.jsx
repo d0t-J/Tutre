@@ -12,6 +12,7 @@ const Profile = lazy(() => import('../pages/Profile/Profile'));
 const Join = lazy(() => import('../pages/Join/Join'));
 const MovedToStaffPortal = lazy(() => import('../pages/School/MovedToStaffPortal'));
 const MaterialViewer = lazy(() => import('../pages/Materials/MaterialViewer'));
+const Welcome = lazy(() => import('../pages/Welcome/Welcome'));
 
 export default function AppRoutes() {
   const location = useLocation();
@@ -30,6 +31,11 @@ export default function AppRoutes() {
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="/welcome" element={
+          <ProtectedRoute>
+            <Welcome />
           </ProtectedRoute>
         } />
         <Route path="/join" element={

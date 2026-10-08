@@ -36,16 +36,50 @@ export const invalidateSchoolQueries = (queryClient) => {
   }
 };
 
-export const useRedeemCode = () => {
+// Phase 5g: a student does not join with a code directly; they ask, with
+// their name and roll number as the school has them, and a teacher or the
+// school's admin approves. The database refuses to let a student skip that.
+export const useRequestToJoin = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async (code) => {
-      const { data, error } = await supabase.rpc('redeem_invite_code', { p_code: code });
+    mutationFn: async ({ code, fullName, rollNumber }) => {
+      const { data, error } = await supabase.rpc('request_to_join', {
+        p_code: code, p_full_name: fullName, p_roll_number: rollNumber,
+      });
       if (error) throw new Error(error.message);
       return data;
     },
-    onSuccess: () => invalidateSchoolQueries(queryClient),
+    onSuccess: () => {
+      invalidateSchoolQueries(queryClient);
+      queryClient.invalidateQueries({ queryKey: ['my-join-requests'] });
+    },
+  });
+};
+
+// The student's own requests, newest first, with school and section names.
+export const useMyJoinRequests = () => {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ['my-join-requests', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('my_join_requests');
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    enabled: !!user,
+    // A teacher may approve at any moment; check again when the page is seen.
+    refetchOnWindowFocus: true,
+  });
+};
+
+export const useCancelJoinRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { error } = await supabase.rpc('cancel_join_request', { p_request: id });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-join-requests'] }),
   });
 };
 

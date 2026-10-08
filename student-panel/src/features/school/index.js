@@ -4,4 +4,6 @@
 // audit.
 
 // Hooks
-export { useMyRoles, useRedeemCode, peekInviteCode } from './hooks/useMyRoles';
+export {
+  useMyRoles, peekInviteCode, useRequestToJoin, useMyJoinRequests, useCancelJoinRequest,
+} from './hooks/useMyRoles';

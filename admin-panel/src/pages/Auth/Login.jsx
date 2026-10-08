@@ -5,6 +5,7 @@ import { Lock, Loader2, Mail, UserRound, MailCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import LoginForm from '../../features/auth/components/LoginForm';
 import { STUDENT_APP_URL } from '../../services/portals';
+import { resetPasswordWithCode } from '../../services/passwordReset';
 
 const fieldClass = 'w-full pl-9 pr-4 py-2 bg-slate-50/50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all text-[13px]';
 
@@ -83,6 +84,51 @@ function SignupForm({ onDone }) {
   );
 }
 
+// Forgot your password? There is no email yet (Phase 5g): your principal (or
+// Tutre) gives you a one-time reset code.
+function ResetForm({ onDone }) {
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await resetPasswordWithCode({ email: email.trim(), code: code.trim(), password });
+      toast.success('Password changed. Sign in with your new password.');
+      onDone();
+    } catch (err) {
+      toast.error(err.message || 'Could not reset the password.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <p className="text-[13px] text-slate-500">Ask your principal (or Tutre, if you are a principal) for a reset code. It works once, for 30 minutes.</p>
+      <label className="block text-[13px] font-semibold text-slate-700" htmlFor="reset-email">Email</label>
+      <input id="reset-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
+        className={fieldClass.replace('pl-9', 'pl-3')} />
+      <label className="block text-[13px] font-semibold text-slate-700" htmlFor="reset-code">Reset code</label>
+      <input id="reset-code" type="text" required maxLength={12} autoComplete="one-time-code" value={code} onChange={(e) => setCode(e.target.value)}
+        className={`${fieldClass.replace('pl-9', 'pl-3')} font-mono tracking-widest uppercase`} />
+      <label className="block text-[13px] font-semibold text-slate-700" htmlFor="reset-password">New password</label>
+      <input id="reset-password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" value={password}
+        onChange={(e) => setPassword(e.target.value)} className={fieldClass.replace('pl-9', 'pl-3')} />
+      <div className="flex gap-2">
+        <button type="submit" disabled={busy || !email || !code.trim() || password.length < 8}
+          className="cursor-pointer flex-1 py-2.5 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px]">
+          {busy && <Loader2 className="w-4 h-4 animate-spin" />} Set new password
+        </button>
+        <button type="button" onClick={onDone} className="cursor-pointer px-4 rounded-lg text-[13px] font-bold text-slate-600 hover:bg-slate-100">Back</button>
+      </div>
+    </form>
+  );
+}
+
 export default function Login() {
   const [mode, setMode] = useState('signin');
   const [confirmEmail, setConfirmEmail] = useState(null);
@@ -151,17 +197,25 @@ export default function Login() {
               </button>
             </div>
 
-            {mode === 'signin' ? (
-              <LoginForm
-                email={email}
-                setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
-                showPassword={showPassword}
-                setShowPassword={setShowPassword}
-                isSubmitting={isSubmitting}
-                handleLogin={handleLogin}
-              />
+            {mode === 'reset' ? (
+              <ResetForm onDone={() => setMode('signin')} />
+            ) : mode === 'signin' ? (
+              <>
+                <LoginForm
+                  email={email}
+                  setEmail={setEmail}
+                  password={password}
+                  setPassword={setPassword}
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                  isSubmitting={isSubmitting}
+                  handleLogin={handleLogin}
+                />
+                <button type="button" onClick={() => setMode('reset')}
+                  className="cursor-pointer block mx-auto mt-3 text-[12px] font-semibold text-slate-500 hover:text-primary-700">
+                  Forgot your password? Use a reset code
+                </button>
+              </>
             ) : (
               <SignupForm onDone={setConfirmEmail} />
             )}

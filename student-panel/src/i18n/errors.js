@@ -2,6 +2,11 @@
 // are shown in the interface language; anything else gets the caller's fallback
 // message, so raw technical text never reaches the screen.
 const KNOWN = [
+  [/not open to students/i, 'errors.notOpen'],
+  [/Write your full name/i, 'errors.fullName'],
+  [/Write your roll number/i, 'errors.rollNumber'],
+  [/Too many join requests/i, 'errors.tooManyRequests'],
+  [/This is a staff code/i, 'errors.staffCode'],
   [/This code is not valid/i, 'errors.invalidCode'],
   [/permission to do that|cannot create this kind of code|No such code|row-level security|permission denied/i, 'errors.permission'],
   [/must keep at least one org admin/i, 'errors.lastAdmin'],

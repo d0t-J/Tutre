@@ -239,6 +239,11 @@ Both panels redirect to a login screen; neither shows data to an anonymous
 visitor, by design.
 
 - **Student panel** — sign up at `/login` and use the new account.
+- **Students** join a school class by asking: they enter the class code (or
+  their personal slip code), give their name and roll number, and the teacher
+  approves them in the staff portal. A forgotten password is reset with a
+  one-time code from the teacher ("Forgot your password?"), since Tutre sends
+  no email yet.
 - **Staff portal (admin panel)** — anyone can create an account at `/login`,
   but it only opens up after joining a school with a staff code (teacher or
   school admin) on the Join page, or for the Tutre content team, whose user id is

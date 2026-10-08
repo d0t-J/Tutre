@@ -170,6 +170,11 @@ Route guards and hidden links are for usability. Who can read or change what is
 decided by RLS policies and database functions, and every new rule needs pgTAP
 tests for each role.
 
+Students join a school only through a request the school approves
+(`request_to_join`, `decide_join_requests`); never add a way for a student code
+to add someone to a section directly. There is no email delivery yet, so do not
+rely on an email address proving anything.
+
 Teachers' own simulations and notes (`teacher_materials`) never go into the
 `simulations` or `topics` tables: Tutre's library is changed only in the
 Studio. Show a teacher's simulation only in the sandboxed simulation frame and

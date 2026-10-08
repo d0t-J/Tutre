@@ -22,7 +22,7 @@ export const deriveRoles = (context) => {
   const studioRole = context?.studio_role ?? null;
   const adminOrgs = active
     .filter(m => m.role === 'org_admin')
-    .map(m => ({ id: m.org_id, name: m.org_name, isHead: m.is_head }));
+    .map(m => ({ id: m.org_id, name: m.org_name, isHead: m.is_head, verified: m.org_verified !== false }));
   // Schools where the user may create teaching material (Phase 5c).
   const staffOrgs = [...new Map(active
     .filter(m => m.role === 'teacher' || m.role === 'org_admin')

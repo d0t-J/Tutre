@@ -1,19 +1,14 @@
 {
   "join": {
-    "title": "Join your school or class",
-    "message": "Enter the code your school or teacher gave you. It has 10 letters and numbers, like ABCDE-23456.",
+    "title": "Join your class",
+    "message": "Enter the code from your school or teacher: a class code, or the code on your own slip. It has 10 letters and numbers, like ABCDE-23456.",
     "code": "Code",
-    "submit": "Join",
     "failed": "Could not join. Please try again.",
-    "joined": "You joined!",
-    "alreadyMember": "You are already a member.",
-    "joinedAs": "{{school}}, as {{role}}.",
-    "joinedAsInSection": "{{school}}, as {{role}}, in {{section}}.",
     "next": {
-      "org_admin": "Open My school",
-      "teacher": "Open My sections",
       "student": "Start exploring"
-    }
+    },
+    "check": "Continue",
+    "invalid": "This code is not valid. Ask your teacher for a new one."
   },
   "joinStaff": {
     "staffCode": "This is a staff code for {{school}}. Teachers and school admins join in the Tutre staff portal.",
@@ -24,5 +19,29 @@
     "message": "My school and My sections are now in the Tutre staff portal, where teachers and school admins sign in.",
     "open": "Open the staff portal",
     "noLink": "Ask your school admin for the staff portal's address."
+  },
+  "request": {
+    "teachers": "Teacher: {{names}}",
+    "slipFor": "This slip is for {{name}}.",
+    "explain": "Your teacher checks your name and roll number against the class list before letting you in.",
+    "fullName": "Your full name (as your school has it)",
+    "rollNumber": "Roll number",
+    "submit": "Ask to join",
+    "sent": "Request sent.",
+    "sentDetail": "Your teacher will check it. You will see {{place}} on your dashboard once they approve.",
+    "alreadyIn": "You are already in {{place}}.",
+    "alreadyAsked": "You have already asked to join {{place}}. Your teacher has not decided yet.",
+    "notOpen": "{{school}} is not open to students on Tutre yet. Ask your school to contact Tutre.",
+    "mine": "Your requests",
+    "status": {
+      "pending": "Waiting",
+      "approved": "Approved",
+      "rejected": "Not approved",
+      "cancelled": "Cancelled"
+    },
+    "waiting": "Waiting for your teacher to approve.",
+    "reason": "Reason: {{reason}}",
+    "cancel": "Cancel request",
+    "failed": "Could not change the request."
   }
 }

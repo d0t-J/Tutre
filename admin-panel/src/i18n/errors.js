@@ -2,6 +2,10 @@
 // actually meet get a clear message; anything else gets the caller's fallback,
 // so raw technical text never reaches the screen.
 const KNOWN = [
+  [/already joined/i, 'errors.alreadyJoined'],
+  [/cannot reset this person/i, 'errors.cannotReset'],
+  [/Too many reset codes/i, 'errors.tooManyResets'],
+  [/You cannot decide this request/i, 'errors.permission'],
   [/This code is not valid/i, 'errors.invalidCode'],
   [/head admin cannot be removed/i, 'errors.headCannotBeRemoved'],
   [/Only the school's head admin or Tutre/i, 'errors.headOnly'],

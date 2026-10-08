@@ -6,6 +6,7 @@ import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import { useAuth } from '../../../context/AuthContext';
 import { useMakeOrgAdmin, useSetMembershipStatus, useTransferHead } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
+import ResetPasswordButton from './ResetPasswordButton';
 import { isolate } from '../../../i18n';
 import { formatDate, secondaryButtonClass, dangerButtonClass } from '../utils/school';
 
@@ -29,6 +30,8 @@ const actionsFor = (member, { canManageAdmins, isPlatformAdmin, adminUserIds }) 
   return {
     remove: true,
     makeAdmin: member.role === 'teacher' && !adminUserIds.has(member.userId),
+    // A school admin gives a teacher or student a one-time reset code.
+    resetPassword: !adminUserIds.has(member.userId),
   };
 };
 
@@ -51,6 +54,7 @@ function MemberRow({ member, sectionNames, actions, onRemove, onRestore, onMakeA
           .filter(Boolean).join(' · ')}
       </span>
       <span className="ms-auto flex flex-wrap gap-1">
+        {actions.resetPassword && <ResetPasswordButton userId={member.userId} name={member.name} />}
         {actions.restore && (
           <button type="button" onClick={() => onRestore(member)} disabled={isPending} className={secondaryButtonClass}>
             <RotateCcw className="w-3.5 h-3.5" /> {t('members.restore')}

@@ -14,7 +14,7 @@ export const useOrganizations = () => {
     queryKey: ['organizations'],
     queryFn: async () => {
       const [orgs, memberships, sections, codes] = await Promise.all([
-        supabase.from('organizations').select('id, name, slug, status, created_at').order('name'),
+        supabase.from('organizations').select('id, name, slug, status, created_at, verified_at, emis_code').order('name'),
         supabase.from('org_memberships').select('id, org_id, user_id, role, status, created_at'),
         supabase.from('sections').select('id, org_id, archived'),
         supabase

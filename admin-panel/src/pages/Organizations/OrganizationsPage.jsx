@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useOrganizations } from '../../features/organizations/hooks/useOrganizations';
 import CreateOrganizationForm from '../../features/organizations/components/CreateOrganizationForm';
 import OrganizationCard from '../../features/organizations/components/OrganizationCard';
+import SupportPasswordReset from '../../features/organizations/components/SupportPasswordReset';
 
 export default function OrganizationsPage() {
   const { studioRole } = useAuth();
@@ -25,7 +26,8 @@ export default function OrganizationsPage() {
           <h2 className="text-lg font-extrabold text-slate-800 mb-1">Schools</h2>
           <p className="text-sm text-slate-500 mb-4">
             Create a school to get its first school admin code. The school admin then manages teachers, students,
-            sections and codes from the student app.
+            sections and codes on My school in this portal. Students can ask to join only once you verify the
+            school and it has a head admin.
           </p>
           <CreateOrganizationForm />
         </section>
@@ -45,6 +47,8 @@ export default function OrganizationsPage() {
             </ul>
           )}
         </section>
+
+        <SupportPasswordReset />
       </div>
     </div>
   );

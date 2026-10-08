@@ -70,6 +70,8 @@ export default function SchoolPage() {
 
   const orgId = selected ?? schools[0]?.id;
   const current = schools.find(s => s.id === orgId);
+  // Students can ask to join only once Tutre has verified the school (Phase 5g).
+  const notVerified = current && current.verified === false;
 
   return (
     <div className="h-full overflow-y-auto">
@@ -91,7 +93,12 @@ export default function SchoolPage() {
             {hasSuspendedSchool ? t('suspended') : t('notAdmin')}
           </p>
         ) : (
-          <SchoolAdmin key={orgId} orgId={orgId} />
+          <>
+            {notVerified && (
+              <p className="text-sm p-3 rounded-xl bg-amber-50 border border-amber-100 text-amber-800">{t('notVerified')}</p>
+            )}
+            <SchoolAdmin key={orgId} orgId={orgId} />
+          </>
         )}
       </div>
     </div>

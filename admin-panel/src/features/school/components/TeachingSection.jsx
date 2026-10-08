@@ -8,6 +8,9 @@ import { useRemoveSectionMember } from '../hooks/useSchoolActions';
 import { translateError } from '../../../i18n/errors';
 import { InviteCodeList, CreateInviteCodeForm } from './InviteCodes';
 import ClassCodeCard from './ClassCodeCard';
+import JoinRequestsPanel from './JoinRequestsPanel';
+import ClassListPanel from './ClassListPanel';
+import ResetPasswordButton from './ResetPasswordButton';
 import { formatDate, dangerButtonClass } from '../utils/school';
 
 // One section on the My sections page: its students, and the student codes a
@@ -40,6 +43,8 @@ export default function TeachingSection({ section }) {
         {details && <p className="text-xs text-slate-500"><bdi>{details}</bdi></p>}
       </div>
 
+      <JoinRequestsPanel sectionId={section.id} />
+
       <div>
         <h3 className="flex items-center gap-1.5 text-sm font-bold text-slate-700 mb-2">
           <Users className="w-4 h-4 text-slate-400" /> {t('teaching.students', { count: section.students.length })}
@@ -52,10 +57,13 @@ export default function TeachingSection({ section }) {
               <li key={student.userId} className="flex items-center gap-3 py-2">
                 <span className="text-sm font-medium text-slate-800"><bdi>{student.name}</bdi></span>
                 <span className="text-xs text-slate-400">{t('members.joined', { date: formatDate(student.joinedAt) })}</span>
+                <span className="ms-auto">
+                  <ResetPasswordButton userId={student.userId} name={student.name} />
+                </span>
                 <button
                   type="button"
                   onClick={() => setRemoving(student)}
-                  className={`ms-auto ${dangerButtonClass}`}
+                  className={dangerButtonClass}
                   title={t('teaching.removeTitle', { name: student.name })}
                 >
                   <UserMinus className="w-3.5 h-3.5" /> {t('common:actions.remove')}
@@ -67,6 +75,11 @@ export default function TeachingSection({ section }) {
       </div>
 
       <ClassCodeCard sectionId={section.id} sectionName={section.name} />
+
+      <details>
+        <summary className="cursor-pointer text-sm font-bold text-slate-500">{t('classList.open')}</summary>
+        <div className="mt-2"><ClassListPanel sectionId={section.id} /></div>
+      </details>
 
       <details>
         <summary className="cursor-pointer text-sm font-bold text-slate-500">{t('teaching.otherCodes', { count: section.codes.length })}</summary>

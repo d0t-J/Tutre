@@ -28,6 +28,9 @@ export function AuthFormProvider({ children }) {
       } else {
         const { data, error } = await signup(email, password, fullName);
         if (error) throw error;
+        if (data?.session) {
+          try { sessionStorage.setItem('tutre.welcome', '1'); } catch { /* storage may be blocked */ }
+        }
         // With email confirmation on, there is no session until the address
         // is confirmed: say so, and offer the sign-in form.
         if (!data?.session) {
@@ -44,7 +47,7 @@ export function AuthFormProvider({ children }) {
         : undefined;
       toast.error(translateAuthError(err, t), { action, duration: action ? 10000 : undefined });
       setIsSubmitting(false);
-    } 
+    }
   };
 
   return (

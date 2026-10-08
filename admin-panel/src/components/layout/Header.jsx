@@ -18,7 +18,7 @@ export default function Header() {
   const showWizardToggle = isAdmin && pathname === '/';
 
   return (
-    <header className="bg-white border-b border-slate-200 py-2 px-4 lg:px-6 flex items-center justify-between sticky top-0 z-20 h-[53px]">
+    <header className="bg-white border-b border-slate-200 py-2 px-4 lg:px-6 flex items-center justify-between sticky top-0 z-20 h-[53px] print:hidden">
       <div className="flex-1 flex items-center justify-start">
         <NavLink to="/" className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity">
           <img src={Logo} alt="Tutre" className="h-[33px] w-auto object-contain shrink-0" />
@@ -28,7 +28,7 @@ export default function Header() {
           </div>
         </NavLink>
       </div>
-      
+
       {/* Center Desktop Nav */}
       <div className="hidden lg:flex items-center justify-center">
         <nav className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
@@ -78,7 +78,7 @@ export default function Header() {
         )}
 
         {/* Desktop Logout */}
-        <button 
+        <button
           onClick={() => setIsLogoutModalOpen(true)}
           title="Logout"
           aria-label="Logout"
@@ -88,7 +88,7 @@ export default function Header() {
         </button>
 
         {/* Hamburger Toggle (Mobile Only) */}
-        <button 
+        <button
           className="lg:hidden cursor-pointer p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors"
           onClick={() => setIsMenuOpen(true)}
           aria-label="Open menu"
@@ -98,19 +98,19 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu Component */}
-      <MobileMenu 
-        isOpen={isMenuOpen} 
-        onClose={() => setIsMenuOpen(false)} 
-        onLogoutClick={() => setIsLogoutModalOpen(true)} 
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onLogoutClick={() => setIsLogoutModalOpen(true)}
       />
 
-      <LogoutConfirmationModal 
-        isOpen={isLogoutModalOpen} 
-        onClose={() => setIsLogoutModalOpen(false)} 
+      <LogoutConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={() => {
           setIsLogoutModalOpen(false);
           logout();
-        }} 
+        }}
       />
     </header>
   );

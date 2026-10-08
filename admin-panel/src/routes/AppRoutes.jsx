@@ -16,6 +16,7 @@ const TranslationsPage = lazy(() => import('../pages/Translations/TranslationsPa
 const SchoolPage = lazy(() => import('../pages/School/SchoolPage'));
 const ClassroomPage = lazy(() => import('../pages/Classroom/ClassroomPage'));
 const MaterialEditorPage = lazy(() => import('../pages/Classroom/MaterialEditorPage'));
+const SlipsPage = lazy(() => import('../pages/Classroom/SlipsPage'));
 const JoinPage = lazy(() => import('../pages/Join/JoinPage'));
 
 export default function AppRoutes() {
@@ -91,6 +92,12 @@ export default function AppRoutes() {
             <Route path="/classroom/materials/:id" element={
               <ProtectedRoute>
                 <MaterialEditorPage />
+              </ProtectedRoute>
+            } />
+            {/* Teachers and school admins (and Tutre) print slips; RLS decides whose list. */}
+            <Route path="/classroom/sections/:sectionId/slips" element={
+              <ProtectedRoute>
+                <SlipsPage />
               </ProtectedRoute>
             } />
             <Route path="/join" element={

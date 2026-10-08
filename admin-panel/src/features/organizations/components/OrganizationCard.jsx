@@ -7,6 +7,7 @@ import {
 } from '../hooks/useOrganizations';
 import { codeState, formatCode, formatDate } from '../utils/codes';
 import CodeBadge from './CodeBadge';
+import SchoolVerification from './SchoolVerification';
 
 const smallButton =
   'cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors';
@@ -87,6 +88,8 @@ export default function OrganizationCard({ org }) {
       <p className="text-xs text-slate-500">
         {plural(org.counts.students, 'student')} · {plural(org.counts.teachers, 'teacher')} · {plural(org.counts.sections, 'section')} · created {formatDate(org.created_at)}
       </p>
+
+      <SchoolVerification org={org} />
 
       <div>
         <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">School admins ({activeAdmins.length})</p>

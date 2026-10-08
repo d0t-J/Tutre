@@ -44,6 +44,9 @@
     "topicChapter": "That topic is not in the chosen chapter.",
     "noNotes": "Tutre has no notes for this topic yet.",
     "noChapter": "This simulation is not in a chapter, so it cannot be copied.",
-    "dailyLimit": "You have reached today's limit for this. Try again tomorrow."
+    "dailyLimit": "You have reached today's limit for this. Try again tomorrow.",
+    "alreadyJoined": "This student has already joined.",
+    "cannotReset": "You cannot reset this person's password. Teachers reset their students; school admins reset teachers and students.",
+    "tooManyResets": "Too many reset codes today. Try again tomorrow."
   }
 }
