@@ -78,7 +78,7 @@ Tutre uses **AIML API** (<https://api.aimlapi.com/v1>), an OpenAI-compatible
 endpoint. It replaced Fireworks AI on 2026-09-30; no Fireworks reference remains
 in the codebase.
 
-The project has **seven** Edge Functions. `generate-simulation` and
+The project has **eight** Edge Functions. `generate-simulation` and
 `generate-simulation-3d` are selected at runtime from a template literal in
 `useSimulationGeneration.js:19` and `useSimulationUpdate.js:13`, which is why a
 naive grep for function names misses them.
@@ -92,8 +92,9 @@ naive grep for function names misses them.
 | `extract-html-details` | Sonnet 5 | Written from scratch |
 | `generate-simulation-prompt` | — | Builds a prompt string locally, no model call |
 | `send-whatsapp` | — | Green API |
+| `translate-content` | Sonnet 5 | Urdu drafts of curriculum text (Phase 3c) |
 
-All five model-calling functions are on AIML API. No Fireworks reference remains
+All six model-calling functions are on AIML API. No Fireworks reference remains
 anywhere in the repository.
 
 ### Edge Function secrets
@@ -449,9 +450,36 @@ their own scopes (below), the Studio against its existing ones.
 Tests: `tests/database/phase5c_teacher_materials.test.sql` (54 assertions) and
 `tests/database/phase5f_class_codes.test.sql` (14).
 
+## Audit fixes (2026-10-08)
+
+Migration `20261011090000_audit_fixes.sql`, additive only.
+
+- A code tied to an **archived section** no longer works: `redeem_invite_code`
+  refuses it and `peek_invite_code` reports it as not valid. That includes the
+  section's class code. Unarchiving makes the codes work again.
+- **Indexes** on 22 foreign keys that had none: the curriculum lookups every
+  student page makes (`topics.chapter_id`, `topics.subject_id`,
+  `subjects.class_id`, ...), progress, teachers' material, and the "who did
+  this" columns scanned when an account is deleted. The frozen per-subject
+  tables are left alone.
+- Anonymous visitors can no longer call `set_updated_at`, `subjects_set_slug`
+  or `upsert_canonical_simulation` through the API (the last had been granted
+  to `anon` by Supabase's default privileges).
+- `private.normalize_manifest` is `STABLE`, not `IMMUTABLE`.
+
+Still open from the audit, needing a decision: the older content-table policies
+("Enable all access for admins" and the `ai_usage` / `ai_quota_limits` ones) call
+`auth.uid()` once per row instead of once per query. Rewriting them changes
+existing policies, so it waits for approval.
+
+Tests: `tests/database/audit_2026_10_08.test.sql` (16 assertions).
+
 ## Schema
 
-Nine tables, one view, RLS enabled on every table.
+26 tables and 2 views (`all_simulations`, `translation_overview`), RLS enabled
+on every table. This section covers the curriculum and the simulation library;
+the phase sections above cover schools, translations, progress and teachers'
+material.
 
 ### Curriculum tree
 
@@ -460,7 +488,7 @@ classes ──< subjects ──< chapters
                   │           │
                   └──< topics ┘
                          │
-                         └──< <subject>_simulations
+                         └──< simulations ──< simulation_versions
 ```
 
 | Table | Columns | Notes |
@@ -469,7 +497,7 @@ classes ──< subjects ──< chapters
 | `subjects` | `id`, `class_id`, `name`, `icon_name`, `created_at` | `UNIQUE (name, class_id)`, `class_id` cascades |
 | `chapters` | `id`, `name`, `subject_id`, `chapter_no`, `description`, `created_at` | `UNIQUE (subject_id, chapter_no)` and `UNIQUE (name, subject_id)` |
 | `topics` | `id`, `subject_id`, `chapter_id`, `name`, `description`, `study_guide`, `created_at` | `chapter_id` is `ON DELETE SET NULL`; `subject_id` cascades |
-| `admin_users` | `id`, `created_at` | `id` references `auth.users(id)` |
+| `admin_users` | `id`, `created_at`, `studio_role` | `id` references `auth.users(id)`; `studio_role` author, reviewer or platform_admin |
 
 ### Simulation payloads (one table since Phase 2b, 2026-10-05)
 
