@@ -28,6 +28,20 @@ BEGIN
     PERFORM set_config('request.jwt.claims', '', true);
 END $$;
 GRANT USAGE ON SCHEMA test_helpers TO authenticated, anon;
+
+-- Since Phase 5g a student asks to join (request_to_join) and the school
+-- approves. Tests that are about membership, not the approval, use this helper
+-- to do both in one step, as the student.
+CREATE FUNCTION test_helpers.join_student(p_code text) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, private AS $$
+DECLARE
+    v jsonb := public.request_to_join(p_code, 'Test Student', 'R-' || substr(md5(random()::text), 1, 8));
+BEGIN
+    IF v ->> 'status' = 'already_member' THEN
+        RETURN v || '{"already_member": true}'::jsonb;
+    END IF;
+    RETURN private.approve_join_request((v ->> 'request_id')::uuid) || '{"already_member": false}'::jsonb;
+END $$;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO authenticated, anon;
 
 -- People. "a" = School A, "b" = School B, "c" = no school.
@@ -92,6 +106,8 @@ SELECT set_config('test.org_a', j ->> 'org_id', true), set_config('test.code_adm
 WITH r AS (SELECT create_organization('School B', 'school-b') AS j)
 SELECT set_config('test.org_b', j ->> 'org_id', true), set_config('test.code_admin_b', j ->> 'admin_code', true) FROM r;
 SELECT is((SELECT count(*)::int FROM organizations), 2, 'a platform admin sees every school');
+SELECT set_school_verification(current_setting('test.org_a')::uuid, true);
+SELECT set_school_verification(current_setting('test.org_b')::uuid, true);
 SELECT throws_ok($$SELECT create_organization('Dup', 'school-a')$$, '23505', NULL, 'school slugs are unique');
 SELECT test_helpers.logout();
 SELECT matches(current_setting('test.code_admin_a'), '^[A-HJKMNP-Z2-9]{10}$', 'codes are 10 unambiguous characters');
@@ -157,18 +173,18 @@ SELECT is((SELECT role FROM org_memberships WHERE user_id = '00000000-0000-0000-
     'the teacher is also a teacher of the school');
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a4');
-SELECT is((redeem_invite_code(current_setting('test.code_student_9a')) ->> 'already_member')::boolean, false, 'student A1 joins 9-A');
-SELECT is((redeem_invite_code(current_setting('test.code_student_9a')) ->> 'already_member')::boolean, true,
+SELECT is((test_helpers.join_student(current_setting('test.code_student_9a')) ->> 'already_member')::boolean, false, 'student A1 joins 9-A');
+SELECT is((test_helpers.join_student(current_setting('test.code_student_9a')) ->> 'already_member')::boolean, true,
     'redeeming the same code again reports already_member');
 SELECT test_helpers.logout();
 SELECT is((SELECT uses FROM invite_codes WHERE code = current_setting('test.code_student_9a')), 1,
     'a repeat redemption does not use up the code');
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a5');
-SELECT lives_ok(format('SELECT redeem_invite_code(%L)', current_setting('test.code_student_9b')), 'student A2 joins 9-B');
+SELECT lives_ok(format('SELECT test_helpers.join_student(%L)', current_setting('test.code_student_9b')), 'student A2 joins 9-B');
 SELECT test_helpers.logout();
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000b4');
-SELECT lives_ok(format('SELECT redeem_invite_code(%L)', current_setting('test.code_student_b')), 'student B joins School B');
+SELECT lives_ok(format('SELECT test_helpers.join_student(%L)', current_setting('test.code_student_b')), 'student B joins School B');
 SELECT test_helpers.logout();
 
 -- Expired and revoked codes
@@ -204,7 +220,7 @@ SELECT throws_ok(format('INSERT INTO sections (org_id, name) VALUES (%L, %L)', c
 SELECT test_helpers.logout();
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000a6');
-SELECT lives_ok(format('SELECT redeem_invite_code(%L)', current_setting('test.code_by_teacher')), 'a classmate joins 9-A with the teacher''s code');
+SELECT lives_ok(format('SELECT test_helpers.join_student(%L)', current_setting('test.code_by_teacher')), 'a classmate joins 9-A with the teacher''s code');
 SELECT test_helpers.logout();
 
 -- ===========================================================================

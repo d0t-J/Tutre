@@ -25,6 +25,20 @@ BEGIN
     PERFORM set_config('request.jwt.claims', '', true);
 END $$;
 GRANT USAGE ON SCHEMA test_helpers TO authenticated, anon;
+
+-- Since Phase 5g a student asks to join (request_to_join) and the school
+-- approves. Tests that are about membership, not the approval, use this helper
+-- to do both in one step, as the student.
+CREATE FUNCTION test_helpers.join_student(p_code text) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, private AS $$
+DECLARE
+    v jsonb := public.request_to_join(p_code, 'Test Student', 'R-' || substr(md5(random()::text), 1, 8));
+BEGIN
+    IF v ->> 'status' = 'already_member' THEN
+        RETURN v || '{"already_member": true}'::jsonb;
+    END IF;
+    RETURN private.approve_join_request((v ->> 'request_id')::uuid) || '{"already_member": false}'::jsonb;
+END $$;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO authenticated, anon;
 
 -- School A: e1 principal, e2 teacher of 9-A, e3 teacher of 9-B, e4 student
@@ -43,6 +57,7 @@ INSERT INTO org_memberships (org_id, user_id, role) VALUES
     ('00000000-0000-0000-0000-00000000ea00', '00000000-0000-0000-0000-0000000000e2', 'teacher'),
     ('00000000-0000-0000-0000-00000000ea00', '00000000-0000-0000-0000-0000000000e3', 'teacher'),
     ('00000000-0000-0000-0000-00000000eb00', '00000000-0000-0000-0000-0000000000e5', 'org_admin');
+UPDATE organizations SET verified_at = now();
 INSERT INTO sections (id, org_id, name, archived) VALUES
     ('00000000-0000-0000-0000-00000000ea09', '00000000-0000-0000-0000-00000000ea00', '9-A', false),
     ('00000000-0000-0000-0000-00000000ea0b', '00000000-0000-0000-0000-00000000ea00', '9-B', false),
@@ -65,7 +80,7 @@ SELECT ok((SELECT expires_at > now() + interval '360 days' FROM invite_codes WHE
     'it lasts a year');
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000e4');
-SELECT is(redeem_invite_code(current_setting('test.code1')) ->> 'section_name', '9-A', 'a student joins the section with it');
+SELECT is(test_helpers.join_student(current_setting('test.code1')) ->> 'section_name', '9-A', 'a student joins the section with it');
 SELECT throws_ok($$SELECT class_code('00000000-0000-0000-0000-00000000ea09')$$, 'P0002', NULL,
     'a student cannot read the class code');
 SELECT test_helpers.logout();

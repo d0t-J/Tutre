@@ -20,6 +20,20 @@ BEGIN
     PERFORM set_config('request.jwt.claims', '', true);
 END $$;
 GRANT USAGE ON SCHEMA test_helpers TO authenticated;
+
+-- Since Phase 5g a student asks to join (request_to_join) and the school
+-- approves. Tests that are about membership, not the approval, use this helper
+-- to do both in one step, as the student.
+CREATE FUNCTION test_helpers.join_student(p_code text) RETURNS jsonb
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, private AS $$
+DECLARE
+    v jsonb := public.request_to_join(p_code, 'Test Student', 'R-' || substr(md5(random()::text), 1, 8));
+BEGIN
+    IF v ->> 'status' = 'already_member' THEN
+        RETURN v || '{"already_member": true}'::jsonb;
+    END IF;
+    RETURN private.approve_join_request((v ->> 'request_id')::uuid) || '{"already_member": false}'::jsonb;
+END $$;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA test_helpers TO authenticated;
 
 -- A school with a principal (a1), a teacher of 9-A (a2) and two students (a3, a4).
@@ -32,6 +46,7 @@ INSERT INTO organizations (id, name, slug) VALUES ('00000000-0000-0000-0000-0000
 INSERT INTO org_memberships (org_id, user_id, role) VALUES
     ('00000000-0000-0000-0000-0000000aa000', '00000000-0000-0000-0000-00000000aa01', 'org_admin'),
     ('00000000-0000-0000-0000-0000000aa000', '00000000-0000-0000-0000-00000000aa02', 'teacher');
+UPDATE organizations SET verified_at = now();
 INSERT INTO sections (id, org_id, name) VALUES ('00000000-0000-0000-0000-0000000aa009', '00000000-0000-0000-0000-0000000aa000', '9-A');
 INSERT INTO section_members (section_id, user_id, role) VALUES
     ('00000000-0000-0000-0000-0000000aa009', '00000000-0000-0000-0000-00000000aa02', 'teacher');
@@ -67,7 +82,7 @@ SELECT test_helpers.logout();
 SELECT test_helpers.login('00000000-0000-0000-0000-00000000aa04');
 SELECT is((peek_invite_code(current_setting('test.class_code')) ->> 'valid')::boolean, true,
     'unarchived, the class code works again');
-SELECT is(redeem_invite_code(current_setting('test.class_code')) ->> 'section_name', '9-A', 'and a student can join');
+SELECT is(test_helpers.join_student(current_setting('test.class_code')) ->> 'section_name', '9-A', 'and a student can join');
 SELECT test_helpers.logout();
 
 -- ===========================================================================

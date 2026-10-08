@@ -78,7 +78,7 @@ Tutre uses **AIML API** (<https://api.aimlapi.com/v1>), an OpenAI-compatible
 endpoint. It replaced Fireworks AI on 2026-09-30; no Fireworks reference remains
 in the codebase.
 
-The project has **eight** Edge Functions. `generate-simulation` and
+The project has **nine** Edge Functions. `generate-simulation` and
 `generate-simulation-3d` are selected at runtime from a template literal in
 `useSimulationGeneration.js:19` and `useSimulationUpdate.js:13`, which is why a
 naive grep for function names misses them.
@@ -93,6 +93,7 @@ naive grep for function names misses them.
 | `generate-simulation-prompt` | — | Builds a prompt string locally, no model call |
 | `send-whatsapp` | — | Green API |
 | `translate-content` | Sonnet 5 | Urdu drafts of curriculum text (Phase 3c) |
+| `reset-password-with-code` | — | Password reset with a teacher's one-time code (Phase 5g); no session, `verify_jwt = false` |
 
 All six model-calling functions are on AIML API. No Fireworks reference remains
 anywhere in the repository.
@@ -150,6 +151,7 @@ server, so expired or tampered tokens are refused.
 | `chat-tutor` | any signed-in user; with `purpose: "notes"` staff only | `tutor_message`; teachers' notes drafts `teacher_notes_draft` |
 | `translate-content` | admins (any Studio role) | `translation` (300 per user per 24 h) |
 | `send-whatsapp` | any signed-in user, only if `WHATSAPP_ENABLED=true` | none. Off by default. |
+| `reset-password-with-code` | anyone with a valid one-time reset code (no session) | 5 attempts per code, codes last 30 minutes |
 
 Responses: `401` not signed in or session expired, `403` signed in but not an
 admin, `429` limit reached (with a `Retry-After` header and a message such as
@@ -473,6 +475,54 @@ Still open from the audit, needing a decision: the older content-table policies
 existing policies, so it waits for approval.
 
 Tests: `tests/database/audit_2026_10_08.test.sql` (16 assertions).
+
+## Verified students without email (Phase 5g, 2026-10-08)
+
+Migration `20261012090000_verified_students.sql`. There is no email delivery
+yet, so an email address proves nothing: the school verifies each student.
+
+**Verified schools.** `organizations.verified_at`, `verified_by` and an optional
+`emis_code` (the government school code, unique). Tutre sets them with
+`set_school_verification(org, verified, emis_code)` on the Schools page.
+Students can ask to join only a school that is active, verified and has a head
+admin (`private.school_open_to_students`). Schools that existed before this
+migration were marked verified so nothing stopped working.
+
+**Join requests.** A student code (class code, slip, or one-off code) no longer
+joins anyone: `redeem_invite_code` refuses student codes (`22023`), so approval
+cannot be skipped. Staff codes are unchanged.
+
+| Object | What it does |
+| --- | --- |
+| `request_to_join(code, full_name, roll_number)` | Records a pending request (one open request per student and section; 10 a day), uses the code once, and matches it to the class list (the slip's own entry, or an unclaimed entry with the same roll number) |
+| `join_requests` | The requests. Students read their own; the section's teachers, the school's admins and Tutre read the ones they decide. Written only by the functions |
+| `decide_join_requests(ids, approve, reason)` | Approve (adds the student to the school and section and marks the class list entry joined) or reject with a reason the student sees. Section teachers, school admins, Tutre |
+| `my_join_requests()`, `cancel_join_request(id)` | The student's own requests, with school and section names |
+
+**Class lists and slips.** `class_list_entries` (section, full name, roll
+number unique per section, `student_id` set on approval) is managed by the
+section's teachers and the school's admins. `slip_code(entry, replace)` gives an
+entry a personal one-time student code (`invite_codes.class_list_entry_id`,
+90 days); the staff portal prints slips with a join link and QR code.
+
+**Password reset without email.** `create_password_reset_code(user)` returns an
+8-character code, valid 30 minutes, once; only its SHA-256 fingerprint is
+stored (`password_reset_codes`, no API access at all). Who may reset whom: a
+teacher their sections' students; a school admin the school's teachers and
+students (other admins: the head only); Tutre anyone except platform admins,
+also by email with `support_password_reset_code(email)` for people with no
+teacher. The Edge Function `reset-password-with-code` (deployed with
+`verify_jwt = false`, see `config.toml`) takes email, code and new password,
+checks the code with `use_password_reset_code` (service role only; 5 attempts
+per code; the newest code only) and sets the password with the Auth admin API.
+
+`peek_invite_code` also returns `needs_request`, `school_open`, the section's
+`teachers`, `pending_request` and `slip_name`; `get_my_context` returns
+`org_verified` per membership.
+
+Tests: `tests/database/phase5g_verified_students.test.sql` (65 assertions). The
+older tests that joined students directly now use a helper that asks and
+approves in one step.
 
 ## Schema
 

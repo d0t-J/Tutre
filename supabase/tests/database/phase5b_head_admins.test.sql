@@ -228,7 +228,7 @@ SELECT revoke_invite_code(current_setting('test.revoked_id')::uuid);
 SELECT test_helpers.logout();
 
 SELECT test_helpers.login('00000000-0000-0000-0000-0000000000f7');
-SELECT is(peek_invite_code(lower(current_setting('test.code'))),
+SELECT ok(peek_invite_code(lower(current_setting('test.code'))) @>
     jsonb_build_object('valid', true, 'role', 'student', 'org_name', 'School A', 'section_name', '9-A', 'already_member', false),
     'a code shows its school, role and section before it is used');
 SELECT is(peek_invite_code('ZZZZZZZZZZ'), '{"valid": false}'::jsonb, 'an unknown code is just "not valid"');
