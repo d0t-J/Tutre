@@ -216,7 +216,9 @@ The Supabase project is shared and holds real content. Treat it accordingly.
 ## Security expectations
 
 - **AI-generated HTML is untrusted input.** Simulation payloads are model output
-  stored in a database row. Treat them exactly as HTML pasted by a stranger.
+  stored in a database row. Treat them exactly as HTML pasted by a stranger. The
+  same goes for anything else a model writes: tutor replies, drafted notes and
+  descriptions are shown only after `sanitizeHTML`.
 - **Iframe isolation is load-bearing.** Simulations render inside sandboxed
   iframes. Do not widen the sandbox, remove it, or move a payload into the host
   document. Keep `dompurify` and `utils/sanitizeHTML.js` in the render path.

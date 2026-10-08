@@ -26,8 +26,16 @@ export function AuthFormProvider({ children }) {
         const { error } = await login(email, password);
         if (error) throw error;
       } else {
-        const { error } = await signup(email, password, fullName);
+        const { data, error } = await signup(email, password, fullName);
         if (error) throw error;
+        // With email confirmation on, there is no session until the address
+        // is confirmed: say so, and offer the sign-in form.
+        if (!data?.session) {
+          toast.info(t('signup.confirmEmail', { email }), { duration: 10000 });
+          setIsLogin(true);
+          setPassword('');
+          setIsSubmitting(false);
+        }
       }
     } catch (err) {
       // A teacher or principal is offered a way to the staff portal.

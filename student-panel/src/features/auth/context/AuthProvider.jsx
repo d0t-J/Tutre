@@ -9,10 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      enforceStudentOnlyApi(session?.user, setUser, setLoading);
-    });
-
+    // The first event (INITIAL_SESSION) carries the stored session, if any.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       enforceStudentOnlyApi(session?.user, setUser, setLoading);
     });

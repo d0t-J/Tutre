@@ -3,10 +3,18 @@ import { supabase } from './supabase';
 // The student app is for students (Phase 5a). The Tutre content team, and
 // teachers and school admins who are not also students somewhere, use the staff
 // portal instead. get_my_context() returns the user's own roles in one call.
-const fetchMyContext = async () => {
-  const { data, error } = await supabase.rpc('get_my_context');
-  if (error) throw error;
-  return data;
+let contextRequest = null;
+const fetchMyContext = () => {
+  // Sign-in and the session check ask at the same moment; share one request.
+  if (!contextRequest) {
+    contextRequest = supabase.rpc('get_my_context')
+      .then(({ data, error }) => {
+        if (error) throw error;
+        return data;
+      })
+      .finally(() => { contextRequest = null; });
+  }
+  return contextRequest;
 };
 
 export const isStaffOnly = (context) => {
@@ -46,8 +54,8 @@ export const loginApi = async (email, password) => {
 };
 
 export const signupApi = async (email, password, fullName) => {
-  return supabase.auth.signUp({ 
-    email, 
+  return supabase.auth.signUp({
+    email,
     password,
     options: {
       data: {

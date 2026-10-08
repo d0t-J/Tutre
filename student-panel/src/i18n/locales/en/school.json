@@ -1,125 +1,4 @@
 {
-  "tabs": {
-    "overview": "Overview",
-    "members": "Members",
-    "sections": "Sections",
-    "codes": "Invite codes"
-  },
-  "loadFailed": "Could not load the school. Please refresh the page.",
-  "chooseSchool": "Choose a school",
-  "suspended": "Your school's Tutre account is suspended. Contact Tutre to reactivate it.",
-  "notAdmin": "You are not a school admin. School admins manage members, sections and invite codes here.",
-  "overview": {
-    "students": "Students",
-    "teachers": "Teachers",
-    "sections": "Sections",
-    "activeCodes": "Active codes",
-    "schoolName": "School name",
-    "nameTooShort": "Use at least 2 characters.",
-    "saveName": "Save name",
-    "renamed": "School name saved.",
-    "renameFailed": "Could not rename the school."
-  },
-  "members": {
-    "group": {
-      "org_admin": "School admins ({{count}})",
-      "teacher": "Teachers ({{count}})",
-      "student": "Students ({{count}})"
-    },
-    "adminNote": "Only Tutre can remove a school admin. Add one with a school admin code.",
-    "nobody": "Nobody yet. Create a code on the Invite codes tab.",
-    "you": "(you)",
-    "joined": "joined {{date}}",
-    "restore": "Restore",
-    "removedTitle": "Removed ({{count}})",
-    "restored": "{{name}} is a member again.",
-    "removed": "{{name}} was removed from the school.",
-    "changeFailed": "Could not change the membership.",
-    "removeTitle": "Remove from school?",
-    "removeMessage": "{{name}} ({{role}}) will lose access to this school and be taken off all its sections. You can restore them later, but you will need to add them to sections again."
-  },
-  "sections": {
-    "new": "New section",
-    "name": "Name",
-    "class": "Class",
-    "notSet": "Not set",
-    "year": "Year",
-    "nameRequired": "Enter a section name.",
-    "yearFormat": "Write the year like 2026 or 2026-27.",
-    "add": "Add section",
-    "created": "Section {{name}} created.",
-    "createFailed": "Could not create the section.",
-    "listTitle": "Sections ({{count}})",
-    "none": "No sections yet.",
-    "roleCount": {
-      "teacher": "Teachers ({{count}})",
-      "student": "Students ({{count}})"
-    },
-    "addRole": {
-      "teacher": "Add a teacher...",
-      "student": "Add a student..."
-    },
-    "addButton": "Add",
-    "memberAdded": "{{name}} added to {{section}}.",
-    "addFailed": "Could not add them.",
-    "removeTitle": "Take {{name}} off {{section}}",
-    "memberRemoved": "{{name}} taken off {{section}}.",
-    "removeFailed": "Could not remove them.",
-    "saved": "Section saved.",
-    "updateFailed": "Could not update the section.",
-    "archive": "Archive",
-    "archived": "{{name}} archived.",
-    "unarchive": "Unarchive",
-    "unarchived": "{{name}} is active again.",
-    "archivedTitle": "Archived ({{count}})",
-    "archivedNote": "Archived sections are no longer shown to their teachers and students; their member lists are kept. Codes for an archived section still work until they expire, so revoke any you no longer need."
-  },
-  "codes": {
-    "createTitle": "Create a code",
-    "createNote": "A section code also puts the person in that section. Students and teachers enter codes on the Join page.",
-    "forRole": "For a",
-    "section": "Section",
-    "schoolOnly": "School only",
-    "uses": "Uses",
-    "days": "Days",
-    "create": "New code",
-    "createFailed": "Could not create the code.",
-    "createdSummary_one": "{{role}} code · {{count}} use · expires {{date}}",
-    "createdSummary_other": "{{role}} code · {{count}} uses · expires {{date}}",
-    "activeTitle": "Active codes ({{count}})",
-    "noneActive": "No active codes.",
-    "pastTitle": "Expired, used up and revoked ({{count}})",
-    "none": "No codes yet.",
-    "usage": "{{uses}} of {{max}} used",
-    "expires": "expires {{date}}",
-    "state": {
-      "active": "active",
-      "expired": "expired",
-      "usedUp": "used up",
-      "revoked": "revoked"
-    },
-    "copy": "Copy",
-    "copied": "Copied",
-    "copyTitle": "Copy code",
-    "copyFailed": "Could not copy. Select the code and copy it by hand.",
-    "revoke": "Revoke",
-    "revoked": "Code {{code}} revoked. It can no longer be used.",
-    "revokeFailed": "Could not revoke the code."
-  },
-  "teaching": {
-    "loadFailed": "Could not load your sections. Please refresh the page.",
-    "suspended": "Your school's Tutre account is suspended. Contact your school admin.",
-    "none": "You don't teach any sections yet. Your school admin assigns teachers to sections.",
-    "students": "Students ({{count}})",
-    "noStudents": "No students yet. Create a student code below and share it with your class.",
-    "removeTitle": "Take {{name}} off this section",
-    "removeConfirmTitle": "Remove student?",
-    "removeConfirmMessage": "{{name}} will be taken off {{section}}. They stay in the school, and can rejoin with a section code.",
-    "removed": "{{name}} was taken off {{section}}.",
-    "removeFailed": "Could not remove the student.",
-    "codes": "Student codes",
-    "noCodes": "No student codes for this section yet."
-  },
   "join": {
     "title": "Join your school or class",
     "message": "Enter the code your school or teacher gave you. It has 10 letters and numbers, like ABCDE-23456.",
@@ -136,14 +15,14 @@
       "student": "Start exploring"
     }
   },
+  "joinStaff": {
+    "staffCode": "This is a staff code for {{school}}. Teachers and school admins join in the Tutre staff portal.",
+    "open": "Open the staff portal"
+  },
   "moved": {
     "title": "This page has moved",
     "message": "My school and My sections are now in the Tutre staff portal, where teachers and school admins sign in.",
     "open": "Open the staff portal",
     "noLink": "Ask your school admin for the staff portal's address."
-  },
-  "joinStaff": {
-    "staffCode": "This is a staff code for {{school}}. Teachers and school admins join in the Tutre staff portal.",
-    "open": "Open the staff portal"
   }
 }

@@ -22,11 +22,13 @@ export default function AuthFormFields() {
     <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-4">
       {!isLogin && (
         <div className="space-y-1 animate-fade-in-up">
-          <label className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.fullName')}</label>
+          <label htmlFor="auth-full-name" className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.fullName')}</label>
           <div className="relative group">
             <User className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
             <input
+              id="auth-full-name"
               type="text"
+              autoComplete="name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder={t('fields.fullNamePlaceholder')}
@@ -38,11 +40,13 @@ export default function AuthFormFields() {
       )}
 
       <div className="space-y-1">
-        <label className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.email')}</label>
+        <label htmlFor="auth-email" className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.email')}</label>
         <div className="relative group">
           <Mail className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
           <input
+            id="auth-email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="student@tutre.com"
@@ -53,11 +57,14 @@ export default function AuthFormFields() {
       </div>
 
       <div className="space-y-1">
-        <label className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.password')}</label>
+        <label htmlFor="auth-password" className="text-[12px] sm:text-[13px] font-semibold text-slate-700 ms-0.5">{t('fields.password')}</label>
         <div className="relative group">
           <Lock className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
           <input
+            id="auth-password"
             type={showPassword ? "text" : "password"}
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
+            minLength={isLogin ? undefined : 8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
@@ -73,11 +80,12 @@ export default function AuthFormFields() {
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
+        {!isLogin && <p className="text-[11px] text-slate-400 ms-0.5">{t('signup.passwordHint')}</p>}
       </div>
 
       <button
         type="submit"
-        disabled={isSubmitting || !email || !password || (!isLogin && !fullName)}
+        disabled={isSubmitting || !email || !password || (!isLogin && (!fullName || password.length < 8))}
         className="cursor-pointer w-full py-2 sm:py-2.5 bg-linear-to-r from-primary-600 to-primary-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:from-primary-700 hover:to-primary-800 transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px] sm:text-sm group mt-4 sm:mt-6"
       >
         {isSubmitting ? (

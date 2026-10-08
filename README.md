@@ -327,17 +327,21 @@ add-on. Both panels talk to it directly.
 | `subjects` | Subjects within a class — `class_id` foreign key |
 | `chapters` | Chapters within a subject — `subject_id`, `chapter_no` |
 | `topics` | Individual lessons, including the `study_guide` body |
-| `admin_users` | Ids of users allowed into the admin panel |
+| `admin_users` | The Tutre content team (Studio), with a `studio_role` |
 
-**Simulation payloads** live in per-subject tables — `physics_simulations`,
-`chemistry_simulations`, `biology_simulations`, `mathematics_simulations` — each
-row pairing a `topic_id` with a `code_payload` of AI-generated HTML. The panels
-address these dynamically as `` `${subjectName}_simulations` ``, so adding a
-subject implies creating a matching table.
+**Simulations** live in one `simulations` table with a review workflow
+(draft, in review, published, archived) and version history. Students read only
+published rows. **`all_simulations`** is a view that joins them to the
+curriculum tree; both panels read from it. The old per-subject tables
+(`physics_simulations` and so on) are a frozen backup that nothing reads.
 
-**`all_simulations`** is a view that unions those tables and joins the curriculum
-tree. It is what both panels read from; the per-subject tables are written
-directly.
+**Schools** (`organizations`, `org_memberships` with a head admin, `sections`,
+`section_members`, `invite_codes` including each section's class code),
+**teachers' own material** (`teacher_materials`, `material_shares`), **learning
+progress** (`learning_events`, `topic_progress`) and **Urdu content**
+(`content_translations`, `glossary_terms`) complete the schema.
+[`supabase/README.md`](./supabase/README.md) documents every table, who can
+read and change it, and why.
 
 ### Migrations
 
@@ -345,9 +349,10 @@ Schema changes must be represented as migrations under `supabase/migrations/`. A
 change that exists only in the hosted project is a change this repository cannot
 reproduce.
 
-**`supabase/migrations/` is currently empty**, and the hosted project is the only
-source of truth. `supabase/README.md` documents exactly what is known about the
-live schema, what is still unknown, and the commands that pull the real thing.
+Every table, view, policy and function is in `supabase/migrations/`, starting
+from the baseline pulled from the hosted project on 2026-09-30, and the hosted
+project is kept in step with it (`npx supabase migration list`). Access rules are
+tested with pgTAP in `supabase/tests/database/`.
 Read it before touching the database.
 
 Destructive changes — `DROP`, destructive `ALTER`, deletes, truncates, or
@@ -528,17 +533,10 @@ agreed plan.
 Punjab Curriculum and Textbook Board syllabus. This is the first content set
 intended to be canonical rather than generated ad hoc.
 
-**Known blockers for that work:**
-
-1. Simulation tables are derived from the subject name as
-   `` `${subjectName.toLowerCase()}_simulations` ``. A subject literally named
-   "Computer Science" produces the invalid table name
-   `computer science_simulations`. This must be resolved before a CS subject is
-   created.
-2. `all_simulations` is a view over the four existing per-subject tables. A new
-   subject needs both a new table and an updated view.
-3. Nothing distinguishes a verified simulation from a generated draft. Selling a
-   curated library implies that distinction exists.
+The earlier blockers for that work are resolved: subjects have an
+identifier-safe `slug`, all simulations live in one table (adding a subject
+needs no schema change), and published, reviewed simulations are told apart
+from drafts and from AI-generated ones (`status`, `kind`).
 
 **Longer term:** performance and structure work on the generation and render path
 as the catalogue grows.

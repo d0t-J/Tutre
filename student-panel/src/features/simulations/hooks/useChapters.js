@@ -1,36 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../../services/supabase';
+import { classesQuery, subjectsOfClassQuery } from './curriculumQueries';
 import { useAuth } from '../../auth';
 import { slugify } from '../../../utils/slugify';
 
 export const useChapters = (classSlug, subjectSlug) => {
   const { user } = useAuth();
-  
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ['chapters', classSlug, subjectSlug],
     queryFn: async () => {
       if (!classSlug || !subjectSlug) return [];
 
-      const { data: classes, error: classError } = await supabase
-        .from('classes')
-        .select('id, name');
-        
-      if (classError || !classes) {
-        throw new Error(classError?.message || 'Class not found');
-      }
-
+      const classes = await queryClient.fetchQuery(classesQuery);
       const classData = classes.find(c => slugify(c.name) === classSlug);
       if (!classData) throw new Error('Class not found');
 
-      const { data: subjects, error: subjectError } = await supabase
-        .from('subjects')
-        .select('id, name')
-        .eq('class_id', classData.id);
-        
-      if (subjectError || !subjects) {
-        throw new Error(subjectError?.message || 'Subject not found');
-      }
-
+      const subjects = await queryClient.fetchQuery(subjectsOfClassQuery(classData.id));
       const subjectData = subjects.find(s => slugify(s.name) === subjectSlug);
       if (!subjectData) throw new Error('Subject not found');
 
@@ -41,7 +28,7 @@ export const useChapters = (classSlug, subjectSlug) => {
         .eq('subject_id', subjectData.id)
         .order('chapter_no', { ascending: true })
         .order('name');
-        
+
       if (error) throw new Error(error.message);
       return data.map(chap => ({ ...chap, className: classData.name, subjectName: subjectData.name }));
     },

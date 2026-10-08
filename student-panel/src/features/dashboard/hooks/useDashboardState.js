@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../../../services/supabase';
+import { useQuery } from '@tanstack/react-query';
 import { slugify } from '../../../utils/slugify';
 import { useSimulations } from '../../simulations/hooks/useSimulations';
 import { useSubjects } from '../../simulations/hooks/useSubjects';
 import { useChapters } from '../../simulations/hooks/useChapters';
+import { classesQuery } from '../../simulations/hooks/curriculumQueries';
 import { useBreadcrumbs } from './useBreadcrumbs';
 import { useSubjectIcon } from './useSubjectIcon';
 
@@ -12,24 +13,8 @@ export function useDashboardState() {
   const { classSlug, subjectSlug, chapterSlug } = useParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [classes, setClasses] = useState([]);
-  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const observer = useRef();
-  
-  useEffect(() => {
-    async function fetchClasses() {
-      setIsLoadingClasses(true);
-      const { data } = await supabase.from('classes').select('*').order('name');
-      if (data) {
-        const sortedClasses = data.sort((a, b) => 
-          a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
-        );
-        setClasses(sortedClasses);
-      }
-      setIsLoadingClasses(false);
-    }
-    fetchClasses();
-  }, []);
+  const { data: classes = [], isLoading: isLoadingClasses } = useQuery(classesQuery);
 
   const { data: subjectsData, status: subjectsStatus } = useSubjects(classSlug);
   const subjects = subjectsData || [];
@@ -60,13 +45,13 @@ export function useDashboardState() {
   }, [status, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const subjectIcon = useSubjectIcon(matchedSubject, classSlug);
-  
-  const breadcrumbs = useBreadcrumbs({ 
-    classSlug, subjectSlug, chapterSlug, activeClass, matchedSubject, matchedChapter 
+
+  const breadcrumbs = useBreadcrumbs({
+    classSlug, subjectSlug, chapterSlug, activeClass, matchedSubject, matchedChapter
   });
 
   const simulations = data ? data.pages.flatMap(page => page.data) : [];
-  
+
   return {
     classSlug, subjectSlug, chapterSlug, searchQuery, setSearchQuery,
     classes, isLoadingClasses, subjects, subjectsStatus, chapters, chaptersStatus,

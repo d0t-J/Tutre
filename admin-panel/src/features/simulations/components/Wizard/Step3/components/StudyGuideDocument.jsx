@@ -13,7 +13,7 @@ export default function StudyGuideDocument({
         {isEditing ? (
           <div className="w-full h-full">
             <JoditEditor
-              value={preprocessLegacyMath(studyGuide || '')}
+              value={sanitizeHTML(preprocessLegacyMath(studyGuide || ''))}
               config={{
                 readonly: false,
                 placeholder: 'Start typing the study guide here or click "Generate with AI" above...',

@@ -2,6 +2,7 @@ import { Bot, User } from 'lucide-react';
 import { useMemo } from 'react';
 import { preprocessLegacyMath } from '../../../utils/mathPreprocessor';
 import { markdownToHtml } from '../../../utils/markdownToHtml';
+import { sanitizeHTML } from '../../../utils/sanitizeHTML';
 
 export default function ChatMessage({ msg }) {
   // For assistant messages, render markdown and math correctly.
@@ -10,9 +11,11 @@ export default function ChatMessage({ msg }) {
   const renderedContent = useMemo(() => {
     if (msg.role !== 'assistant') return null;
 
+    // Model output is untrusted (its context includes teachers' own text), so
+    // it is cleaned after Markdown and math are rendered, as in GuidePanel.
     let htmlResult = markdownToHtml(msg.content);
     htmlResult = preprocessLegacyMath(htmlResult);
-    return htmlResult;
+    return sanitizeHTML(htmlResult);
   }, [msg.content, msg.role]);
 
   return (

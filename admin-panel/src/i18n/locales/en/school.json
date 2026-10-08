@@ -87,7 +87,7 @@
     "unarchive": "Unarchive",
     "unarchived": "{{name}} is active again.",
     "archivedTitle": "Archived ({{count}})",
-    "archivedNote": "Archived sections are no longer shown to their teachers and students; their member lists are kept. Codes for an archived section still work until they expire, so revoke any you no longer need."
+    "archivedNote": "Archived sections are no longer shown to their teachers and students; their member lists are kept. Their codes, including the class code, stop working while the section is archived, and work again if you unarchive it."
   },
   "codes": {
     "createTitle": "Create a code",

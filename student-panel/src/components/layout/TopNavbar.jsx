@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as Icons from 'lucide-react';
-import { supabase } from '../../services/supabase';
 import { useAuth } from '../../features/auth';
 import Logo from '../../assets/tutre_new_logo.png';
 import LogoutConfirmationModal from '../common/LogoutConfirmationModal';
@@ -10,33 +10,23 @@ import LanguageSwitcher from '../common/LanguageSwitcher';
 import ClassNavMenu from './ClassNavMenu';
 import { useProfile } from '../../features/profile';
 import { useMyRoles } from '../../features/school';
+import { classesQuery } from '../../features/simulations/hooks/curriculumQueries';
 
 export default function TopNavbar() {
   const { t } = useTranslation();
-  const [classes, setClasses] = useState([]);
   const { user, logout } = useAuth();
+  const { data: classes = [] } = useQuery({ ...classesQuery, enabled: !!user });
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const { data: profile } = useProfile();
   const { data: roles } = useMyRoles();
 
-  // Join shows until the student is in a school. My school and My sections
-  // moved to the staff portal in Phase 5a.
+  // Join stays available: a student may join another section (a new year, a
+  // second teacher). My school and My sections moved to the staff portal in
+  // Phase 5a.
   const roleLinks = [
-    roles && !roles.hasSchool && { to: '/join', icon: Icons.KeyRound, label: t('nav.join') },
+    roles && { to: '/join', icon: Icons.KeyRound, label: t('nav.join') },
   ].filter(Boolean);
-  
-  useEffect(() => {
-    async function fetchClasses() {
-      const { data } = await supabase.from('classes').select('*').order('name');
-      if (data) {
-        const sortedClasses = data.sort((a, b) => 
-          a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
-        );
-        setClasses(sortedClasses);
-      }
-    }
-    fetchClasses();
-  }, []);
+
 
   return (
     <header className="relative bg-white border-b border-slate-200 h-15 shrink-0 z-40 px-4 flex items-center justify-between">
@@ -88,7 +78,7 @@ export default function TopNavbar() {
             {profile?.display_name || user?.user_metadata?.full_name || user?.email}
           </span>
         </NavLink>
-        
+
         <button
           onClick={() => setIsLogoutModalOpen(true)}
           className="cursor-pointer flex items-center justify-center p-2 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
@@ -99,13 +89,13 @@ export default function TopNavbar() {
         </button>
       </div>
 
-      <LogoutConfirmationModal 
-        isOpen={isLogoutModalOpen} 
-        onClose={() => setIsLogoutModalOpen(false)} 
+      <LogoutConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={() => {
           setIsLogoutModalOpen(false);
           logout();
-        }} 
+        }}
       />
     </header>
   );

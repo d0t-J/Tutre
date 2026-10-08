@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../../services/supabase';
 import { useAuth } from '../../auth';
+import { classesQuery } from '../../simulations/hooks/curriculumQueries';
 
 // The profiles row is created by a database trigger at sign-up. Its owner may
 // change only display_name, preferred_language and class_id.
@@ -50,16 +51,6 @@ export const useUpdateProfile = () => {
 export const useClassOptions = () => {
   const { user } = useAuth();
 
-  return useQuery({
-    queryKey: ['class-options'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('classes').select('id, name');
-      if (error) throw new Error(error.message);
-      return data.sort((a, b) =>
-        a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
-      );
-    },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 60, // 1 hour
-  });
+  // The shared, cached class list (simulations/hooks/curriculumQueries.js).
+  return useQuery({ ...classesQuery, enabled: !!user });
 };

@@ -1,12 +1,7 @@
-// Components
-export { InviteCodeList, CreateInviteCodeForm, CopyCodeButton } from './components/InviteCodes';
-export { default as TeachingSection } from './components/TeachingSection';
-export { default as SchoolOverviewTab } from './components/SchoolOverviewTab';
-export { default as SchoolMembersTab } from './components/SchoolMembersTab';
-export { default as SchoolSectionsTab } from './components/SchoolSectionsTab';
-export { default as SchoolCodesTab } from './components/SchoolCodesTab';
+// The student app's part of school membership: the user's roles and joining
+// with a code. School management (My school, My sections) moved to the staff
+// portal in Phase 5a; its old components here were removed in the 2026-10-08
+// audit.
 
 // Hooks
 export { useMyRoles, useRedeemCode, peekInviteCode } from './hooks/useMyRoles';
-export { useTeaching } from './hooks/useTeaching';
-export { useSchoolAdmin } from './hooks/useSchoolAdmin';
